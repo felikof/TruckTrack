@@ -1,0 +1,77 @@
+.shipment-stats {
+    background-color: #1e1e2f; /* bleu foncé très doux */
+    color: #d4d4dc; /* gris clair doux */
+    padding: 2rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 0 20px rgba(100, 100, 150, 0.1);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.stats-title {
+    font-size: 1.8rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #a0a8b7; /* gris-bleu discret */
+    text-shadow: none;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: linear-gradient(145deg, #26273f, #1c1d2e);
+    border: 1px solid rgba(160, 168, 183, 0.15);
+    border-radius: 1rem;
+    padding: 1rem;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 0 8px rgba(160, 168, 183, 0.05);
+}
+
+.stat-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(160, 168, 183, 0.2);
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #bac1d1; /* bleu-gris doux */
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #8f92a1; /* gris moyen */
+    letter-spacing: 0.5px;
+}
+
+.chart-container {
+    background-color: #2a2b44;
+    border-radius: 1rem;
+    padding: 1rem;
+    box-shadow: 0 0 12px rgba(160, 168, 183, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.chart-container:hover {
+    box-shadow: 0 0 20px rgba(160, 168, 183, 0.25);
+}
+
+@media screen and (max-width: 600px) {
+    .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .stats-title {
+        font-size: 1.5rem;
+    }
+
+    .chart-container {
+        padding: 0.5rem;
+    }
+}

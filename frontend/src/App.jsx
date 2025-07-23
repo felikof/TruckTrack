@@ -1,15 +1,17 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Dashboard from "./pages/Dashboard";
+import React from "react";
+import "./App.css";
+import Dashboard from "./pages/dashboard";
 
 function App() {
     return (
-        <Router>
-            <Navbar />
-            <Routes>
-                <Route path="/" element={<Dashboard />} />
-            </Routes>
-        </Router>
+        <div className="App">
+            <header className="navbar">
+                <h1>Port Dashboard</h1>
+            </header>
+            <main className="container">
+                <Dashboard />
+            </main>
+        </div>
     );
 }
 
