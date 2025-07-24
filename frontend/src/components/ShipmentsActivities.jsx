@@ -1,34 +1,104 @@
-import React from "react";
+import React from 'react';
+import '/src/ShipmentsActivities.css';
 
-const shipments = [
-    { id: "#172989-72-727bjk", category: "Electronic", company: "Exetron Co", date: "24 Dec 2023", route: "London - Prague", price: "$5,872", status: "Delivered" },
-    // ajoute plus si besoin
-];
+const ShipmentsActivities = () => {
+    // Données simulées
+    const shipments = [
+        {
+            id: '#1799020-79-797hik',
+            category: 'Électronique',
+            company: 'Byveteon Inc',
+            arrivalTime: '2023-05-15 14:30',
+            route: 'New York → Paris',
+            price: '$1,250',
+            status: 'En transit'
+        },
+        {
+            id: '#1799020-79-797hik',
+            category: 'Électronique',
+            company: 'Byveteon Inc',
+            arrivalTime: '2023-05-15 14:30',
+            route: 'New York → Paris',
+            price: '$1,250',
+            status: 'En transit'
+        },
+        {
+            id: '#1799020-79-797hik',
+            category: 'Électronique',
+            company: 'Byveteon Inc',
+            arrivalTime: '2023-05-15 14:30',
+            route: 'New York → Paris',
+            price: '$1,250',
+            status: 'En transit'
+        },
+        {
+            id: '#1799020-79-797hik',
+            category: 'Électronique',
+            company: 'Byveteon Inc',
+            arrivalTime: '2023-05-15 14:30',
+            route: 'New York → Paris',
+            price: '$1,250',
+            status: 'En transit'
+        },
+        // Ajoutez d'autres données ici...
+    ];
 
-export default function ShipmentsActivities() {
+    const statusFilters = ['All Shipments', 'Delivered', 'In transit', 'Pending', 'Processing'];
+
     return (
-        <div className="bg-white p-4 rounded shadow col-span-2">
-            <h2 className="text-lg font-semibold mb-2">Shipments Activities</h2>
-            <table className="w-full text-sm">
-                <thead>
-                    <tr className="text-left border-b">
-                        <th>Order ID</th><th>Category</th><th>Company</th><th>Arrival</th><th>Route</th><th>Price</th><th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {shipments.map((s, i) => (
-                        <tr key={i} className="border-b">
-                            <td>{s.id}</td>
-                            <td>{s.category}</td>
-                            <td>{s.company}</td>
-                            <td>{s.date}</td>
-                            <td>{s.route}</td>
-                            <td>{s.price}</td>
-                            <td>{s.status}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+        <div className="shipments-activities">
+            <div className="header">
+                <h2>Shipments Activities</h2>
+                <div className="controls">
+                    <div className="status-filters">
+                        {statusFilters.map((filter, index) => (
+                            <button
+                                key={index}
+                                className={`filter-btn ${index === 0 ? 'active' : ''}`}
+                            >
+                                {filter}
+                            </button>
+                        ))}
+                    </div>
+                    <div className="pagination">
+                        <button className="page-btn">〈</button>
+                        <span>1-10</span>
+                        <button className="page-btn">〉</button>
+                    </div>
+                </div>
+            </div>
+
+            <p className="subtitle">Keep track of recent shipping activity</p>
+
+            <div className="shipments-table">
+                <div className="table-header">
+                    <div className="header-cell">Order ID</div>
+                    <div className="header-cell">Category</div>
+                    <div className="header-cell">Company</div>
+                    <div className="header-cell">Arrival time</div>
+                    <div className="header-cell">Route</div>
+                    <div className="header-cell">Price</div>
+                    <div className="header-cell">Status</div>
+                </div>
+
+                {shipments.map((shipment, index) => (
+                    <div key={index} className="table-row">
+                        <div className="table-cell">{shipment.id}</div>
+                        <div className="table-cell">{shipment.category}</div>
+                        <div className="table-cell">{shipment.company}</div>
+                        <div className="table-cell">{shipment.arrivalTime}</div>
+                        <div className="table-cell">{shipment.route}</div>
+                        <div className="table-cell">{shipment.price}</div>
+                        <div className="table-cell">
+                            <span className={`status-badge ${shipment.status.toLowerCase().replace(' ', '-')}`}>
+                                {shipment.status}
+                            </span>
+                        </div>
+                    </div>
+                ))}
+            </div>
         </div>
     );
-}
+};
+
+export default ShipmentsActivities;

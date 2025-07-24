@@ -1,0 +1,164 @@
+.tracking-delivery {
+    position: relative;
+    margin-top: -400px;
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+    max-width: 400px;
+}
+
+.tracking-delivery h2 {
+    margin: 0 0 5px 0;
+    color: #333;
+    font-size: 1.5rem;
+}
+
+.subtitle {
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+}
+
+.tracking-id {
+    margin-bottom: 25px;
+}
+
+.tracking-id span {
+    display: block;
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.id-value {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.timeline {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 25px;
+}
+
+.timeline-item {
+    display: flex;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.timeline-marker {
+    position: relative;
+    margin-right: 15px;
+}
+
+.status-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    position: relative;
+    z-index: 1;
+}
+
+.status-dot.checking {
+    background-color: #faad14;
+    border: 3px solid #fff4de;
+}
+
+.status-dot.in-transit {
+    background-color: #1890ff;
+    border: 3px solid #e6f7ff;
+}
+
+.status-dot.delivered {
+    background-color: #52c41a;
+    border: 3px solid #f6ffed;
+}
+
+.timeline-line {
+    position: absolute;
+    left: 7px;
+    top: 16px;
+    height: calc(100% + 20px);
+    width: 2px;
+    background-color: #f0f0f0;
+    z-index: 0;
+}
+
+.timeline-content {
+    flex: 1;
+}
+
+.timeline-date {
+    font-size: 0.9rem;
+    color: #333;
+    font-weight: 500;
+    margin-bottom: 3px;
+}
+
+.timeline-status {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 3px;
+}
+
+.timeline-status.checking {
+    color: #faad14;
+}
+
+.timeline-status.in-transit {
+    color: #1890ff;
+}
+
+.timeline-status.delivered {
+    color: #52c41a;
+}
+
+.timeline-time {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+.courier-info {
+    border-top: 1px solid #f0f0f0;
+    padding-top: 15px;
+}
+
+.courier-label {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.courier-name {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.current-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.status-badge.in-transit {
+    background: #e6f7ff;
+    color: #1890ff;
+}
+
+.status-time {
+    font-size: 0.8rem;
+    color: #999;
+}

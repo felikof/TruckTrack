@@ -1,0 +1,72 @@
+.delivery-vehicles-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+    max-width: 300px;
+}
+
+.delivery-vehicles-card.header h3 {
+    margin: 0 0 5px 0;
+    color: #333;
+    font-size: 1.2rem;
+}
+
+.delivery-vehicles-card.subtitle {
+    color: #666;
+    margin: 0 0 20px 0;
+    font-size: 0.9rem;
+}
+
+.metrics {
+    margin-bottom: 20px;
+}
+
+.main-metric {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    line-height: 1;
+}
+
+.trend {
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+.trend.positive {
+    background-color: #e6f7ee;
+    color: #00a854;
+}
+
+.comparison {
+    color: #999;
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.status {
+    margin-top: 15px;
+}
+
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.status-badge.on-route {
+    background-color: #e6f1ff;
+    color: #2a7be4;
+}

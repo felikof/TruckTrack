@@ -1,12 +1,27 @@
-import React from "react";
+import React from 'react';
+import '/src/DeliveryVehicles.css';
 
-export default function DeliveryVehicles() {
+const DeliveryVehicles = () => {
     return (
-        <div className="bg-white p-4 rounded shadow">
-            <h2 className="text-lg font-semibold mb-2">Delivery Vehicles</h2>
-            <p className="text-3xl font-bold">89</p>
-            <p className="text-green-500 text-sm">+2.29% from last week</p>
-            <img src="/van.png" alt="vehicle" className="mt-2 w-full h-24 object-contain" />
+        <div className="delivery-vehicles-card">
+            <div className="header">
+                <h3>Delivery Vehicles</h3>
+                <p className="subtitle">Vehicles operating on the road</p>
+            </div>
+
+            <div className="metrics">
+                <div className="main-metric">
+                    <span className="value">89</span>
+                    <span className="trend positive">+2,29%</span>
+                </div>
+                <p className="comparison">than last week</p>
+            </div>
+
+            <div className="status">
+                <span className="status-badge on-route">On-Route</span>
+            </div>
         </div>
     );
-}
+};
+
+export default DeliveryVehicles;
