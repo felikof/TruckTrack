@@ -20,7 +20,7 @@ const ShipmentsActivities = () => {
             arrivalTime: '2023-05-15 14:30',
             route: 'New York → Paris',
             price: '$1,250',
-            status: 'En transit'
+            status: 'Pending'
         },
         {
             id: '#1799020-79-797hik',
@@ -29,7 +29,7 @@ const ShipmentsActivities = () => {
             arrivalTime: '2023-05-15 14:30',
             route: 'New York → Paris',
             price: '$1,250',
-            status: 'En transit'
+            status: 'Delivered'
         },
         {
             id: '#1799020-79-797hik',
@@ -38,7 +38,7 @@ const ShipmentsActivities = () => {
             arrivalTime: '2023-05-15 14:30',
             route: 'New York → Paris',
             price: '$1,250',
-            status: 'En transit'
+            status: 'Processing'
         },
         // Ajoutez d'autres données ici...
     ];

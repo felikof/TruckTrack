@@ -1,4 +1,5 @@
 .shipments-activities {
+    position: relative;
     background: white;
     margin-top: 20px;
     border-radius: 10px;
@@ -121,10 +122,10 @@
 
 .status-badge.pending {
     background: #fff7e6;
-    color: #fa8c16;
+    color: #ff8c12;
 }
 
 .status-badge.processing {
     background: #f6ffed;
-    color: #52c41a;
+    color: #8cff52;
 }
