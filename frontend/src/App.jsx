@@ -1,7 +1,7 @@
-import React from "react";
 import "./App.css";
-import Dashboard from "./pages/dashboard";
 import AdminNavbar from "./components/AdminNavbar";
+import UserDashboard from "./components/UserDashboard";
+import Dashboard from "./pages/dashboard";
 
 function App() {
     return (
@@ -17,3 +17,19 @@ function App() {
 }
 
 export default App;
+
+// import React from 'react';
+// import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+// import UserDashboard from './pages/UserDashboard';
+
+// function App() {
+//     return (
+//         <Router>
+//             <Routes>
+//                 <Route path="/user" element={<UserDashboard />} />
+//             </Routes>
+//         </Router>
+//     );
+// }
+
+// export default App;

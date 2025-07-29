@@ -4,24 +4,25 @@ import AnalyticView from "../components/AnalyticView";
 import TrackingDelivery from "../components/TrackingDelivery";
 import DeliveryVehicles from "../components/DeliveryVehicles";
 import ShipmentsActivities from "../components/ShipmentsActivities";
-import AdminNavbar from "../components/AdminNavbar";
 import PieChart from "../components/PieChart";
+import UserDashboard from "../components/UserDashboard";
 
-// export default function Dashboard() {
-//     return (
-//         <div className="bg-gray-100 min-h-screen">
-//             {/* <AdminNavbar /> */}
-//             <div className="p-60 grid grid-cols-4 md:grid-cols-6 lg:grid-cols-2 gap-10">
-//                 <ShipmentStats />
-//                 <AnalyticView />
-//                 <PieChart/>
-//                 <TrackingDelivery />
-//                 <DeliveryVehicles />
-//                 <ShipmentsActivities />
-//             </div>
-//         </div>
-//     );
-// }
+export default function Dashboard() {
+    return (
+        <div className="bg-gray-100 min-h-screen">
+            {/* <AdminNavbar /> */}
+            <div className="p-60 grid grid-cols-4 md:grid-cols-6 lg:grid-cols-2 gap-10">
+                <ShipmentStats />
+                <TrackingDelivery />
+                <DeliveryVehicles />
+                <PieChart/>
+                <AnalyticView />
+                <ShipmentsActivities />
+                {/* <UserDashboard /> */}
+            </div>
+        </div>
+    );
+}
 
 // export default function Dashboard() {
 //     return (
@@ -51,32 +52,32 @@ import PieChart from "../components/PieChart";
 //     );
 // }
 
-export default function Dashboard() {
-    return (
-        <div className="bg-gray-100 min-h-screen p-4">
-            {/* <AdminNavbar /> */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* Première ligne - Large carte */}
-                <div className="md:col-span-2 lg:col-span-3">
-                    <ShipmentStats />
-                </div>
+// export default function Dashboard() {
+//     return (
+//         <div className="bg-gray-100 min-h-screen p-4">
+//             {/* <AdminNavbar /> */}
+//             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+//                 {/* Première ligne - Large carte */}
+//                 <div className="md:col-span-2 lg:col-span-3">
+//                     <ShipmentStats />
+//                 </div>
 
-                {/* Deuxième ligne - 3 cartes égales */}
-                <TrackingDelivery />
-                <div className="grid grid-cols-1 gap-6">
-                    <DeliveryVehicles />
-                    <AnalyticView />
-                </div>
-                <PieChart />
+//                 {/* Deuxième ligne - 3 cartes égales */}
+//                 <TrackingDelivery />
+//                 <div className="grid grid-cols-1 gap-6">
+//                     <DeliveryVehicles />
+//                     <AnalyticView />
+//                 </div>
+//                 <PieChart />
 
-                {/* Troisième ligne - Full width */}
-                <div className="md:col-span-2 lg:col-span-3">
-                    <ShipmentsActivities />
-                </div>
-            </div>
-        </div>
-    );
-}
+//                 {/* Troisième ligne - Full width */}
+//                 <div className="md:col-span-2 lg:col-span-3">
+//                     <ShipmentsActivities />
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// }
 
 // Composant Card réutilisable
 // const Card = ({ children, className = "" }) => (
