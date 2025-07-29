@@ -1,11 +1,10 @@
-import React from "react";
-import ShipmentStats from "../components/ShipmentStats";
 import AnalyticView from "../components/AnalyticView";
-import TrackingDelivery from "../components/TrackingDelivery";
 import DeliveryVehicles from "../components/DeliveryVehicles";
-import ShipmentsActivities from "../components/ShipmentsActivities";
 import PieChart from "../components/PieChart";
-import UserDashboard from "../components/UserDashboard";
+import ShipmentsActivities from "../components/ShipmentsActivities";
+import ShipmentStats from "../components/ShipmentStats";
+import TrackingDelivery from "../components/TrackingDelivery";
+import UserDashboard from "./UserDashboard";
 
 export default function Dashboard() {
     return (

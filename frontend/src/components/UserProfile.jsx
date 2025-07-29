@@ -22,3 +22,4 @@ const UserProfile = ({ user }) => (
         </div>
     </div>
 );
+export default UserProfile;

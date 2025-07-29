@@ -1,17 +1,18 @@
 import "./App.css";
 import AdminNavbar from "./components/AdminNavbar";
-import UserDashboard from "./components/UserDashboard";
+import UserDashboard from "./pages/UserDashboard";
 import Dashboard from "./pages/dashboard";
 
 function App() {
     return (
         <div className="App">
             <header className="navbar">
-                <AdminNavbar/>
+                {/* <AdminNavbar/> */}
+                <UserDashboard/>
             </header>
-            <main className="container">
-                <Dashboard />
-            </main>
+            {/* <main className="container">
+                <UserDashboard />
+            </main> */}
         </div>
     );
 }
