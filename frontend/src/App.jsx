@@ -1,5 +1,6 @@
 import "./App.css";
 import AdminNavbar from "./components/AdminNavbar";
+import UserNavbar from "./components/UserNavbar";
 import UserDashboard from "./pages/UserDashboard";
 import Dashboard from "./pages/dashboard";
 
@@ -7,12 +8,13 @@ function App() {
     return (
         <div className="App">
             <header className="navbar">
+                <UserNavbar/>
                 {/* <AdminNavbar/> */}
-                <UserDashboard/>
+                {/* <UserDashboard/> */}
             </header>
-            {/* <main className="container">
-                <UserDashboard />
-            </main> */}
+            <main className="container">
+                <Dashboard />
+            </main>
         </div>
     );
 }
