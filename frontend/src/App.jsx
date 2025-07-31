@@ -1,5 +1,6 @@
 import "./App.css";
 import AdminNavbar from "./components/AdminNavbar";
+import UserFormulaire from "./components/UserFormulaire";
 import UserNavbar from "./components/UserNavbar";
 import UserDashboard from "./pages/UserDashboard";
 import Dashboard from "./pages/dashboard";
@@ -8,12 +9,13 @@ function App() {
     return (
         <div className="App">
             <header className="navbar">
-                <UserNavbar/>
+                {/* <UserNavbar/> */}
                 {/* <AdminNavbar/> */}
                 {/* <UserDashboard/> */}
             </header>
             <main className="container">
-                <Dashboard />
+                <UserFormulaire />
+                {/* <UserDashboard /> */}
             </main>
         </div>
     );
@@ -21,18 +23,20 @@ function App() {
 
 export default App;
 
-// import React from 'react';
-// import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-// import UserDashboard from './pages/UserDashboard';
+// import { BrowserRouter, Routes, Route } from "react-router-dom";
+// import Dashboard from "./pages/Dashboard.jsx";
+// import UserDashboard from "./pages/UserDashboard.jsx";
 
 // function App() {
 //     return (
-//         <Router>
+//         <BrowserRouter>
 //             <Routes>
-//                 <Route path="/user" element={<UserDashboard />} />
+//                 <Route path="/dashboard" element={<Dashboard />} />
+//                 <Route path="/userDashboard" element={<UserDashboard />} />
 //             </Routes>
-//         </Router>
+//         </BrowserRouter>
 //     );
 // }
 
 // export default App;
+

@@ -6,7 +6,7 @@ const UserNavbar = () => {
         <div className="user-navbar">
             <div className="navbar-brand">
                 <h1>Truck-Tracking</h1>
-                <div className="user-badge">User</div>
+                {/* <div className="user-badge">User</div> */}
             </div>
 
             {/* <nav className="navbar-nav">

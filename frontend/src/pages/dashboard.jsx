@@ -7,23 +7,25 @@ import TrackingDelivery from "../components/TrackingDelivery";
 import UserFormulaire from "../components/UserFormulaire";
 import UserDashboard from "./UserDashboard";
 
-export default function Dashboard() {
+// export default function Dashboard() {
+const Dashboard = () => {
     return (
         <div className="bg-gray-100 min-h-screen">
             {/* <AdminNavbar /> */}
-            <div className="p-60 grid grid-cols-4 md:grid-cols-6 lg:grid-cols-2 gap-10">
-                <UserFormulaire />
-                {/* <ShipmentStats />
+            <div className="p-0 grid grid-cols-4 md:grid-cols-6 lg:grid-cols-2 gap-10">
+                {/* <UserFormulaire /> */}
+                <ShipmentStats />
                 <TrackingDelivery />
                 <DeliveryVehicles />
                 <PieChart/>
                 <AnalyticView />
-                <ShipmentsActivities /> */}
+                <ShipmentsActivities />
                 {/* <UserDashboard /> */}
             </div>
         </div>
     );
 }
+export default Dashboard;
 
 // export default function Dashboard() {
 //     return (
