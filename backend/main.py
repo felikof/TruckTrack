@@ -1,0 +1,48 @@
+from fastapi import FastAPI, Depends, HTTPException
+from sqlalchemy.orm import Session
+from database import SessionLocal, engine
+from backend.models.utilisateur import utilisateur as models
+from schemas import utilisateur as schemas
+from fastapi.middleware.cors import CORSMiddleware
+import hashlib
+
+models.Base.metadata.create_all(bind=engine)
+
+app = FastAPI()
+
+# CORS pour autoriser React à faire les appels
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Tu peux restreindre ça à ["http://localhost:5173"] par ex.
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Dépendance pour récupérer la session DB
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+# Fonction simple de hachage (à améliorer avec bcrypt plus tard)
+def hasher(mdp: str) -> str:
+    return hashlib.sha256(mdp.encode()).hexdigest()
+
+@app.post("/utilisateurs/inscription")
+def inscrire_utilisateur(user: schemas.UtilisateurCreate, db: Session = Depends(get_db)):
+    db_user = db.query(models.Utilisateur).filter(models.Utilisateur.email == user.email).first()
+    if db_user:
+        raise HTTPException(status_code=400, detail="Email déjà utilisé")
+
+    nouvel_utilisateur = models.Utilisateur(
+        nom=user.nom,
+        email=user.email,
+        mot_de_passe=hasher(user.mot_de_passe)
+    )
+    db.add(nouvel_utilisateur)
+    db.commit()
+    db.refresh(nouvel_utilisateur)
+    return {"message": "Inscription réussie", "id": nouvel_utilisateur.id}
