@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine
-from backend.models.utilisateur import utilisateur as models
+from models import utilisateur as models
 from schemas import utilisateur as schemas
 from fastapi.middleware.cors import CORSMiddleware
 import hashlib
@@ -29,6 +29,7 @@ def get_db():
 
 # Fonction simple de hachage (à améliorer avec bcrypt plus tard)
 def hasher(mdp: str) -> str:
+    print(mdp)
     return hashlib.sha256(mdp.encode()).hexdigest()
 
 @app.post("/utilisateurs/inscription")
@@ -39,6 +40,7 @@ def inscrire_utilisateur(user: schemas.UtilisateurCreate, db: Session = Depends(
 
     nouvel_utilisateur = models.Utilisateur(
         nom=user.nom,
+        prenom=user.prenom,
         email=user.email,
         mot_de_passe=hasher(user.mot_de_passe)
     )
