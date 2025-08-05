@@ -14,13 +14,13 @@ const Dashboard = () => {
             {/* <AdminNavbar /> */}
             <div className="p-0 grid grid-cols-4 md:grid-cols-6 lg:grid-cols-2 gap-10">
                 {/* <UserFormulaire /> */}
-                <ShipmentStats />
+                {/* <ShipmentStats />
                 <TrackingDelivery />
                 <DeliveryVehicles />
                 <PieChart/>
                 <AnalyticView />
-                <ShipmentsActivities />
-                {/* <UserDashboard /> */}
+                <ShipmentsActivities /> */}
+                <UserDashboard />
             </div>
         </div>
     );

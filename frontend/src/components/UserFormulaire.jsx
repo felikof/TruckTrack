@@ -48,6 +48,7 @@
 // export default UserFormulaire;
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const UserFormulaire = () => {
@@ -66,6 +67,8 @@ const UserFormulaire = () => {
         });
     };
 
+    const navigate = useNavigate();
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (formData.mot_de_passe !== formData.confirmPassword) {
@@ -79,11 +82,15 @@ const UserFormulaire = () => {
                 prenom: formData.prenom,
                 email: formData.email,
                 mot_de_passe: formData.mot_de_passe
-            });
+            }, {
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                }
+            );
             console.log("Inscription réussie :", response.data);
             alert("Inscription réussie !");
-            // Redirection ou action après l'inscription réussie
-            NavigationHistoryEntry("./pages/UserDashboard.jsx");
+            navigate("/UserDashboard"); // Redirection vers la page Dashboard.jsx
         } catch (error) {
             console.error("Erreur d’inscription :", error);
             alert("Erreur lors de l’inscription !");
@@ -96,7 +103,7 @@ const UserFormulaire = () => {
             <p style={{ color: "white" }}>Veuillez remplir le formulaire ci-dessous pour vous inscrire.</p>
 
             <div className="form" style={{ display: "flex", flexDirection: "column", alignItems: "center", backgroundColor: "#ffefc29a", padding: "30px 100px 50px 100px", borderRadius: "8px", width: "500px", marginTop: "30px" }}>
-                <form >
+                <form onSubmit={handleSubmit}>
                     <input type="text" name="nom" placeholder="Nom" required value={formData.nom} onChange={handleChange} style={inputStyle} />
                     <input type="text" name="prenom" placeholder="Prénom" required value={formData.prenom} onChange={handleChange} style={inputStyle} />
                     <input type="email" name="email" placeholder="Email" required value={formData.email} onChange={handleChange} style={inputStyle} />
@@ -104,7 +111,7 @@ const UserFormulaire = () => {
                     <input type="password" name="confirmPassword" placeholder="Confirmer mot de passe" required value={formData.confirmPassword} onChange={handleChange} style={inputStyle} />
 
                     <button type="reset" style={resetButtonStyle}>Annuler</button>
-                    <button type="submit" onSubmit={handleSubmit} style={submitButtonStyle}>Suivant</button>
+                    <button type="submit" style={submitButtonStyle}>Suivant</button>
 
                     <h4>Avez-vous déjà un compte ? Si oui cliquez
                         <button style={loginButtonStyle}><h2>Se connecter</h2></button>
