@@ -1,4 +1,6 @@
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
+from sqlalchemy import ForeignKey
 from database import Base
 
 class Utilisateur(Base):
@@ -9,3 +11,8 @@ class Utilisateur(Base):
     prenom = Column(String, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     mot_de_passe = Column(String, nullable=False)
+    profil_id = Column(Integer, ForeignKey("profils.id"), nullable=False)
+    notification_id = Column(Integer, ForeignKey("notifications.id"), nullable=False)
+
+    profil = relationship("Profil", back_populates="utilisateur", uselist=False)
+    notification = relationship("Notification", back_populates="utilisateur", uselist=False)
