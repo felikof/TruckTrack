@@ -13,6 +13,6 @@ class Declaration(Base):
     type_conteneur_num = Column(String, ForeignKey("type_conteneurs.num"), nullable=False)
     transitaire_id = Column(Integer, ForeignKey("transitaires.id"), nullable=False)
 
-    marchandise = relationship("Marchandise", back_populates="declarations")
-    type_conteneur = relationship("TypeConteneur", back_populates="declarations")
+    marchandises = relationship("Marchandise", back_populates="declarations")
+    type_conteneurs = relationship("TypeConteneur", back_populates="declarations")
     transitaire = relationship("Transitaire", back_populates="declarations", uselist=False)

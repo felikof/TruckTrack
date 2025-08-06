@@ -15,7 +15,9 @@ class Transporteur(Base):
     chauffeur_id = Column(Integer, ForeignKey("chauffeurs.id"), nullable=False)
     camion_id = Column(Integer, ForeignKey("camions.id"), nullable=False)
     notification_id = Column(Integer, ForeignKey("notifications.id"), nullable=False)
+    reservation_id = Column(Integer, ForeignKey("reservations.id"), nullable=False)
 
-    chauffeur = relationship("Chauffeur", back_populates="transporteur")
-    camion = relationship("Camion", back_populates="transporteur")
-    notification = relationship("Notification", back_populates="transporteur", uselist=False)
+    reservations = relationship("Reservation", back_populates="transporteur")
+    chauffeurs = relationship("Chauffeur", back_populates="transporteur")
+    camions = relationship("Camion", back_populates="transporteur")
+    notifications = relationship("Notification", back_populates="transporteur")

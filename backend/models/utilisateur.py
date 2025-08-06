@@ -15,4 +15,4 @@ class Utilisateur(Base):
     notification_id = Column(Integer, ForeignKey("notifications.id"), nullable=False)
 
     profil = relationship("Profil", back_populates="utilisateur", uselist=False)
-    notification = relationship("Notification", back_populates="utilisateur", uselist=False)
+    notifications = relationship("Notification", back_populates="utilisateur")

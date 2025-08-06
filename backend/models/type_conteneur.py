@@ -12,5 +12,5 @@ class TypeConteneur(Base):
     marchandise_id = Column(Integer, ForeignKey("marchandises.id"), nullable=False)
     declaration_num = Column(String, ForeignKey("declarations.num"), nullable=False)
 
-    declarations = relationship("Declaration", back_populates="type_conteneur", uselist=False)
-    marchandise = relationship("Marchandise", back_populates="type_conteneur")
+    declaration = relationship("Declaration", back_populates="type_conteneur", uselist=False)
+    marchandises = relationship("Marchandise", back_populates="type_conteneur")

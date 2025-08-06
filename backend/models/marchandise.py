@@ -11,7 +11,7 @@ class Marchandise(Base):
     poids = Column(Integer, nullable=False)
     volume = Column(Integer, nullable=False)
     declaration_num = Column(String, ForeignKey("declarations.num"), nullable=False)
-    type_conteneur_num = Column(String, ForeignKey("type_conteneurs.num"), nullable=False)
+    conteneur_num = Column(String, ForeignKey("type_conteneurs.num"), nullable=False)
 
     type_conteneur = relationship("TypeConteneur", back_populates="marchandise", uselist=False)
-    declarations = relationship("Declaration", back_populates="marchandise", uselist=False)
+    declaration = relationship("Declaration", back_populates="marchandise", uselist=False)

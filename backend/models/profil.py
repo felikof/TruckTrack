@@ -9,4 +9,4 @@ class Profil(Base):
     role = Column(String, nullable=False)
     utilisateur_id = Column(Integer, ForeignKey("utilisateurs.id"), nullable=False)
 
-    utilisateur = relationship("Utilisateur", back_populates="profil")
+    utilisateurs = relationship("Utilisateur", back_populates="profil")
