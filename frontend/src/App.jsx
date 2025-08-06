@@ -26,12 +26,13 @@ import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import UserFormulaire from '/src/components/UserFormulaire';
 import UserDashboard from '/src/pages/UserDashboard';
+import PageAcceuil from "./pages/PageAcceuil";
 
 function App() {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<UserFormulaire />} />
+                <Route path="/" element={<PageAcceuil />} />
                 <Route path="/UserDashboard" element={<UserDashboard />} />
             </Routes>
         </Router>
