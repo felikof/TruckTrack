@@ -52,10 +52,10 @@ const PageAcceuil = () => {
                 </div>
             </section>
 
-            {/* Images Section */}}
+            {/* Images Section */}
             <section className="py-12 px-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <img src="/assets/container1.jpg" alt="Container 1" className="rounded shadow-md" />
+                    <img src="/vue-aerienne.jpg" alt="Container 1" className="rounded shadow-md" />
                     <img src="/assets/container2.jpg" alt="Container 2" className="rounded shadow-md" />
                     <img src="/assets/container3.jpg" alt="Container 3" className="rounded shadow-md" />
                 </div>
