@@ -3,7 +3,7 @@ import '/src/DeliveryVehicles.css';
 
 const DeliveryVehicles = () => {
     return (
-        <div className="delivery-vehicles-card">
+        <div className="delivery-vehicles-card" style={{ marginLeft: "40px"}}>
             <div className="header">
                 <h3>Delivery Vehicles</h3>
                 <p className="subtitle">Vehicles operating on the road</p>

@@ -39,7 +39,7 @@ const AnalyticView = () => {
     });
 
     return (
-        <div className="analytic-view-container" style={{ height: "100%", width: "100%", backgroundColor: "#ffffffff", borderRadius: "1.5rem", padding: "1rem", position: "relative", marginTop: "30px", marginBottom: "20px" }}>
+        <div className="analytic-view-container" style={{ height: "100%", width: "auto", backgroundColor: "#ffffffff", borderRadius: "1.5rem", padding: "1rem", position: "relative", margin: "30px 30px 20px 30px"}}>
             <h2 className="analytic-title">Weekly Statistics</h2>
 
             <div className="filters-container" style={{ marginBottom: 20 }}>

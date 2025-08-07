@@ -4,23 +4,20 @@ import PieChart from "../components/PieChart";
 import ShipmentsActivities from "../components/ShipmentsActivities";
 import ShipmentStats from "../components/ShipmentStats";
 import TrackingDelivery from "../components/TrackingDelivery";
-import SignUp from "../components/SignUp";
-import UserDashboard from "./UserDashboard";
+import AdminNavbar from "../components/AdminNavbar";
 
 // export default function Dashboard() {
 const Dashboard = () => {
     return (
         <div className="bg-gray-100 min-h-screen">
-            {/* <AdminNavbar /> */}
+            <AdminNavbar />
             <div className="p-0 grid grid-cols-4 md:grid-cols-6 lg:grid-cols-2 gap-10">
-                {/* <SignUp /> */}
-                {/* <ShipmentStats />
+                <ShipmentStats />
                 <TrackingDelivery />
                 <DeliveryVehicles />
                 <PieChart/>
                 <AnalyticView />
-                <ShipmentsActivities /> */}
-                <UserDashboard />
+                <ShipmentsActivities />
             </div>
         </div>
     );

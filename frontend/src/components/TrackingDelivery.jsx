@@ -10,7 +10,7 @@ const TrackingDelivery = () => {
     ];
 
     return (
-        <div className="tracking-delivery">
+        <div className="tracking-delivery" >
             <h2>Tracking Delivery</h2>
             <p className="subtitle">Last viewed delivery history</p>
 

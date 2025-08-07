@@ -54,11 +54,11 @@ const SignUp = () => {
     };
 
     return (
-        <div className="formulaire" style={{ padding: "40px", backgroundImage: `url("/cargo-au-port-de-miami.jpg")`, display: "flex", flexDirection: "column", alignItems: "center", backgroundSize: "cover", backgroundRepeat: "no-repeat", backgroundPosition: "center" }}>
+        <div className="formulaire" style={{ padding: "10px", backgroundImage: `url("/cargo-au-port-de-miami.jpg")`, display: "flex", flexDirection: "column", alignItems: "center", backgroundSize: "cover", backgroundRepeat: "no-repeat", backgroundPosition: "center", overflowX: "hidden" }}>
             <h2 style={{ color: "white" }}>Bienvenue sur Truck-Tracking</h2>
             <p style={{ color: "white" }}>Veuillez remplir le formulaire ci-dessous pour vous inscrire.</p>
 
-            <div className="form" style={{ display: "flex", flexDirection: "column", alignItems: "center", backgroundColor: "#ffefc29a", padding: "30px 100px 50px 100px", borderRadius: "8px", width: "500px", marginTop: "30px" }}>
+            <div className="form" style={{ display: "flex", flexDirection: "column", alignItems: "center", backgroundColor: "#ffefc29a", padding: "30px 100px 25px 100px", borderRadius: "8px", width: "500px", marginTop: "25px" }}>
                 <form onSubmit={handleSubmit}>
                     <input type="text" name="nom" placeholder="Nom" required value={formData.nom} onChange={handleChange} style={inputStyle} />
                     <input type="text" name="prenom" placeholder="Prénom" required value={formData.prenom} onChange={handleChange} style={inputStyle} />
@@ -69,9 +69,9 @@ const SignUp = () => {
                     <button type="reset" style={resetButtonStyle}>Annuler</button>
                     <button type="submit" style={submitButtonStyle}>Suivant</button>
 
-                    <h4>Avez-vous déjà un compte ? Si oui cliquez
-                        <button type="button" onClick={handleSignIn} style={loginButtonStyle}><h2>Se connecter</h2></button>
-                    </h4>
+                    <button type="button" onClick={handleSignIn} style={{cursor: "pointer", background: "none", border: "none"}}>
+                        <h4 style={{marginTop: "10px", fontSize: "1.1rem", alignItems: "center", textAlign: "center"}}>Vous avez déjà un compte ?</h4>
+                    </button>
                 </form>
             </div>
         </div>
@@ -92,11 +92,13 @@ const resetButtonStyle = {
     width: "300px",
     height: "40px",
     backgroundColor: "#bfdaffff",
-    color: "white",
+    color: "black",
     borderRadius: "30px",
     padding: "10px",
     marginTop: "30px",
-    marginBottom: "10px"
+    marginBottom: "10px",
+    fontSize: "1rem",
+    border: "none"
 };
 
 const submitButtonStyle = {
@@ -108,17 +110,9 @@ const submitButtonStyle = {
     borderRadius: "30px",
     padding: "10px",
     marginTop: "10px",
-    marginBottom: "10px"
-};
-
-const loginButtonStyle = {
-    backgroundColor: "white",
-    cursor: "pointer",
-    color: "blue",
-    marginTop: "20px",
-    width: "300px",
-    height: "40px",
-    borderRadius: "30px"
+    marginBottom: "10px",
+    fontSize: "1rem",
+    border: "none"
 };
 
 export default SignUp;

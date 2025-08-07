@@ -51,20 +51,20 @@ const SignIn = () => {
     };
 
     return (
-        <div className="formulaire" style={{ height: "100%", padding: "40px", backgroundImage: `url("/portnight.jpg")`, display: "flex", flexDirection: "column", alignItems: "center", backgroundSize: "cover", backgroundRepeat: "no-repeat", backgroundPosition: "center" }}>
-            <h2 style={{ color: "white" }}>Bienvenue sur Truck-Tracking</h2>
-            <p style={{ color: "white" }}>Ravie de vous revoir.</p>
+        <div className="formulaire" style={{ width: "100%", height: "100%", padding: "40px", backgroundImage: `url("/portnight.jpg")`, display: "flex", flexDirection: "column", alignItems: "center", backgroundSize: "cover", backgroundRepeat: "no-repeat", backgroundPosition: "center" }}>
+            <h2 style={{ color: "white", textAlign: "center" }}>Bienvenue sur Truck-Tracking</h2>
+            <p style={{ color: "white", textAlign: "center" }}>Ravie de vous revoir.</p>
 
             <div className="form" style={{ display: "flex", flexDirection: "column", alignItems: "center", backgroundColor: "#ffefc29a", padding: "30px 100px 50px 100px", borderRadius: "8px", width: "500px", marginTop: "30px" }}>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                     <input type="email" name="email" placeholder="Email" required value={formData.email} onChange={handleChange} style={inputStyle} />
                     <input type="password" name="mot_de_passe" placeholder="Mot de passe" required value={formData.mot_de_passe} onChange={handleChange} style={inputStyle} />
                     
                     <button type="submit" style={loginButtonStyle}><h2>Se connecter</h2></button>
 
-                    <h4 style={{marginTop: "30px"}}>Vous n'avez pas de compte ? Si non cliquez
-                        <button type="button" onClick={handleSignUp} style={loginButtonStyle}><h2>S'inscrire</h2></button>
-                    </h4>
+                    <button type="button" onClick={handleSignUp} style={{cursor: "pointer", background: "none", border: "none"}}>
+                        <h4 style={{marginTop: "30px", fontSize: "1.1rem", alignItems: "center", textAlign: "center"}}>Vous n'avez pas de compte ?</h4>
+                    </button>
                 </form>
             </div>
         </div>
@@ -81,13 +81,17 @@ const inputStyle = {
 };
 
 const loginButtonStyle = {
-    backgroundColor: "white",
     cursor: "pointer",
-    color: "blue",
-    marginTop: "20px",
     width: "300px",
     height: "40px",
-    borderRadius: "30px"
+    backgroundColor: "#006affff",
+    color: "white",
+    borderRadius: "30px",
+    paddingBottom: "5px",
+    marginTop: "10px",
+    marginBottom: "10px",
+    border: "none",
+    textAlign: "center"
 };
 
 export default SignIn;

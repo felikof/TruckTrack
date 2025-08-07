@@ -26,7 +26,7 @@ const options = {
 
 const PieChart = () => {
     return (
-        <div style={{ position: "relative", width: "50%", marginTop: "-350px", marginLeft: "530px"}}>
+        <div style={{ position: "relative", width: "50%", marginTop: "-350px", marginLeft: "560px"}}>
             <Chart
                 chartType="PieChart"
                 width="100%"

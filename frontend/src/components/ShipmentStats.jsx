@@ -92,7 +92,7 @@ const ShipmentStats = () => {
     ];
 
     return (
-        <div className="shipment-stats-container">
+        <div className="shipment-stats-container" style={{ marginLeft: '40px'}}>
             <div className="shipment-stats" style={{ padding: '10px', backgroundColor: 'transparent', borderRadius: '10px', display: 'flex', flexDirection: 'row', gap: '15px' }}>
                 <div className="card-header" style={{ flex: 1, padding: '10px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '2px 2px 4px rgba(156, 189, 255, 1)'}}>
                     <h3><span className="icon">📦</span>Total shipment</h3>
