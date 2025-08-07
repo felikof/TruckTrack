@@ -1,6 +1,6 @@
 import "./App.css";
 // import AdminNavbar from "./components/AdminNavbar";
-// import UserFormulaire from "./components/UserFormulaire";
+// import SignUp from "./components/SignUp";
 // import UserNavbar from "./components/UserNavbar";
 // import UserDashboard from "./pages/UserDashboard";
 // import Dashboard from "./pages/dashboard";
@@ -14,7 +14,7 @@ import "./App.css";
 //                 {/* <UserDashboard/> */}
 //             </header>
 //             <main className="container">
-//                 <UserFormulaire />
+//                 <SignUp />
 //                 {/* <UserDashboard /> */}
 //             </main>
 //         </div>
@@ -24,7 +24,8 @@ import "./App.css";
 // export default App;
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import UserFormulaire from '/src/components/UserFormulaire';
+import SignUp from '/src/components/SignUp';
+import SignIn from '/src/components/SignIn';
 import UserDashboard from '/src/pages/UserDashboard';
 import PageAcceuil from "./pages/PageAcceuil";
 
@@ -33,6 +34,8 @@ function App() {
         <Router>
             <Routes>
                 <Route path="/" element={<PageAcceuil />} />
+                <Route path="/SignUp" element={<SignUp />} />
+                <Route path="/SignIn" element={<SignIn />} />
                 <Route path="/UserDashboard" element={<UserDashboard />} />
             </Routes>
         </Router>

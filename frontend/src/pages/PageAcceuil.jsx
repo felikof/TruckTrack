@@ -18,46 +18,53 @@
 // export default PageAcceuil;
 
 import React from "react";
-import '/src/PageAcceuil.css';
+import { useNavigate } from "react-router-dom";
+
 
 const PageAcceuil = () => {
-    return (
-        <div className="bg-white text-gray-800 font-sans">
 
-            {/* Navbar */}
-            <nav className="flex justify-between items-center bg-white shadow-md px-6 py-4">
-                <img src="/assets/logo.png" alt="Logo" className="h-10" />
-                <ul className="flex space-x-6 text-blue-600 font-semibold">
-                    <li><a href="#" className="hover:underline">Our Services</a></li>
+    const navigateUp = useNavigate();
+    const navigateIn = useNavigate();
+
+    const handleSignUp = () => {
+        navigateUp("/SignUp");
+    }
+    const handleSignIn = () => {
+        navigateIn("/SignIn");
+    }
+
+    return (
+        <div>
+            <nav style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 40px 10px 40px", backgroundColor: "#f8f9fab5", position: "fixed" }}>
+                <img src="/icon.webp" alt="Logo" style={{width: "50px", height: "50px"}} />
+                <ul style={{ display: "flex", gap: "50px", listStyle: "none", marginLeft: "250px" }}>
+                    <li><a href="#" className="hover:underline">Home</a></li>
+                    <li><a href="#" className="hover:underline">Nos services</a></li>
                     <li><a href="#" className="hover:underline">Cooperation</a></li>
                     <li><a href="#" className="hover:underline">Contacts</a></li>
                 </ul>
-                <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Contact Us</button>
+                <button type="button" onClick={handleSignUp} style={{backgroundColor: "black", color: "white", borderRadius: "10px", padding: "7px 20px 7px 20px", cursor: "pointer", marginRight: "10px"}}>S'inscrire</button>
             </nav>
 
-            {/* Hero Section */}
-            <section
-                className="bg-cover bg-center text-white py-32 text-center"
-                style={{ backgroundImage: "url('/vue-aerienne.jpg')", backgroundSize: "1270px", backgroundRepeat: "no-repeat", backgroundPosition: "center" }}
-            >
-                <div className="bg-black/50 p-10 rounded-lg inline-block text-white">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">Transportation of Cars</h1>
-                    <p className="text-lg mb-6 text-white">
-                        Transportation of cars by sea container has an undeniable advantage over others.
+            <section style={{height: "100vh", display: "flex", alignItems: "center", backgroundImage: `url("/vue-aerienne.jpg")`, backgroundSize: "cover", backgroundPosition: "center"}}>
+                <div style={{ maxWidth: "800px", height: "100%", marginTop: "140px", marginLeft: "60%", textAlign: "center", justifyContent: "center", padding: "150px 20px 0px 20px", backgroundColor: "rgba(0, 0, 0, 0.23)"}}>
+                    <h1 style={{color: "white", fontSize: "3rem"}}>Gestionnaire de flux</h1>
+                    <p style={{color: "white", fontSize: "1.2rem", marginBottom: "20px"}}>
+                        Reservez votre créneau pour effectuer vos opérations au Port Autonome de Lomé en toute fluidité.
                     </p>
-                    <div className="flex justify-center gap-4">
-                        <button className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">Start Transportation</button>
-                        <button className="border border-white px-6 py-2 rounded hover:bg-white hover:text-blue-600 transition text-white">Explore More</button>
+                    <div style={{ display: "flex", justifyContent: "center", gap: "20px", marginTop: "20px" }}>
+                        <button type="button" onClick={handleSignIn} style={{backgroundColor: "blue", width: "180px", padding: "15px 10px 15px 10px", border: "none", color: "white", fontSize: "1rem", borderRadius: "10px", cursor: "pointer"}}>Reserver un créneau</button>
+                        {/* <button style={{backgroundColor: "transparent", width: "180px", padding: "15px 10px 15px 10px", border: "none", color: "white", fontSize: "1rem", cursor: "pointer"}}>Explore More</button> */}
                     </div>
                 </div>
             </section>
 
             {/* Images Section */}
             <section className="py-12 px-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <img src="/vue-aerienne.jpg" alt="Container 1" className="rounded shadow-md" />
-                    <img src="/assets/container2.jpg" alt="Container 2" className="rounded shadow-md" />
-                    <img src="/assets/container3.jpg" alt="Container 3" className="rounded shadow-md" />
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                    <img src="/vue-aerienne.jpg" alt="Container 1" style={{width: "33%", height: "auto"}} />
+                    <img src="/portnight.jpg" alt="Container 2" style={{width: "33%", height: "auto"}} />
+                    <img src="/container1.png" alt="Container 3" style={{width: "33%", height: "auto"}} />
                 </div>
             </section>
 
@@ -74,15 +81,15 @@ const PageAcceuil = () => {
                 <h2 className="text-3xl font-bold text-center mb-8">Parameters</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div className="text-center">
-                        <img src="/assets/param1.jpg" alt="External dimensions" className="rounded shadow mb-2 mx-auto" />
+                        <img src="/man2.jpg" alt="External dimensions" style={{width: "50%", height: "auto"}} />
                         <p className="text-gray-600">External container dimensions</p>
                     </div>
                     <div className="text-center">
-                        <img src="/assets/param2.jpg" alt="Internal layout" className="rounded shadow mb-2 mx-auto" />
+                        <img src="/container2.jpg" alt="Internal layout" style={{width: "50%", height: "100%"}} />
                         <p className="text-gray-600">Internal layout</p>
                     </div>
                     <div className="text-center">
-                        <img src="/assets/param3.jpg" alt="Modern container" className="rounded shadow mb-2 mx-auto" />
+                        <img src="/man3.jpg" alt="Modern container" style={{width: "50%", height: "auto"}} />
                         <p className="text-gray-600">Modern container up to 4 cars</p>
                     </div>
                 </div>

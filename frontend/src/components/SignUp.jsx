@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const UserFormulaire = () => {
+const SignUp = () => {
     const [formData, setFormData] = useState({
         nom: '',
         prenom: '',
@@ -19,6 +19,11 @@ const UserFormulaire = () => {
     };
 
     const navigate = useNavigate();
+    const navigateIn = useNavigate();
+
+    const handleSignIn = () => {
+        navigateIn("/SignIn");
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -65,7 +70,7 @@ const UserFormulaire = () => {
                     <button type="submit" style={submitButtonStyle}>Suivant</button>
 
                     <h4>Avez-vous déjà un compte ? Si oui cliquez
-                        <button style={loginButtonStyle}><h2>Se connecter</h2></button>
+                        <button type="button" onClick={handleSignIn} style={loginButtonStyle}><h2>Se connecter</h2></button>
                     </h4>
                 </form>
             </div>
@@ -116,4 +121,4 @@ const loginButtonStyle = {
     borderRadius: "30px"
 };
 
-export default UserFormulaire;
+export default SignUp;

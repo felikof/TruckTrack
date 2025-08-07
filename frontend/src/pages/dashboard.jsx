@@ -4,7 +4,7 @@ import PieChart from "../components/PieChart";
 import ShipmentsActivities from "../components/ShipmentsActivities";
 import ShipmentStats from "../components/ShipmentStats";
 import TrackingDelivery from "../components/TrackingDelivery";
-import UserFormulaire from "../components/UserFormulaire";
+import SignUp from "../components/SignUp";
 import UserDashboard from "./UserDashboard";
 
 // export default function Dashboard() {
@@ -13,7 +13,7 @@ const Dashboard = () => {
         <div className="bg-gray-100 min-h-screen">
             {/* <AdminNavbar /> */}
             <div className="p-0 grid grid-cols-4 md:grid-cols-6 lg:grid-cols-2 gap-10">
-                {/* <UserFormulaire /> */}
+                {/* <SignUp /> */}
                 {/* <ShipmentStats />
                 <TrackingDelivery />
                 <DeliveryVehicles />
