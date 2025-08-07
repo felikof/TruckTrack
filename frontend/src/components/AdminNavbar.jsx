@@ -31,6 +31,7 @@ const AdminNavbar = () => {
                         <option>This Week</option>
                         <option>This Month</option>
                     </select>
+                    <img src="/notif.png" alt="Notifications" className="notif-icon" />
                     <button className="export-btn">Export CSV</button>
                     <button className="new-shipment-btn">New Shipment</button>
                 </div>
