@@ -52,11 +52,34 @@ const SignIn = () => {
     };
 
     return (
-        <div style={{ backgroundImage: `url("/portnight.jpg")`, display: "flex", flexDirection: "column", alignItems: "center", backgroundSize: "cover", backgroundRepeat: "no-repeat", backgroundPosition: "center"}}>
-            <h2 style={{ color: "white", textAlign: "center" }}>Bienvenue sur Truck-Tracking</h2>
-            <p style={{ color: "white", textAlign: "center" }}>Ravie de vous revoir.</p>
+        <div style={{
+            minHeight: "100vh",
+            minWidth: "100vw",
+            position: "fixed",
+            top: 0,
+            left: 0,
+            backgroundImage: `url("/portnight.jpg")`,
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "center",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1
+        }}>
+            <div style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                borderRadius: "8px",
+                width: "500px"
+            }}>
+                <h2 style={{ color: "white", textAlign: "center" }}>Bienvenue sur Truck-Tracking</h2>
+                <p style={{ color: "white", textAlign: "center" }}>Ravie de vous revoir.</p>
+            </div>
 
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", backgroundColor: "#ffefc29a", padding: "30px 100px 10px 100px", borderRadius: "8px", width: "500px", marginTop: "30px" }}>
+            <div style={{ backgroundColor: "#ffefc29a", padding: "30px 0px 10px 0px", borderRadius: "8px", width: "500px", marginTop: "30px" }}>
                 <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                     <input type="email" name="email" placeholder="Email" required value={formData.email} onChange={handleChange} style={inputStyle} />
                     <input type="password" name="mot_de_passe" placeholder="Mot de passe" required value={formData.mot_de_passe} onChange={handleChange} style={inputStyle} />

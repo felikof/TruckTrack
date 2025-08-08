@@ -231,56 +231,81 @@
 
 // export default TimeSlot;
 
-import React, { useState } from 'react';
-import '/src/TimeSlot.css';
+// import React, { useState } from 'react';
+// import '/src/TimeSlot.css';
 
-const TimeSlot = () => {
-    const [formData, setFormData] = useState({
-        date: '',
-        time: '',
-        type: 'Chargement'
-    });
+// const TimeSlot = () => {
+//     const [formData, setFormData] = useState({
+//         date: '',
+//         time: '',
+//         type: 'Chargement'
+//     });
 
-    const handleChange = (e) => {
-        setFormData(prev => ({
-            ...prev,
-            [e.target.name]: e.target.value
-        }));
-    };
+//     const handleChange = (e) => {
+//         setFormData(prev => ({
+//             ...prev,
+//             [e.target.name]: e.target.value
+//         }));
+//     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        alert(`Créneau réservé pour le ${formData.date} à ${formData.time} (${formData.type})`);
-    };
+//     const handleSubmit = (e) => {
+//         e.preventDefault();
+//         alert(`Créneau réservé pour le ${formData.date} à ${formData.time} (${formData.type})`);
+//     };
 
+//     return (
+//         <div className="booking-container">
+//             <h2>Réserver un créneau</h2>
+//             <form className="booking-form" onSubmit={handleSubmit}>
+//                 <label>
+//                     Date :
+//                     <input type="date" name="date" value={formData.date} onChange={handleChange} required />
+//                 </label>
+
+//                 <label>
+//                     Heure :
+//                     <input type="time" name="time" value={formData.time} onChange={handleChange} required />
+//                 </label>
+
+//                 <label>
+//                     Type :
+//                     <select name="type" value={formData.type} onChange={handleChange}>
+//                         <option value="Chargement">Chargement</option>
+//                         <option value="Déchargement">Déchargement</option>
+//                         <option value="Inspection">Inspection</option>
+//                     </select>
+//                 </label>
+
+//                 <button type="submit">Réserver</button>
+//             </form>
+//         </div>
+//     );
+// };
+
+// export default TimeSlot;
+
+import React from 'react';
+import Header from '../components/Headers';
+import SearchForm from '../components/SearchForm';
+import Filters from '../components/Filters';
+import TrainResults from '../components/TrainResults';
+
+function TimeSlot() {
     return (
-        <div className="booking-container">
-            <h2>Réserver un créneau</h2>
-            <form className="booking-form" onSubmit={handleSubmit}>
-                <label>
-                    Date :
-                    <input type="date" name="date" value={formData.date} onChange={handleChange} required />
-                </label>
+        <div className="min-h-screen bg-gray-50">
+            <Header />
 
-                <label>
-                    Heure :
-                    <input type="time" name="time" value={formData.time} onChange={handleChange} required />
-                </label>
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <SearchForm />
 
-                <label>
-                    Type :
-                    <select name="type" value={formData.type} onChange={handleChange}>
-                        <option value="Chargement">Chargement</option>
-                        <option value="Déchargement">Déchargement</option>
-                        <option value="Inspection">Inspection</option>
-                    </select>
-                </label>
-
-                <button type="submit">Réserver</button>
-            </form>
+                <div className="flex gap-6">
+                    <Filters />
+                    <TrainResults />
+                </div>
+            </main>
         </div>
     );
-};
+}
 
 export default TimeSlot;
 

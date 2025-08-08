@@ -30,11 +30,6 @@ def get_db():
     finally:
         db.close()
 
-# Fonction simple de hachage (à améliorer avec bcrypt plus tard)
-def hasher(mdp: str) -> str:
-    print(mdp)
-    return hashlib.sha256(mdp.encode()).hexdigest()
-
 @app.post("/utilisateurs/inscription")
 def inscrire_utilisateur(user: schemas.UtilisateurCreate, db: Session = Depends(get_db)):
     db_user = db.query(models.Utilisateur).filter(models.Utilisateur.email == user.email).first()
@@ -54,7 +49,7 @@ def inscrire_utilisateur(user: schemas.UtilisateurCreate, db: Session = Depends(
 
 @app.post("/utilisateurs/connexion")
 def connexion_utilisateur(user: UtilisateurLogin, db: Session = Depends(get_db)):
-    db_user = db.query(UtilisateurLogin).filter(UtilisateurLogin.email == user.email).first()
+    db_user = db.query(models.Utilisateur).filter(models.Utilisateur.email == user.email).first()
     if not db_user:
         raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
 

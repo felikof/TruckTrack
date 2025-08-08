@@ -46,7 +46,7 @@ const SignUp = () => {
             );
             console.log("Inscription réussie :", response.data);
             alert("Inscription réussie !");
-            navigate("/UserDashboard"); // Redirection vers la page Dashboard.jsx
+            navigate("/SignIn"); // Redirection vers la page Dashboard.jsx
         } catch (error) {
             console.error("Erreur d’inscription :", error);
             alert("Erreur lors de l’inscription !");
