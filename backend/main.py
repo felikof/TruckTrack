@@ -3,6 +3,9 @@ from sqlalchemy.orm import Session
 from database import SessionLocal, engine
 from models import utilisateur as models
 from schemas import utilisateur as schemas
+from schemas.utilisateur_login import UtilisateurLogin
+from security import hasher, verifier_mdp
+
 from fastapi.middleware.cors import CORSMiddleware
 import hashlib
 
@@ -48,3 +51,14 @@ def inscrire_utilisateur(user: schemas.UtilisateurCreate, db: Session = Depends(
     db.commit()
     db.refresh(nouvel_utilisateur)
     return {"message": "Inscription réussie", "id": nouvel_utilisateur.id}
+
+@app.post("/utilisateurs/connexion")
+def connexion_utilisateur(user: UtilisateurLogin, db: Session = Depends(get_db)):
+    db_user = db.query(UtilisateurLogin).filter(UtilisateurLogin.email == user.email).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
+
+    if not verifier_mdp(user.mot_de_passe, db_user.mot_de_passe):
+        raise HTTPException(status_code=401, detail="Mot de passe incorrect")
+
+    return {"message": "Connexion réussie", "id": db_user.id, "nom": db_user.nom}
