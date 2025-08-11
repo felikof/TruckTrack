@@ -37,11 +37,11 @@ const PageAcceuil = () => {
         <div>
             <nav style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 40px 10px 40px", backgroundColor: "#f8f9fab5", position: "fixed" }}>
                 <img src="/icon.webp" alt="Logo" style={{width: "50px", height: "50px"}} />
-                <ul style={{ display: "flex", gap: "50px", listStyle: "none", marginLeft: "250px" }}>
-                    <li><a href="#" className="hover:underline">Home</a></li>
-                    <li><a href="#" className="hover:underline">Nos services</a></li>
-                    <li><a href="#" className="hover:underline">Cooperation</a></li>
-                    <li><a href="#" className="hover:underline">Contacts</a></li>
+                <ul style={{ display: "flex", gap: "50px", listStyle: "none", marginLeft: "250px"}}>
+                    <li><a href="#" style={{textDecoration: "none"}}>Home</a></li>
+                    <li><a href="#" style={{textDecoration: "none"}}>Nos services</a></li>
+                    <li><a href="#" style={{textDecoration: "none"}}>Cooperation</a></li>
+                    <li><a href="#" style={{textDecoration: "none"}}>Contacts</a></li>
                 </ul>
                 <button type="button" onClick={handleSignUp} style={{backgroundColor: "black", color: "white", borderRadius: "10px", padding: "7px 20px 7px 20px", cursor: "pointer", marginRight: "10px"}}>S'inscrire</button>
             </nav>
