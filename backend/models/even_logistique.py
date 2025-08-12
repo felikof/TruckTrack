@@ -8,10 +8,10 @@ class EvenLogistique(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     type = Column(String, nullable=False)
-    description = Column(String, nullable=True)
+    description = Column(String)
     date = Column(DateTime, nullable=False)
     lieu = Column(String, nullable=False)
     statut = Column(String, nullable=False)
-    camion_id = Column(Integer, ForeignKey("camions.id"), nullable=False)
+    # camion_id = Column(Integer, ForeignKey("camions.id"))
 
-    camion = relationship("Camion", back_populates="even_logistique", uselist=False)
+    # camion = relationship("Camion", back_populates="even_logistique", uselist=False)

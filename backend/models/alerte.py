@@ -1,6 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime
-from sqlalchemy.orm import relationship
-from sqlalchemy import ForeignKey
+from sqlalchemy import Column, Integer, String, Enum
 from database import Base
 
 class Alerte(Base):
@@ -8,4 +6,4 @@ class Alerte(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     message = Column(String, nullable=False)
-    niveau = Column(enumerate(["info", "warning", "high", "critical"]), nullable=False)
+    niveau = Column(Enum("info", "warning", "high", "critical", name="alerte_niveau"), nullable=False)

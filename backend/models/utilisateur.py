@@ -11,8 +11,8 @@ class Utilisateur(Base):
     prenom = Column(String, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     mot_de_passe = Column(String, nullable=False)
-    # profil_id = Column(Integer, ForeignKey("profils.id"), nullable=False)
-    # notification_id = Column(Integer, ForeignKey("notifications.id"), nullable=False)
+    # profil_id = Column(Integer, ForeignKey("profils.id"))
+    # notification_id = Column(Integer, ForeignKey("notifications.id"))
 
     # profil = relationship("Profil", back_populates="utilisateur", uselist=False)
     # notifications = relationship("Notification", back_populates="utilisateur")

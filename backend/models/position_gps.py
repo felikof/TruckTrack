@@ -9,7 +9,7 @@ class PositionGPS(Base):
     id = Column(Integer, primary_key=True, index=True)
     latitude = Column(float, nullable=False)
     longitude = Column(float, nullable=False)
-    timestamp = Column(DateTime, nullable=True)
-    camion_id = Column(Integer, ForeignKey("camions.id"), nullable=False)
+    timestamp = Column(DateTime)
+    # camion_id = Column(Integer, ForeignKey("camions.id"))
 
-    camion = relationship("Camion", back_populates="positions_gps", uselist=False)
+    # camion = relationship("Camion", back_populates="positions_gps", uselist=False)

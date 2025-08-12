@@ -5,10 +5,9 @@ from models import utilisateur as models
 from schemas import utilisateur as schemas
 from schemas.utilisateur_login import UtilisateurLogin
 from security import hasher, verifier_mdp
-
 from fastapi.middleware.cors import CORSMiddleware
 import hashlib
-
+        
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()

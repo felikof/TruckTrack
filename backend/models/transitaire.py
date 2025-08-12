@@ -10,6 +10,6 @@ class Transitaire(Base):
     nom = Column(String, nullable=False)
     adresse = Column(String, nullable=False)
     telephone = Column(String, unique=True, index=True, nullable=False)
-    declaration_num = Column(String, ForeignKey("declarations.num"), nullable=False)
+    # declaration_num = Column(String, ForeignKey("declarations.num"))
 
-    declarations = relationship("Declaration", back_populates="transitaire")
+    # declarations = relationship("Declaration", back_populates="transitaire")

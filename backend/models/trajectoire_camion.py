@@ -8,7 +8,7 @@ class TrajectoireCamion(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     chemin = Column(String, nullable=False)
-    camion_id = Column(Integer, ForeignKey("camions.id"), nullable=False)
+    # camion_id = Column(Integer, ForeignKey("camions.id"))
 
-    camion = relationship("Camion", back_populates="trajectoires", uselist=False)
+    # camion = relationship("Camion", back_populates="trajectoires", uselist=False)
     

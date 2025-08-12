@@ -106,16 +106,17 @@ const inputStyle = {
 
 const loginButtonStyle = {
     cursor: "pointer",
-    width: "300px",
-    height: "40px",
+    width: "60%",
     backgroundColor: "#006affff",
     color: "white",
     borderRadius: "30px",
-    paddingBottom: "5px",
+    paddingBottom: "10px",
+    paddingTop: "10px",
     marginTop: "10px",
-    marginBottom: "10px",
     border: "none",
-    textAlign: "center"
+    textAlign: "center",
+    fontSize: "0.8rem",
+    transition: "background-color 0.3s ease",
 };
 
 export default SignIn;

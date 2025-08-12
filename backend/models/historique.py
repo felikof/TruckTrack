@@ -9,6 +9,6 @@ class Historique(Base):
     id = Column(Integer, primary_key=True, index=True)
     heure_entre = Column(DateTime, nullable=False)
     heure_sortie = Column(DateTime, nullable=False)
-    reservation_id = Column(Integer, ForeignKey("reservations.id"), nullable=False)
+    # reservation_id = Column(Integer, ForeignKey("reservations.id"))
 
-    reservations = relationship("Reservation", back_populates="historiques")
+    # reservations = relationship("Reservation", back_populates="historiques")

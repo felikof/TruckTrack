@@ -8,10 +8,10 @@ class Marchandise(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     description = Column(String, nullable=False)
-    poids = Column(Integer, nullable=False)
-    volume = Column(Integer, nullable=False)
-    declaration_num = Column(String, ForeignKey("declarations.num"), nullable=False)
-    conteneur_num = Column(String, ForeignKey("type_conteneurs.num"), nullable=False)
+    poids = Column(Integer)
+    volume = Column(Integer)
+    # declaration_num = Column(String, ForeignKey("declarations.num"))
+    # conteneur_num = Column(String, ForeignKey("type_conteneurs.num"))
 
-    type_conteneur = relationship("TypeConteneur", back_populates="marchandise", uselist=False)
-    declaration = relationship("Declaration", back_populates="marchandise", uselist=False)
+    # type_conteneur = relationship("TypeConteneur", back_populates="marchandise", uselist=False)
+    # declaration = relationship("Declaration", back_populates="marchandise", uselist=False)

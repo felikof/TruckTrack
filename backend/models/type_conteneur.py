@@ -9,8 +9,8 @@ class TypeConteneur(Base):
     num = Column(String, primary_key=True, index=True)
     type = Column(String, nullable=False)
     capacite = Column(Integer, nullable=False)
-    marchandise_id = Column(Integer, ForeignKey("marchandises.id"), nullable=False)
-    declaration_num = Column(String, ForeignKey("declarations.num"), nullable=False)
+    # marchandise_id = Column(Integer, ForeignKey("marchandises.id"))
+    # declaration_num = Column(String, ForeignKey("declarations.num"))
 
-    declaration = relationship("Declaration", back_populates="type_conteneur", uselist=False)
-    marchandises = relationship("Marchandise", back_populates="type_conteneur")
+    # declaration = relationship("Declaration", back_populates="type_conteneur", uselist=False)
+    # marchandises = relationship("Marchandise", back_populates="type_conteneur")

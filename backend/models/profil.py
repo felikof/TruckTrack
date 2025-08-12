@@ -7,6 +7,6 @@ class Profil(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     role = Column(String, nullable=False)
-    utilisateur_id = Column(Integer, ForeignKey("utilisateurs.id"), nullable=False)
+    utilisateur_id = Column(Integer, ForeignKey("utilisateurs.id"))
 
     utilisateurs = relationship("Utilisateur", back_populates="profil")
