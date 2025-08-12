@@ -5,6 +5,7 @@ import UserDashboard from '/src/pages/UserDashboard';
 import PageAcceuil from "./pages/PageAcceuil";
 import Dashboard from "./pages/Dashboard";
 import TimeSlot from "./pages/TimeSlot";
+import Landing from "./pages/Landing";
 
 function App() {
     return (
@@ -16,6 +17,7 @@ function App() {
                 <Route path="/UserDashboard" element={<UserDashboard />} />
                 <Route path="/Dashboard" element={<Dashboard />} />
                 {/* <Route path="/TimeSlot" element={<TimeSlot />}/> */}
+                <Route path="/Landing" element={<Landing />} />
             </Routes>
         </Router>
     );
