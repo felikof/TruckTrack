@@ -8,7 +8,7 @@ class Transporteur(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     nom = Column(String, nullable=False)
-    email = Column(String, unique=True, index=True, nullable=False)
+    email = Column(String, unique=True, nullable=False)
     telephone = Column(String, nullable=False)
     adresse = Column(String, nullable=False)
     # chauffeur_id = Column(Integer, ForeignKey("chauffeurs.id"))

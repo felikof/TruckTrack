@@ -44,7 +44,7 @@ const SignIn = () => {
             );
             console.log("Connexion réussie :", response.data);
             alert("Connexion réussie !");
-            navigate("/UserDashboard"); // Redirection vers la page Dashboard.jsx
+            navigate("/Booking"); // Redirection vers la page Dashboard.jsx
         } catch (error) {
             console.error("Erreur de connexion :", error);
             alert("Erreur lors de la connexion !");

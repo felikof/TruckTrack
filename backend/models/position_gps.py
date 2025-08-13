@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, Float, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy import ForeignKey
 from database import Base
@@ -7,8 +7,8 @@ class PositionGPS(Base):
     __tablename__ = "positions_gps"
     
     id = Column(Integer, primary_key=True, index=True)
-    latitude = Column(float, nullable=False)
-    longitude = Column(float, nullable=False)
+    latitude = Column(Float, nullable=False)
+    longitude = Column(Float, nullable=False)
     timestamp = Column(DateTime)
     # camion_id = Column(Integer, ForeignKey("camions.id"))
 
