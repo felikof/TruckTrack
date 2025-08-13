@@ -43,7 +43,7 @@ const SignIn = () => {
             }
             );
             console.log("Connexion réussie :", response.data);
-            alert("Connexion réussie !");
+            // alert("Connexion réussie !");
             navigate("/Booking"); // Redirection vers la page Dashboard.jsx
         } catch (error) {
             console.error("Erreur de connexion :", error);
