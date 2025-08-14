@@ -292,7 +292,7 @@ function Booking() {
             <h2>Mes réservations</h2>
             <span className="results-count">{myBookings.length} Réservations actives</span>
         </div>
-        
+
         <div className="slots-list">
             {myBookings.map((booking) => (
             <div key={booking.id} className="slot-card booking-card">
@@ -338,7 +338,7 @@ function Booking() {
                     <span className="time">{booking.timeSlot}</span>
                     <span className="location">{booking.gate}</span>
                     </div>
-                    
+
                     <div className="route-visualization">
                     {booking.stops.map((stop, index) => (
                         <div key={index} className="route-stop">
@@ -384,7 +384,7 @@ function Booking() {
             <h2>Créneaux prévus</h2>
             <span className="results-count">{scheduledSlots.length} créneaux prévus</span>
         </div>
-        
+
         <div className="slots-list">
             {scheduledSlots.map((slot) => (
             <div key={slot.id} className="slot-card scheduled-card">
@@ -426,7 +426,7 @@ function Booking() {
                     <span className="time">{slot.timeSlot}</span>
                     <span className="location">{slot.gate}</span>
                     </div>
-                    
+
                     <div className="route-visualization">
                     {slot.stops.map((stop, index) => (
                         <div key={index} className={`route-stop ${stop.completed ? 'completed' : ''}`}>
@@ -473,7 +473,7 @@ function Booking() {
             <h2>Historique des réservations</h2>
             <span className="results-count">{bookingHistory.length} réservations passées</span>
         </div>
-        
+
         <div className="slots-list">
             {bookingHistory.map((booking) => (
             <div key={booking.id} className="slot-card history-card">
@@ -640,7 +640,7 @@ function Booking() {
                             <span className="time">{slot.timeSlot}</span>
                             <span className="location">{slot.gate}</span>
                             </div>
-                            
+
                             <div className="route-visualization">
                             {slot.stops.map((stop, index) => (
                                 <div key={index} className="route-stop">
@@ -693,7 +693,7 @@ function Booking() {
                     <span className="popular-badge">Populaires</span>
                     <span className="slots-count">{availableSlots.length} places restantes</span>
                     </div>
-                    
+
                     <div className="popular-slot">
                     <div className="provider-info">
                         <div className="provider-icon">🏢</div>
@@ -715,7 +715,7 @@ function Booking() {
             <div className="logo">
                 <span className="logo-text">Truck-Tracking</span>
             </div>
-            
+
             <nav className="navigation">
                 <button
                 className={`nav-tab ${activeTab === 'browse-slots' ? 'active' : ''}`}
@@ -843,3 +843,295 @@ function Booking() {
 }
 
 export default Booking
+
+// Booking.jsx (composant principal)
+// import { useState } from 'react';
+// import '/src/Booking.css';
+// import Header from '/src/components/Header';
+// import SearchForm from '/src/components/SearchForm';
+// import BrowseSlots from '/src/components/BrowseSlots';
+// import MyBookings from '/src/components/MyBookings';
+// import ScheduledSlots from '/src/components/ScheduledSlots';
+// import BookingHistory from '/src/components/BookingHistory';
+
+// function Booking() {
+//     const [activeTab, setActiveTab] = useState('browse-slots')
+//     const [searchForm, setSearchForm] = useState({
+//         origin: 'Gate A1',
+//         destination: 'Terminal 3',
+//         date: '2025-01-15',
+//         returnSlot: false,
+//         truckType: 'Standard',
+//         cargoType: 'Conteneur'
+//     })
+//     const [filters, setFilters] = useState({
+//         timeRange: { start: '07:00', end: '18:00' },
+//         selectedTime: '08:00',
+//         facilities: {
+//         bascule: true,
+//         inspection: false,
+//         douane: false,
+//         parking: true
+//         }
+//     })
+
+//     const [availableSlots] = useState([
+//         {
+//         id: 1,
+//         timeSlot: '08:00',
+//         duration: '2h 30m',
+//         gate: 'Gate A1',
+//         terminal: 'Terminal 3',
+//         price: 45000,
+//         currency: 'CFA',
+//         stops: [
+//             { time: '08:00', location: 'Gate A1', transfer: '15min temps de transfert' },
+//             { time: '08:15', location: 'Pont-bascule', transfer: '20min processus' },
+//             { time: '08:45', location: 'Terminal 3', transfer: 'Destination finale' }
+//         ],
+//         amenities: ['pont-bascule', 'parking', 'sécurité'],
+//         available: true,
+//         slotsLeft: 12
+//         },
+//         {
+//         id: 2,
+//         timeSlot: '10:30',
+//         duration: '3h 15m',
+//         gate: 'Gate B2',
+//         terminal: 'Terminal 3',
+//         price: 52000,
+//         currency: 'CFA',
+//         stops: [
+//             { time: '10:30', location: 'Gate B2', transfer: '20min temps de transfert' },
+//             { time: '11:00', location: 'Douanes', transfer: '45min inspection' },
+//             { time: '12:15', location: 'Pont-bascule', transfer: '15min processus' },
+//             { time: '12:45', location: 'Terminal 3', transfer: 'Destination finale' }
+//         ],
+//         amenities: ['pont-bascule', 'inspection', 'douanes', 'parking'],
+//         available: true,
+//         slotsLeft: 8
+//         },
+//         {
+//         id: 3,
+//         timeSlot: '14:20',
+//         duration: '2h 45m',
+//         gate: 'Gate C1',
+//         terminal: 'Terminal 3',
+//         price: 48000,
+//         currency: 'CFA',
+//         stops: [
+//             { time: '14:20', location: 'Gate C1', transfer: '10min temps de transfert' },
+//             { time: '14:45', location: 'Pont-bascule', transfer: '25min processus' },
+//             { time: '15:30', location: 'Terminal 3', transfer: 'Destination Finale' }
+//         ],
+//         amenities: ['pont-bascule', 'parking', 'sécurité', 'inspection'],
+//         available: true,
+//         slotsLeft: 15
+//         }
+//     ])
+
+//     const [myBookings] = useState([
+//         {
+//         id: 'BK001',
+//         bookingRef: 'TG-2025-001',
+//         status: 'confirmé',
+//         date: '2025-01-15',
+//         timeSlot: '08:00',
+//         duration: '2h 30m',
+//         gate: 'Gate A1',
+//         terminal: 'Terminal 3',
+//         truckPlate: 'TG-1234-AB',
+//         driverName: 'Kofi Mensah',
+//         price: 45000,
+//         currency: 'CFA',
+//         stops: [
+//             { time: '08:00', location: 'Gate A1', transfer: '15min temps de transfert' },
+//             { time: '08:15', location: 'Pont-bascule', transfer: '20min processus' },
+//             { time: '08:45', location: 'Terminal 3', transfer: 'Destination finale' }
+//         ],
+//         amenities: ['pont-bascule', 'parking', 'sécurité'],
+//         bookedAt: '2025-01-10T14:30:00Z'
+//         },
+//         {
+//         id: 'BK002',
+//         bookingRef: 'TG-2025-002',
+//         status: 'en attente',
+//         date: '2025-01-16',
+//         timeSlot: '10:30',
+//         duration: '3h 15m',
+//         gate: 'Gate B2',
+//         terminal: 'Terminal 2',
+//         truckPlate: 'TG-5678-CD',
+//         driverName: 'Ama Asante',
+//         price: 52000,
+//         currency: 'CFA',
+//         stops: [
+//             { time: '10:30', location: 'Gate B2', transfer: '20min temps de transfert' },
+//             { time: '11:00', location: 'Douanes', transfer: '45min inspection' },
+//             { time: '12:15', location: 'Pont-bascule', transfer: '15min processus' },
+//             { time: '12:45', location: 'Terminal 2', transfer: 'Destination finale' }
+//         ],
+//         amenities: ['pont-bascule', 'inspection', 'douanes', 'parking'],
+//         bookedAt: '2025-01-12T09:15:00Z'
+//         }
+//     ])
+
+//     const [scheduledSlots] = useState([
+//         {
+//         id: 'SC001',
+//         bookingRef: 'TG-2025-003',
+//         status: 'prévu',
+//         date: '2025-01-17',
+//         timeSlot: '09:15',
+//         duration: '2h 45m',
+//         gate: 'Gate A2',
+//         terminal: 'Terminal 1',
+//         truckPlate: 'TG-9012-EF',
+//         driverName: 'Kwame Nkrumah',
+//         price: 48000,
+//         currency: 'CFA',
+//         stops: [
+//             { time: '09:15', location: 'Gate A2', transfer: '10min temps de transfert' },
+//             { time: '09:30', location: 'Pont-bascule', transfer: '25min processus' },
+//             { time: '10:15', location: 'Terminal 1', transfer: 'Destination finale' }
+//         ],
+//         amenities: ['pont-bascule', 'parking', 'sécurité'],
+//         estimatedArrival: '10:15',
+//         currentStatus: 'En Transit - Gate A2'
+//         },
+//         {
+//         id: 'SC002',
+//         bookingRef: 'TG-2025-004',
+//         status: 'en cours',
+//         date: '2025-01-15',
+//         timeSlot: '14:00',
+//         duration: '3h 00m',
+//         gate: 'Gate C1',
+//         terminal: 'Terminal 3',
+//         truckPlate: 'TG-3456-GH',
+//         driverName: 'Akosua Osei',
+//         price: 55000,
+//         currency: 'CFA',
+//         stops: [
+//             { time: '14:00', location: 'Gate C1', transfer: '15min temps de transfert', completed: true },
+//             { time: '14:20', location: 'Douanes', transfer: '40min inspection', completed: true },
+//             { time: '15:15', location: 'Pont-bascule', transfer: '20min procesus', completed: false },
+//             { time: '15:45', location: 'Terminal 3', transfer: 'Destination finale', completed: false }
+//         ],
+//         amenities: ['pont-bascule', 'inspection', 'douanes', 'parking'],
+//         estimatedArrival: '15:45',
+//         currentStatus: 'À la douane - En cours de traitement'
+//         }
+//     ])
+
+//     const [bookingHistory] = useState([
+//         {
+//         id: 'HT001',
+//         bookingRef: 'TG-2024-156',
+//         status: 'completé',
+//         date: '2024-12-20',
+//         timeSlot: '11:30',
+//         duration: '2h 15m',
+//         gate: 'Gate A1',
+//         terminal: 'Terminal 2',
+//         truckPlate: 'TG-1234-AB',
+//         driverName: 'Kofi Mensah',
+//         price: 42000,
+//         currency: 'CFA',
+//         completedAt: '13:45',
+//         rating: 5
+//         },
+//         {
+//         id: 'HT002',
+//         bookingRef: 'TG-2024-145',
+//         status: 'completé',
+//         date: '2024-12-15',
+//         timeSlot: '08:00',
+//         duration: '3h 30m',
+//         gate: 'Gate B2',
+//         terminal: 'Terminal 1',
+//         truckPlate: 'TG-5678-CD',
+//         driverName: 'Ama Asante',
+//         price: 58000,
+//         currency: 'CFA',
+//         completedAt: '11:30',
+//         rating: 4
+//         },
+//         {
+//         id: 'HT003',
+//         bookingRef: 'TG-2024-132',
+//         status: 'annulé',
+//         date: '2024-12-10',
+//         timeSlot: '15:20',
+//         duration: '2h 45m',
+//         gate: 'Gate C1',
+//         terminal: 'Terminal 3',
+//         truckPlate: 'TG-9012-EF',
+//         driverName: 'Kwame Nkrumah',
+//         price: 48000,
+//         currency: 'CFA',
+//         cancelledAt: '2024-12-09T16:30:00Z',
+//         refundAmount: 48000
+//         }
+//     ])
+
+//     const handleSearch = (e) => {
+//         e.preventDefault();
+//         console.log('Searching with:', searchForm);
+//     };
+
+//     const handleFilterChange = (filterType, value) => {
+//         setFilters(prev => ({ ...prev, [filterType]: value }));
+//     };
+
+//     const handleBookSlot = (slotId) => {
+//         console.log('Créneau de réservation:', slotId);
+//     };
+
+//     const handleCancelBooking = (bookingId) => {
+//         console.log('Annulation de la réservation:', bookingId);
+//     };
+
+//     const handleModifyBooking = (bookingId) => {
+//         console.log('Modification de la réservation:', bookingId);
+//     };
+
+//     const renderContent = () => {
+//         switch (activeTab) {
+//             case 'my-booking':
+//                 return <MyBookings bookings={myBookings}
+//                     onCancel={handleCancelBooking}
+//                     onModify={handleModifyBooking} />;
+//             case 'scheduled':
+//                 return <ScheduledSlots slots={scheduledSlots} />;
+//             case 'history':
+//                 return <BookingHistory history={bookingHistory} />;
+//             default:
+//                 return <BrowseSlots
+//                     slots={availableSlots}
+//                     filters={filters}
+//                     onFilterChange={handleFilterChange}
+//                     onBookSlot={handleBookSlot} />;
+//         }
+//     };
+
+//     return (
+//         <div className="app">
+//             <Header activeTab={activeTab} setActiveTab={setActiveTab} />
+
+//             <main className="main-content">
+//                 {activeTab === 'browse-slots' && (
+//                     <SearchForm
+//                         formData={searchForm}
+//                         onFormChange={setSearchForm}
+//                         onSubmit={handleSearch}
+//                     />
+//                 )}
+
+//                 {renderContent()}
+//             </main>
+//         </div>
+//     );
+// }
+
+// export default Booking;

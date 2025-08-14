@@ -330,7 +330,7 @@ function Landing() {
                         </div>
                     </div>
                     <p className="text-gray-700 italic leading-relaxed">
-                        "La fonctionnalité de suivi en temps réel nous a fait économiser 50K$ en coûts opérationnels le trimestre dernier."
+                        "La fonctionnalité de suivi en temps réel nous a fait économiser 50 000 F CFA en coûts opérationnels le trimestre dernier."
                     </p>
                     <div className="flex text-yellow-400 mt-4">⭐⭐⭐⭐⭐</div>
                 </div>
