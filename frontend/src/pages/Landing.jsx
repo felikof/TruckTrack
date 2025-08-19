@@ -260,7 +260,7 @@ function Landing() {
                         className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden group border border-gray-100"
                         style={{ backgroundImage: "url('/creneau.jpg')", backgroundSize: "cover", backgroundPosition: "center" }}
                     >
-                        <div className="p-8" style={{ padding: "35px", backgroundColor: "#454545a7", color: "white" }}>
+                        <div className="p-8" style={{ padding: "48px", backgroundColor: "#454545a7", color: "white" }}>
                             <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
                                 📊
                             </div>

@@ -218,6 +218,7 @@ const SignIn = () => {
                                 fontSize: "1.1rem",
                                 alignItems: "center",
                                 textAlign: "center",
+                                
                             }}
                         >
                             Vous n'avez pas de compte ?
