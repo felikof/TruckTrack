@@ -11,10 +11,6 @@ class Chauffeur(Base):
     prenom = Column(String, nullable=False)
     email = Column(String, unique=True)
     telephone = Column(String, nullable=False)
-    # camion_id = Column(Integer, ForeignKey("camions.id"))
-    # transporteur_id = Column(Integer, ForeignKey("transporteurs.id"))
-    # notification_id = Column(Integer, ForeignKey("notifications.id"))
+    transporteur_id = Column(Integer, ForeignKey("transporteurs.id"))
 
-    # camion = relationship("Camion", back_populates="chauffeur", uselist=False)
-    # transporteur = relationship("Transporteur", back_populates="chauffeur", uselist=False)
-    # notifications = relationship("Notification", back_populates="chauffeur")
+    transporteur = relationship("Transporteur", back_populates="chauffeur", uselist=False)
