@@ -6,6 +6,8 @@ import PageAcceuil from "./pages/PageAcceuil";
 import Dashboard from "./pages/Dashboard";
 import Landing from "./pages/Landing";
 import Booking from "./pages/Booking";
+import Book from "./pages/Book";
+import AdminSlotCreation from './components/AdminSlotCreation';
 
 function App() {
     return (
@@ -18,6 +20,7 @@ function App() {
                 <Route path="/Dashboard" element={<Dashboard />} />
                 <Route path="/Acceuil" element={<PageAcceuil />} />
                 <Route path="/Booking" element={<Booking />} />
+                <Route path="/Book.jsx" element={<Book />} />
             </Routes>
         </Router>
     );
