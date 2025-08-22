@@ -96,77 +96,126 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
     const handleSubmit = (e) => {
         e.preventDefault()
         if (validateForm()) {
-            onSubmit(formData)
+            if (onSubmit) {
+                onSubmit(formData)
+            } else {
+                console.log('Truck registration data:', formData)
+                alert('Truck registered successfully!')
+            }
+        }
+    }
+
+    const handleCancel = () => {
+        if (onCancel) {
+            onCancel()
+        } else {
+            if (window.confirm('Are you sure you want to cancel? All data will be lost.')) {
+                setFormData({
+                    plateNumber: '',
+                    chassisNumber: '',
+                    engineNumber: '',
+                    make: '',
+                    model: '',
+                    year: '',
+                    color: '',
+                    fuelType: 'Diesel',
+                    truckType: 'Standard',
+                    cargoType: 'Container',
+                    maxWeight: '',
+                    dimensions: {
+                        length: '',
+                        width: '',
+                        height: ''
+                    },
+                    registrationDate: '',
+                    registrationExpiry: '',
+                    insuranceProvider: '',
+                    insurancePolicyNumber: '',
+                    insuranceExpiry: '',
+                    inspectionDate: '',
+                    inspectionExpiry: '',
+                    ownerType: 'Company',
+                    ownerName: '',
+                    ownerContact: '',
+                    driverAssigned: '',
+                    gpsInstalled: false,
+                    trackingDeviceId: '',
+                    specialEquipment: [],
+                    certifications: [],
+                    operatingPermits: []
+                })
+                setErrors({})
+            }
         }
     }
 
     return (
-        <div className="form-container">
-            <div className="form-header">
-                <h2>Truck Registration</h2>
-                <p>Register a new truck for port operations</p>
+        <div style={styles.container}>
+            <div style={styles.header}>
+                <h2 style={styles.title}>Enregistrement du camion</h2>
+                <p style={styles.subtitle}>Enregistrez un nouveau camion pour les opérations portuaires</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="registration-form">
-                <div className="form-section">
-                    <h3>Vehicle Identification</h3>
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <label htmlFor="plateNumber">Plate Number *</label>
+            <form onSubmit={handleSubmit} style={styles.form}>
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Identification du véhicule</h3>
+                    <div style={styles.grid}>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="plateNumber" style={styles.label}>Numéro de plaque *</label>
                             <input
                                 type="text"
                                 id="plateNumber"
                                 name="plateNumber"
                                 value={formData.plateNumber}
                                 onChange={handleChange}
-                                className={errors.plateNumber ? 'error' : ''}
+                                style={{ ...styles.input, ...(errors.plateNumber ? styles.inputError : {}), textTransform: 'uppercase' }}
                                 placeholder="TG-1234-AB"
-                                style={{ textTransform: 'uppercase' }}
                             />
-                            {errors.plateNumber && <span className="error-message">{errors.plateNumber}</span>}
+                            {errors.plateNumber && <span style={styles.errorMessage}>{errors.plateNumber}</span>}
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="chassisNumber">Chassis Number *</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="chassisNumber" style={styles.label}>Numéro de châssis *</label>
                             <input
                                 type="text"
                                 id="chassisNumber"
                                 name="chassisNumber"
                                 value={formData.chassisNumber}
                                 onChange={handleChange}
-                                className={errors.chassisNumber ? 'error' : ''}
-                                placeholder="Enter chassis number"
+                                style={{ ...styles.input, ...(errors.chassisNumber ? styles.inputError : {}) }}
+                                placeholder="Entrez le numéro de châssis"
                             />
-                            {errors.chassisNumber && <span className="error-message">{errors.chassisNumber}</span>}
+                            {errors.chassisNumber && <span style={styles.errorMessage}>{errors.chassisNumber}</span>}
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="engineNumber">Engine Number</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="engineNumber" style={styles.label}>Numéro de moteur</label>
                             <input
                                 type="text"
                                 id="engineNumber"
                                 name="engineNumber"
                                 value={formData.engineNumber}
                                 onChange={handleChange}
-                                placeholder="Enter engine number"
+                                style={styles.input}
+                                placeholder="Entrez le numéro de moteur"
                             />
                         </div>
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Vehicle Details</h3>
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <label htmlFor="make">Make *</label>
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Détails du véhicule</h3>
+                    <div style={styles.grid}>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="make" style={styles.label}>Marque *</label>
                             <select
                                 id="make"
                                 name="make"
                                 value={formData.make}
                                 onChange={handleChange}
-                                className={errors.make ? 'error' : ''}
+                                style={{ ...styles.select, ...(errors.make ? styles.inputError : {}) }}
                             >
-                                <option value="">Select make</option>
+                                <option value="">Sélectionnez la marque</option>
                                 <option value="Mercedes-Benz">Mercedes-Benz</option>
                                 <option value="Volvo">Volvo</option>
                                 <option value="Scania">Scania</option>
@@ -176,408 +225,565 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
                                 <option value="Renault">Renault</option>
                                 <option value="Isuzu">Isuzu</option>
                                 <option value="Mitsubishi">Mitsubishi</option>
-                                <option value="Other">Other</option>
+                                <option value="Other">Autre</option>
                             </select>
-                            {errors.make && <span className="error-message">{errors.make}</span>}
+                            {errors.make && <span style={styles.errorMessage}>{errors.make}</span>}
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="model">Model *</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="model" style={styles.label}>Modèle *</label>
                             <input
                                 type="text"
                                 id="model"
                                 name="model"
                                 value={formData.model}
                                 onChange={handleChange}
-                                className={errors.model ? 'error' : ''}
-                                placeholder="Enter model"
+                                style={{ ...styles.input, ...(errors.model ? styles.inputError : {}) }}
+                                placeholder="Entrez le modèle"
                             />
-                            {errors.model && <span className="error-message">{errors.model}</span>}
+                            {errors.model && <span style={styles.errorMessage}>{errors.model}</span>}
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="year">Year *</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="year" style={styles.label}>Année *</label>
                             <input
                                 type="number"
                                 id="year"
                                 name="year"
                                 value={formData.year}
                                 onChange={handleChange}
-                                className={errors.year ? 'error' : ''}
+                                style={{ ...styles.input, ...(errors.year ? styles.inputError : {}) }}
                                 min="1990"
                                 max={new Date().getFullYear() + 1}
-                                placeholder="YYYY"
+                                placeholder="AAAA"
                             />
-                            {errors.year && <span className="error-message">{errors.year}</span>}
+                            {errors.year && <span style={styles.errorMessage}>{errors.year}</span>}
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="color">Color</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="color" style={styles.label}>Couleur</label>
                             <input
                                 type="text"
                                 id="color"
                                 name="color"
                                 value={formData.color}
                                 onChange={handleChange}
-                                placeholder="Vehicle color"
+                                style={styles.input}
+                                placeholder="Couleur du véhicule"
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="fuelType">Fuel Type</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="fuelType" style={styles.label}>Type de carburant</label>
                             <select
                                 id="fuelType"
                                 name="fuelType"
                                 value={formData.fuelType}
                                 onChange={handleChange}
+                                style={styles.select}
                             >
                                 <option value="Diesel">Diesel</option>
-                                <option value="Gasoline">Gasoline</option>
-                                <option value="Electric">Electric</option>
-                                <option value="Hybrid">Hybrid</option>
-                                <option value="CNG">CNG (Compressed Natural Gas)</option>
+                                <option value="Gasoline">Essence</option>
+                                <option value="Electric">Électrique</option>
+                                <option value="Hybrid">Hybride</option>
+                                <option value="CNG">GNC (Gaz naturel comprimé)</option>
                             </select>
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="truckType">Truck Type</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="truckType" style={styles.label}>Type de camion</label>
                             <select
                                 id="truckType"
                                 name="truckType"
                                 value={formData.truckType}
                                 onChange={handleChange}
+                                style={styles.select}
                             >
-                                <option value="Standard">Standard Truck</option>
-                                <option value="Heavy Duty">Heavy Duty</option>
-                                <option value="Container">Container Truck</option>
-                                <option value="Flatbed">Flatbed</option>
-                                <option value="Tanker">Tanker</option>
-                                <option value="Refrigerated">Refrigerated</option>
-                                <option value="Dump Truck">Dump Truck</option>
+                                <option value="Standard">Camion standard</option>
+                                <option value="Heavy Duty">Poids lourd</option>
+                                <option value="Container">Camion conteneur</option>
+                                <option value="Flatbed">Plateau</option>
+                                <option value="Tanker">Citerne</option>
+                                <option value="Refrigerated">Frigorifique</option>
+                                <option value="Dump Truck">Benne</option>
                             </select>
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="cargoType">Primary Cargo Type</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="cargoType" style={styles.label}>Type de cargaison principale</label>
                             <select
                                 id="cargoType"
                                 name="cargoType"
                                 value={formData.cargoType}
                                 onChange={handleChange}
+                                style={styles.select}
                             >
-                                <option value="Container">Container</option>
-                                <option value="Bulk">Bulk Cargo</option>
-                                <option value="General">General Cargo</option>
-                                <option value="Liquid">Liquid</option>
-                                <option value="Hazardous">Hazardous Materials</option>
-                                <option value="Refrigerated">Refrigerated Goods</option>
-                                <option value="Heavy Machinery">Heavy Machinery</option>
+                                <option value="Container">Conteneur</option>
+                                <option value="Bulk">Cargaison en vrac</option>
+                                <option value="General">Cargaison générale</option>
+                                <option value="Liquid">Liquide</option>
+                                <option value="Hazardous">Matériaux dangereux</option>
+                                <option value="Refrigerated">Produits réfrigérés</option>
+                                <option value="Heavy Machinery">Machines lourdes</option>
                             </select>
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="maxWeight">Maximum Weight (tons) *</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="maxWeight" style={styles.label}>Poids maximal (tonnes) *</label>
                             <input
                                 type="number"
                                 id="maxWeight"
                                 name="maxWeight"
                                 value={formData.maxWeight}
                                 onChange={handleChange}
-                                className={errors.maxWeight ? 'error' : ''}
+                                style={{ ...styles.input, ...(errors.maxWeight ? styles.inputError : {}) }}
                                 min="1"
                                 max="100"
                                 step="0.1"
-                                placeholder="e.g., 25.5"
+                                placeholder="ex : 25.5"
                             />
-                            {errors.maxWeight && <span className="error-message">{errors.maxWeight}</span>}
+                            {errors.maxWeight && <span style={styles.errorMessage}>{errors.maxWeight}</span>}
                         </div>
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Dimensions</h3>
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <label htmlFor="dimensions.length">Length (m)</label>
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Dimensions</h3>
+                    <div style={styles.grid}>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="dimensions.length" style={styles.label}>Longueur (m)</label>
                             <input
                                 type="number"
                                 id="dimensions.length"
                                 name="dimensions.length"
                                 value={formData.dimensions.length}
                                 onChange={handleChange}
+                                style={styles.input}
                                 step="0.1"
-                                placeholder="e.g., 12.5"
+                                placeholder="ex : 12.5"
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="dimensions.width">Width (m)</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="dimensions.width" style={styles.label}>Largeur (m)</label>
                             <input
                                 type="number"
                                 id="dimensions.width"
                                 name="dimensions.width"
                                 value={formData.dimensions.width}
                                 onChange={handleChange}
+                                style={styles.input}
                                 step="0.1"
-                                placeholder="e.g., 2.5"
+                                placeholder="ex : 2.5"
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="dimensions.height">Height (m)</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="dimensions.height" style={styles.label}>Hauteur (m)</label>
                             <input
                                 type="number"
                                 id="dimensions.height"
                                 name="dimensions.height"
                                 value={formData.dimensions.height}
                                 onChange={handleChange}
+                                style={styles.input}
                                 step="0.1"
-                                placeholder="e.g., 4.0"
+                                placeholder="ex : 4.0"
                             />
                         </div>
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Registration & Documentation</h3>
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <label htmlFor="registrationDate">Registration Date</label>
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Enregistrement & Documentation</h3>
+                    <div style={styles.grid}>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="registrationDate" style={styles.label}>Date d'enregistrement</label>
                             <input
                                 type="date"
                                 id="registrationDate"
                                 name="registrationDate"
                                 value={formData.registrationDate}
                                 onChange={handleChange}
+                                style={styles.input}
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="registrationExpiry">Registration Expiry</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="registrationExpiry" style={styles.label}>Expiration de l'enregistrement</label>
                             <input
                                 type="date"
                                 id="registrationExpiry"
                                 name="registrationExpiry"
                                 value={formData.registrationExpiry}
                                 onChange={handleChange}
+                                style={styles.input}
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="inspectionDate">Last Inspection Date</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="inspectionDate" style={styles.label}>Date de la dernière inspection</label>
                             <input
                                 type="date"
                                 id="inspectionDate"
                                 name="inspectionDate"
                                 value={formData.inspectionDate}
                                 onChange={handleChange}
+                                style={styles.input}
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="inspectionExpiry">Inspection Expiry</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="inspectionExpiry" style={styles.label}>Expiration de l'inspection</label>
                             <input
                                 type="date"
                                 id="inspectionExpiry"
                                 name="inspectionExpiry"
                                 value={formData.inspectionExpiry}
                                 onChange={handleChange}
+                                style={styles.input}
                             />
                         </div>
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Insurance Information</h3>
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <label htmlFor="insuranceProvider">Insurance Provider</label>
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Informations sur l'assurance</h3>
+                    <div style={styles.grid}>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="insuranceProvider" style={styles.label}>Compagnie d'assurance</label>
                             <input
                                 type="text"
                                 id="insuranceProvider"
                                 name="insuranceProvider"
                                 value={formData.insuranceProvider}
                                 onChange={handleChange}
-                                placeholder="Insurance company name"
+                                style={styles.input}
+                                placeholder="Nom de la compagnie d'assurance"
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="insurancePolicyNumber">Policy Number</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="insurancePolicyNumber" style={styles.label}>Numéro de police</label>
                             <input
                                 type="text"
                                 id="insurancePolicyNumber"
                                 name="insurancePolicyNumber"
                                 value={formData.insurancePolicyNumber}
                                 onChange={handleChange}
-                                placeholder="Policy number"
+                                style={styles.input}
+                                placeholder="Numéro de police"
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="insuranceExpiry">Insurance Expiry</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="insuranceExpiry" style={styles.label}>Expiration de l'assurance</label>
                             <input
                                 type="date"
                                 id="insuranceExpiry"
                                 name="insuranceExpiry"
                                 value={formData.insuranceExpiry}
                                 onChange={handleChange}
+                                style={styles.input}
                             />
                         </div>
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Ownership Information</h3>
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <label htmlFor="ownerType">Owner Type</label>
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Informations sur le propriétaire</h3>
+                    <div style={styles.grid}>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="ownerType" style={styles.label}>Type de propriétaire</label>
                             <select
                                 id="ownerType"
                                 name="ownerType"
                                 value={formData.ownerType}
                                 onChange={handleChange}
+                                style={styles.select}
                             >
-                                <option value="Company">Company</option>
-                                <option value="Individual">Individual</option>
-                                <option value="Cooperative">Cooperative</option>
+                                <option value="Company">Entreprise</option>
+                                <option value="Individual">Individuel</option>
+                                <option value="Cooperative">Coopérative</option>
                             </select>
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="ownerName">Owner Name *</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="ownerName" style={styles.label}>Nom du propriétaire *</label>
                             <input
                                 type="text"
                                 id="ownerName"
                                 name="ownerName"
                                 value={formData.ownerName}
                                 onChange={handleChange}
-                                className={errors.ownerName ? 'error' : ''}
-                                placeholder="Owner/Company name"
+                                style={{ ...styles.input, ...(errors.ownerName ? styles.inputError : {}) }}
+                                placeholder="Nom du propriétaire/entreprise"
                             />
-                            {errors.ownerName && <span className="error-message">{errors.ownerName}</span>}
+                            {errors.ownerName && <span style={styles.errorMessage}>{errors.ownerName}</span>}
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="ownerContact">Owner Contact</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="ownerContact" style={styles.label}>Contact du propriétaire</label>
                             <input
                                 type="tel"
                                 id="ownerContact"
                                 name="ownerContact"
                                 value={formData.ownerContact}
                                 onChange={handleChange}
+                                style={styles.input}
                                 placeholder="+228 XX XX XX XX"
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="driverAssigned">Assigned Driver</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="driverAssigned" style={styles.label}>Chauffeur assigné</label>
                             <input
                                 type="text"
                                 id="driverAssigned"
                                 name="driverAssigned"
                                 value={formData.driverAssigned}
                                 onChange={handleChange}
-                                placeholder="Primary driver name"
+                                style={styles.input}
+                                placeholder="Nom du chauffeur principal"
                             />
                         </div>
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Tracking & Equipment</h3>
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <label className="checkbox-label">
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Suivi & Équipement</h3>
+                    <div style={styles.grid}>
+                        <div style={styles.formGroup}>
+                            <label style={styles.checkboxLabel}>
                                 <input
                                     type="checkbox"
                                     name="gpsInstalled"
                                     checked={formData.gpsInstalled}
                                     onChange={handleChange}
+                                    style={styles.checkbox}
                                 />
-                                <span>GPS Tracking Installed</span>
+                                <span style={styles.checkboxText}>GPS installé</span>
                             </label>
                         </div>
 
                         {formData.gpsInstalled && (
-                            <div className="form-group">
-                                <label htmlFor="trackingDeviceId">Tracking Device ID</label>
+                            <div style={styles.formGroup}>
+                                <label htmlFor="trackingDeviceId" style={styles.label}>ID du dispositif de suivi</label>
                                 <input
                                     type="text"
                                     id="trackingDeviceId"
                                     name="trackingDeviceId"
                                     value={formData.trackingDeviceId}
                                     onChange={handleChange}
-                                    placeholder="Device ID or IMEI"
+                                    style={styles.input}
+                                    placeholder="ID ou IMEI du dispositif"
                                 />
                             </div>
                         )}
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Special Equipment</h3>
-                    <div className="checkbox-group">
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Équipements spéciaux</h3>
+                    <div style={styles.checkboxGrid}>
                         {[
-                            'Crane',
-                            'Hydraulic Lift',
-                            'Refrigeration Unit',
-                            'Tank System',
-                            'Hazmat Equipment',
-                            'Loading Ramps',
-                            'Tie-down Points',
-                            'Tarpaulin System'
-                        ].map(equipment => (
-                            <label key={equipment} className="checkbox-label">
+                            'Grue',
+                            'Lift hydraulique',
+                            'Unité de réfrigération',
+                            'Système de réservoir',
+                            'Équipement Hazmat',
+                            'Rampes de chargement',
+                            'Points d’arrimage',
+                            'Système de bâche'
+                        ].map((equipment) => (
+                            <label key={equipment} style={styles.checkboxLabel}>
                                 <input
                                     type="checkbox"
                                     name="specialEquipment"
                                     value={equipment}
                                     checked={formData.specialEquipment.includes(equipment)}
                                     onChange={handleChange}
+                                    style={styles.checkbox}
                                 />
-                                <span>{equipment}</span>
+                                <span style={styles.checkboxText}>{equipment}</span>
                             </label>
                         ))}
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Operating Permits</h3>
-                    <div className="checkbox-group">
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Permis d'exploitation</h3>
+                    <div style={styles.checkboxGrid}>
                         {[
-                            'Port Access Permit',
-                            'Hazardous Materials Permit',
-                            'Oversize Load Permit',
-                            'International Transport Permit',
-                            'Container Transport License',
-                            'Bulk Cargo License'
+                            "Permis d'accès au port",
+                            "Permis matières dangereuses",
+                            "Permis de transport de charges hors gabarit",
+                            "Permis de transport international",
+                            "Licence de transport de conteneurs",
+                            "Licence de cargaison en vrac"
                         ].map(permit => (
-                            <label key={permit} className="checkbox-label">
+                            <label key={permit} style={styles.checkboxLabel}>
                                 <input
                                     type="checkbox"
                                     name="operatingPermits"
                                     value={permit}
                                     checked={formData.operatingPermits.includes(permit)}
                                     onChange={handleChange}
+                                    style={styles.checkbox}
                                 />
-                                <span>{permit}</span>
+                                <span style={styles.checkboxText}>{permit}</span>
                             </label>
                         ))}
                     </div>
                 </div>
 
-                <div className="form-actions">
-                    <button type="button" onClick={onCancel} className="btn-secondary">
-                        Cancel
+                <div style={styles.actions}>
+                    <button type="button" onClick={handleCancel} style={styles.cancelButton}>
+                        Annuler
                     </button>
-                    <button type="submit" className="btn-primary">
-                        Register Truck
+                    <button type="submit" style={styles.submitButton}>
+                        Enregistrer le camion
                     </button>
                 </div>
             </form>
         </div>
     )
+}
+
+const styles = {
+    container: {
+        maxWidth: '800px',
+        margin: '20px auto',
+        padding: '20px',
+        backgroundColor: '#ffffff',
+        borderRadius: '12px',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+    },
+    header: {
+        textAlign: 'center',
+        marginBottom: '32px',
+        paddingBottom: '24px',
+        borderBottom: '2px solid #f1f5f9'
+    },
+    title: {
+        fontSize: '28px',
+        fontWeight: '700',
+        color: '#1f2937',
+        marginBottom: '8px'
+    },
+    subtitle: {
+        fontSize: '16px',
+        color: '#6b7280'
+    },
+    form: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '32px'
+    },
+    section: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '20px'
+    },
+    sectionTitle: {
+        fontSize: '20px',
+        fontWeight: '600',
+        color: '#1f2937',
+        marginBottom: '4px',
+        paddingBottom: '8px',
+        borderBottom: '1px solid #e5e7eb'
+    },
+    grid: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+        gap: '20px'
+    },
+    formGroup: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '6px'
+    },
+    label: {
+        fontSize: '14px',
+        fontWeight: '500',
+        color: '#374151'
+    },
+    input: {
+        padding: '12px 16px',
+        border: '2px solid #e5e7eb',
+        borderRadius: '8px',
+        fontSize: '16px',
+        transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+        backgroundColor: '#ffffff'
+    },
+    select: {
+        padding: '12px 16px',
+        border: '2px solid #e5e7eb',
+        borderRadius: '8px',
+        fontSize: '16px',
+        transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+        backgroundColor: '#ffffff'
+    },
+    inputError: {
+        borderColor: '#ef4444'
+    },
+    errorMessage: {
+        fontSize: '12px',
+        color: '#ef4444',
+        marginTop: '4px'
+    },
+    checkboxGrid: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '12px',
+        marginTop: '8px'
+    },
+    checkboxLabel: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        cursor: 'pointer',
+        padding: '8px 12px',
+        borderRadius: '8px',
+        transition: 'background 0.2s ease'
+    },
+    checkbox: {
+        width: '16px',
+        height: '16px',
+        margin: '0'
+    },
+    checkboxText: {
+        fontSize: '14px',
+        color: '#374151'
+    },
+    actions: {
+        display: 'flex',
+        justifyContent: 'flex-end',
+        gap: '16px',
+        paddingTop: '24px',
+        borderTop: '2px solid #f1f5f9'
+    },
+    cancelButton: {
+        padding: '12px 24px',
+        borderRadius: '8px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
+        border: '2px solid #d1d5db',
+        backgroundColor: '#ffffff',
+        color: '#6b7280'
+    },
+    submitButton: {
+        padding: '12px 24px',
+        borderRadius: '8px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
+        border: '2px solid #3b82f6',
+        backgroundColor: '#3b82f6',
+        color: '#ffffff'
+    }
 }
 
 export default TruckRegistration

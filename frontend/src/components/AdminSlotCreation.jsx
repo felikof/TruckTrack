@@ -1,5 +1,100 @@
 import { useState } from 'react'
-
+/* Traductions françaises pour les labels, options et textes */
+const FR = {
+    basicInfo: "Informations de base du créneau",
+    slotDate: "Date du créneau *",
+    startTime: "Heure de début *",
+    endTime: "Heure de fin *",
+    duration: "Durée",
+    durationPlaceholder: "Calcul automatique",
+    routeConfig: "Configuration de l'itinéraire",
+    originGate: "Porte d'origine",
+    destinationTerminal: "Terminal de destination",
+    routeStops: "Arrêts de l'itinéraire",
+    location: "Emplacement",
+    estimatedTime: "Heure estimée",
+    transferTime: "Temps de transfert (min)",
+    remove: "Supprimer",
+    addRouteStop: "Ajouter un arrêt",
+    capacityPricing: "Capacité et tarification",
+    totalSlots: "Nombre total de créneaux *",
+    reservedSlots: "Créneaux pré-réservés",
+    basePrice: "Prix de base *",
+    currency: "Devise",
+    facilities: "Installations disponibles",
+    restrictions: "Restrictions des véhicules",
+    maxWeight: "Poids maximal (tonnes)",
+    truckTypes: "Types de camions autorisés",
+    cargoTypes: "Types de cargaison autorisés",
+    operationalDetails: "Détails opérationnels",
+    operatorName: "Nom de l'opérateur *",
+    contactPerson: "Personne de contact *",
+    contactPhone: "Téléphone de contact",
+    specialInstructions: "Instructions spéciales",
+    statusSettings: "Statut et paramètres",
+    status: "Statut",
+    visibility: "Visibilité",
+    autoConfirm: "Confirmation automatique des réservations",
+    cancel: "Annuler",
+    createSlot: "Créer le créneau",
+    headerTitle: "Créer un nouveau créneau",
+    headerSubtitle: "Créez un nouveau créneau horaire pour la gestion du trafic des camions",
+    errorSlotDate: "La date du créneau est requise",
+    errorStartTime: "L'heure de début est requise",
+    errorEndTime: "L'heure de fin est requise",
+    errorTotalSlots: "Le nombre total de créneaux doit être au moins 1",
+    errorBasePrice: "Le prix de base est requis",
+    errorOperatorName: "Le nom de l'opérateur est requis",
+    errorContactPerson: "La personne de contact est requise",
+    errorEndTimeOrder: "L'heure de fin doit être après l'heure de début",
+    errorSlotDatePast: "La date du créneau ne peut pas être dans le passé",
+    slotCreated: "Créneau créé avec succès !",
+    cancelConfirm: "Êtes-vous sûr de vouloir annuler ? Toutes les données seront perdues.",
+    facilitiesList: [
+        "Pont bascule",
+        "Inspection douanière",
+        "Contrôle de sécurité",
+        "Zone de stationnement",
+        "Chargement/Déchargement",
+        "Centre de documentation",
+        "Station-service",
+        "Service de maintenance"
+    ],
+    truckTypesList: [
+        "Camion standard",
+        "Poids lourd",
+        "Camion porte-conteneurs",
+        "Plateau",
+        "Citerne",
+        "Réfrigéré",
+        "Camion benne"
+    ],
+    cargoTypesList: [
+        "Conteneur",
+        "Marchandises en vrac",
+        "Marchandises générales",
+        "Liquide",
+        "Matières dangereuses",
+        "Produits réfrigérés",
+        "Machines lourdes"
+    ],
+    statusOptions: [
+        { value: "active", label: "Actif" },
+        { value: "inactive", label: "Inactif" },
+        { value: "maintenance", label: "En maintenance" },
+        { value: "suspended", label: "Suspendu" }
+    ],
+    visibilityOptions: [
+        { value: "public", label: "Public" },
+        { value: "private", label: "Privé" },
+        { value: "restricted", label: "Restreint" }
+    ],
+    currencyOptions: [
+        { value: "CFA", label: "Franc CFA" },
+        { value: "USD", label: "Dollar US" },
+        { value: "EUR", label: "Euro" }
+    ]
+}
 const AdminSlotCreation = ({ onSubmit, onCancel }) => {
     const [formData, setFormData] = useState({
         // Basic Slot Information
@@ -66,6 +161,7 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
     const [errors, setErrors] = useState({})
 
     const handleChange = (e) => {
+
         const { name, value, type, checked } = e.target
 
         if (type === 'checkbox') {
@@ -182,40 +278,101 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
                 ...formData,
                 id: `SLOT-${Date.now()}`,
                 createdAt: new Date().toISOString(),
-                createdBy: 'admin', // This would come from auth context
+                createdBy: 'admin',
                 availableSlots: formData.totalSlots - formData.reservedSlots
             }
-            onSubmit(slotData)
+
+            if (onSubmit) {
+                onSubmit(slotData)
+            } else {
+                console.log('Admin slot creation data:', slotData)
+                alert('Slot created successfully!')
+            }
+        }
+    }
+
+    const handleCancel = () => {
+        if (onCancel) {
+            onCancel()
+        } else {
+            if (window.confirm('Are you sure you want to cancel? All data will be lost.')) {
+                // Reset form to initial state
+                setFormData({
+                    slotDate: '',
+                    startTime: '',
+                    endTime: '',
+                    duration: '',
+                    originGate: 'Gate A1',
+                    destinationTerminal: 'Terminal 3',
+                    routeStops: [
+                        { location: 'Gate A1', estimatedTime: '', transferTime: '15' },
+                        { location: 'Weighbridge', estimatedTime: '', transferTime: '20' },
+                        { location: 'Terminal 3', estimatedTime: '', transferTime: '0' }
+                    ],
+                    totalSlots: 20,
+                    availableSlots: 20,
+                    reservedSlots: 0,
+                    basePrice: 45000,
+                    currency: 'CFA',
+                    priceFactors: {
+                        priority: 0,
+                        additionalServices: 0,
+                        peakHours: 0
+                    },
+                    availableFacilities: [],
+                    requiredDocuments: [],
+                    truckTypes: [],
+                    cargoTypes: [],
+                    maxWeight: '',
+                    maxDimensions: {
+                        length: '',
+                        width: '',
+                        height: ''
+                    },
+                    operatorName: '',
+                    contactPerson: '',
+                    contactPhone: '',
+                    specialInstructions: '',
+                    status: 'active',
+                    visibility: 'public',
+                    autoConfirm: true,
+                    isRecurring: false,
+                    recurringPattern: 'daily',
+                    recurringEndDate: '',
+                    recurringDays: []
+                })
+                setErrors({})
+            }
         }
     }
 
     return (
-        <div className="form-container">
-            <div className="form-header">
-                <h2>Create New Slot</h2>
-                <p>Create a new time slot for truck traffic management</p>
+        <div style={styles.container}>
+            <div style={styles.header}>
+                <h2 style={styles.title}>{FR.headerTitle}</h2>
+                <p style={styles.subtitle}>{FR.headerSubtitle}</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="registration-form">
-                <div className="form-section">
-                    <h3>Basic Slot Information</h3>
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <label htmlFor="slotDate">Slot Date *</label>
+            <form onSubmit={handleSubmit} style={styles.form}>
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>{FR.basicInfo}</h3>
+                    <div style={styles.grid}>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="slotDate" style={styles.label}>{FR.slotDate}</label>
                             <input
                                 type="date"
                                 id="slotDate"
                                 name="slotDate"
                                 value={formData.slotDate}
                                 onChange={handleChange}
-                                className={errors.slotDate ? 'error' : ''}
+                                style={{ ...styles.input, ...(errors.slotDate ? styles.inputError : {}) }}
                                 min={new Date().toISOString().split('T')[0]}
                             />
-                            {errors.slotDate && <span className="error-message">{errors.slotDate}</span>}
+                            {errors.slotDate && <span style={styles.errorMessage}>{FR.errorSlotDate}</span>}
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="startTime">Start Time *</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="startTime" style={styles.label}>{FR.startTime}</label>
                             <input
                                 type="time"
                                 id="startTime"
@@ -225,13 +382,13 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
                                     handleChange(e)
                                     setTimeout(calculateDuration, 100)
                                 }}
-                                className={errors.startTime ? 'error' : ''}
+                                style={{ ...styles.input, ...(errors.startTime ? styles.inputError : {}) }}
                             />
-                            {errors.startTime && <span className="error-message">{errors.startTime}</span>}
+                            {errors.startTime && <span style={styles.errorMessage}>{FR.errorStartTime}</span>}
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="endTime">End Time *</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="endTime" style={styles.label}>{FR.endTime}</label>
                             <input
                                 type="time"
                                 id="endTime"
@@ -241,544 +398,567 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
                                     handleChange(e)
                                     setTimeout(calculateDuration, 100)
                                 }}
-                                className={errors.endTime ? 'error' : ''}
+                                style={{ ...styles.input, ...(errors.endTime ? styles.inputError : {}) }}
                             />
-                            {errors.endTime && <span className="error-message">{errors.endTime}</span>}
+                            {errors.endTime && <span style={styles.errorMessage}>{FR.errorEndTime}</span>}
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="duration">Duration</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="duration" style={styles.label}>{FR.duration}</label>
                             <input
                                 type="text"
                                 id="duration"
                                 name="duration"
                                 value={formData.duration}
                                 readOnly
-                                placeholder="Auto-calculated"
-                                className="readonly"
+                                placeholder={FR.durationPlaceholder}
+                                style={{ ...styles.input, backgroundColor: '#f9fafb', color: '#6b7280', cursor: 'not-allowed' }}
                             />
                         </div>
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Route Configuration</h3>
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <label htmlFor="originGate">Origin Gate</label>
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>{FR.routeConfig}</h3>
+                    <div style={styles.grid}>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="originGate" style={styles.label}>{FR.originGate}</label>
                             <select
                                 id="originGate"
                                 name="originGate"
                                 value={formData.originGate}
                                 onChange={handleChange}
+                                style={styles.select}
                             >
-                                <option value="Gate A1">Gate A1</option>
-                                <option value="Gate A2">Gate A2</option>
-                                <option value="Gate B1">Gate B1</option>
-                                <option value="Gate B2">Gate B2</option>
-                                <option value="Gate C1">Gate C1</option>
-                                <option value="Gate C2">Gate C2</option>
+                                <option value="Gate A1">Porte A1</option>
+                                <option value="Gate A2">Porte A2</option>
+                                <option value="Gate B1">Porte B1</option>
+                                <option value="Gate B2">Porte B2</option>
+                                <option value="Gate C1">Porte C1</option>
+                                <option value="Gate C2">Porte C2</option>
                             </select>
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="destinationTerminal">Destination Terminal</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="destinationTerminal" style={styles.label}>{FR.destinationTerminal}</label>
                             <select
                                 id="destinationTerminal"
                                 name="destinationTerminal"
                                 value={formData.destinationTerminal}
                                 onChange={handleChange}
+                                style={styles.select}
                             >
                                 <option value="Terminal 1">Terminal 1</option>
                                 <option value="Terminal 2">Terminal 2</option>
                                 <option value="Terminal 3">Terminal 3</option>
-                                <option value="Container Yard">Container Yard</option>
-                                <option value="Bulk Terminal">Bulk Terminal</option>
+                                <option value="Container Yard">Parc à conteneurs</option>
+                                <option value="Bulk Terminal">Terminal vrac</option>
                             </select>
                         </div>
                     </div>
 
-                    <div className="route-stops">
-                        <h4>Route Stops</h4>
+                    <div style={styles.routeStops}>
+                        <h4 style={styles.subsectionTitle}>{FR.routeStops}</h4>
                         {formData.routeStops.map((stop, index) => (
-                            <div key={index} className="route-stop-config">
-                                <div className="form-grid">
-                                    <div className="form-group">
-                                        <label>Location</label>
+                            <div key={index} style={styles.routeStopConfig}>
+                                <div style={styles.grid}>
+                                    <div style={styles.formGroup}>
+                                        <label style={styles.label}>{FR.location}</label>
                                         <input
                                             type="text"
                                             value={stop.location}
                                             onChange={(e) => handleRouteStopChange(index, 'location', e.target.value)}
-                                            placeholder="Stop location"
+                                            style={styles.input}
+                                            placeholder={FR.location}
                                         />
                                     </div>
-                                    <div className="form-group">
-                                        <label>Estimated Time</label>
+                                    <div style={styles.formGroup}>
+                                        <label style={styles.label}>{FR.estimatedTime}</label>
                                         <input
                                             type="time"
                                             value={stop.estimatedTime}
                                             onChange={(e) => handleRouteStopChange(index, 'estimatedTime', e.target.value)}
+                                            style={styles.input}
                                         />
                                     </div>
-                                    <div className="form-group">
-                                        <label>Transfer Time (min)</label>
+                                    <div style={styles.formGroup}>
+                                        <label style={styles.label}>{FR.transferTime}</label>
                                         <input
                                             type="number"
                                             value={stop.transferTime}
                                             onChange={(e) => handleRouteStopChange(index, 'transferTime', e.target.value)}
+                                            style={styles.input}
                                             min="0"
                                             placeholder="0"
                                         />
                                     </div>
-                                    <div className="form-group">
+                                    <div style={styles.formGroup}>
                                         {formData.routeStops.length > 2 && (
                                             <button
                                                 type="button"
                                                 onClick={() => removeRouteStop(index)}
-                                                className="btn-remove"
+                                                style={styles.removeButton}
                                             >
-                                                Remove
+                                                {FR.remove}
                                             </button>
                                         )}
                                     </div>
                                 </div>
                             </div>
                         ))}
-                        <button type="button" onClick={addRouteStop} className="btn-add">
-                            Add Route Stop
+                        <button type="button" onClick={addRouteStop} style={styles.addButton}>
+                            {FR.addRouteStop}
                         </button>
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Capacity and Availability</h3>
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <label htmlFor="totalSlots">Total Slots *</label>
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>{FR.capacityPricing}</h3>
+                    <div style={styles.grid}>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="totalSlots" style={styles.label}>{FR.totalSlots}</label>
                             <input
                                 type="number"
                                 id="totalSlots"
                                 name="totalSlots"
                                 value={formData.totalSlots}
                                 onChange={handleChange}
-                                className={errors.totalSlots ? 'error' : ''}
+                                style={{ ...styles.input, ...(errors.totalSlots ? styles.inputError : {}) }}
                                 min="1"
                                 max="100"
                             />
-                            {errors.totalSlots && <span className="error-message">{errors.totalSlots}</span>}
+                            {errors.totalSlots && <span style={styles.errorMessage}>{FR.errorTotalSlots}</span>}
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="reservedSlots">Pre-reserved Slots</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="reservedSlots" style={styles.label}>{FR.reservedSlots}</label>
                             <input
                                 type="number"
                                 id="reservedSlots"
                                 name="reservedSlots"
                                 value={formData.reservedSlots}
                                 onChange={handleChange}
+                                style={styles.input}
                                 min="0"
                                 max={formData.totalSlots}
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label>Available Slots</label>
-                            <input
-                                type="number"
-                                value={formData.totalSlots - formData.reservedSlots}
-                                readOnly
-                                className="readonly"
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                <div className="form-section">
-                    <h3>Pricing</h3>
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <label htmlFor="basePrice">Base Price *</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="basePrice" style={styles.label}>{FR.basePrice}</label>
                             <input
                                 type="number"
                                 id="basePrice"
                                 name="basePrice"
                                 value={formData.basePrice}
                                 onChange={handleChange}
-                                className={errors.basePrice ? 'error' : ''}
+                                style={{ ...styles.input, ...(errors.basePrice ? styles.inputError : {}) }}
                                 min="0"
                                 step="1000"
                             />
-                            {errors.basePrice && <span className="error-message">{errors.basePrice}</span>}
+                            {errors.basePrice && <span style={styles.errorMessage}>{FR.errorBasePrice}</span>}
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="currency">Currency</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="currency" style={styles.label}>{FR.currency}</label>
                             <select
                                 id="currency"
                                 name="currency"
                                 value={formData.currency}
                                 onChange={handleChange}
+                                style={styles.select}
                             >
-                                <option value="CFA">CFA Franc</option>
-                                <option value="USD">US Dollar</option>
-                                <option value="EUR">Euro</option>
+                                {FR.currencyOptions.map(opt => (
+                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                ))}
                             </select>
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="priceFactors.priority">Priority Surcharge (%)</label>
-                            <input
-                                type="number"
-                                id="priceFactors.priority"
-                                name="priceFactors.priority"
-                                value={formData.priceFactors.priority}
-                                onChange={handleChange}
-                                min="0"
-                                max="100"
-                                step="5"
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="priceFactors.peakHours">Peak Hours Surcharge (%)</label>
-                            <input
-                                type="number"
-                                id="priceFactors.peakHours"
-                                name="priceFactors.peakHours"
-                                value={formData.priceFactors.peakHours}
-                                onChange={handleChange}
-                                min="0"
-                                max="100"
-                                step="5"
-                            />
                         </div>
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Available Facilities</h3>
-                    <div className="checkbox-group">
-                        {[
-                            'Weighbridge',
-                            'Customs Inspection',
-                            'Security Check',
-                            'Parking Area',
-                            'Loading/Unloading',
-                            'Documentation Center',
-                            'Fuel Station',
-                            'Maintenance Service'
-                        ].map(facility => (
-                            <label key={facility} className="checkbox-label">
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>{FR.facilities}</h3>
+                    <div style={styles.checkboxGrid}>
+                        {FR.facilitiesList.map(facility => (
+                            <label key={facility} style={styles.checkboxLabel}>
                                 <input
                                     type="checkbox"
                                     name="availableFacilities"
                                     value={facility}
                                     checked={formData.availableFacilities.includes(facility)}
                                     onChange={handleChange}
+                                    style={styles.checkbox}
                                 />
-                                <span>{facility}</span>
+                                <span style={styles.checkboxText}>{facility}</span>
                             </label>
                         ))}
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Vehicle Restrictions</h3>
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <label htmlFor="maxWeight">Maximum Weight (tons)</label>
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>{FR.restrictions}</h3>
+                    <div style={styles.grid}>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="maxWeight" style={styles.label}>{FR.maxWeight}</label>
                             <input
                                 type="number"
                                 id="maxWeight"
                                 name="maxWeight"
                                 value={formData.maxWeight}
                                 onChange={handleChange}
+                                style={styles.input}
                                 min="1"
                                 step="0.1"
-                                placeholder="e.g., 40"
+                                placeholder="ex: 40"
                             />
                         </div>
                     </div>
 
-                    <div className="subsection">
-                        <h4>Maximum Dimensions</h4>
-                        <div className="form-grid">
-                            <div className="form-group">
-                                <label htmlFor="maxDimensions.length">Length (m)</label>
-                                <input
-                                    type="number"
-                                    id="maxDimensions.length"
-                                    name="maxDimensions.length"
-                                    value={formData.maxDimensions.length}
-                                    onChange={handleChange}
-                                    step="0.1"
-                                    placeholder="e.g., 18.5"
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label htmlFor="maxDimensions.width">Width (m)</label>
-                                <input
-                                    type="number"
-                                    id="maxDimensions.width"
-                                    name="maxDimensions.width"
-                                    value={formData.maxDimensions.width}
-                                    onChange={handleChange}
-                                    step="0.1"
-                                    placeholder="e.g., 2.5"
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label htmlFor="maxDimensions.height">Height (m)</label>
-                                <input
-                                    type="number"
-                                    id="maxDimensions.height"
-                                    name="maxDimensions.height"
-                                    value={formData.maxDimensions.height}
-                                    onChange={handleChange}
-                                    step="0.1"
-                                    placeholder="e.g., 4.2"
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="subsection">
-                        <h4>Allowed Truck Types</h4>
-                        <div className="checkbox-group">
-                            {[
-                                'Standard Truck',
-                                'Heavy Duty',
-                                'Container Truck',
-                                'Flatbed',
-                                'Tanker',
-                                'Refrigerated',
-                                'Dump Truck'
-                            ].map(type => (
-                                <label key={type} className="checkbox-label">
+                    <div style={styles.subsection}>
+                        <h4 style={styles.subsectionTitle}>{FR.truckTypes}</h4>
+                        <div style={styles.checkboxGrid}>
+                            {FR.truckTypesList.map(type => (
+                                <label key={type} style={styles.checkboxLabel}>
                                     <input
                                         type="checkbox"
                                         name="truckTypes"
                                         value={type}
                                         checked={formData.truckTypes.includes(type)}
                                         onChange={handleChange}
+                                        style={styles.checkbox}
                                     />
-                                    <span>{type}</span>
+                                    <span style={styles.checkboxText}>{type}</span>
                                 </label>
                             ))}
                         </div>
                     </div>
 
-                    <div className="subsection">
-                        <h4>Allowed Cargo Types</h4>
-                        <div className="checkbox-group">
-                            {[
-                                'Container',
-                                'Bulk Cargo',
-                                'General Cargo',
-                                'Liquid',
-                                'Hazardous Materials',
-                                'Refrigerated Goods',
-                                'Heavy Machinery'
-                            ].map(type => (
-                                <label key={type} className="checkbox-label">
+                    <div style={styles.subsection}>
+                        <h4 style={styles.subsectionTitle}>{FR.cargoTypes}</h4>
+                        <div style={styles.checkboxGrid}>
+                            {FR.cargoTypesList.map(type => (
+                                <label key={type} style={styles.checkboxLabel}>
                                     <input
                                         type="checkbox"
                                         name="cargoTypes"
                                         value={type}
                                         checked={formData.cargoTypes.includes(type)}
                                         onChange={handleChange}
+                                        style={styles.checkbox}
                                     />
-                                    <span>{type}</span>
+                                    <span style={styles.checkboxText}>{type}</span>
                                 </label>
                             ))}
                         </div>
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Operational Details</h3>
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <label htmlFor="operatorName">Operator Name *</label>
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>{FR.operationalDetails}</h3>
+                    <div style={styles.grid}>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="operatorName" style={styles.label}>{FR.operatorName}</label>
                             <input
                                 type="text"
                                 id="operatorName"
                                 name="operatorName"
                                 value={formData.operatorName}
                                 onChange={handleChange}
-                                className={errors.operatorName ? 'error' : ''}
-                                placeholder="Responsible operator"
+                                style={{ ...styles.input, ...(errors.operatorName ? styles.inputError : {}) }}
+                                placeholder={FR.operatorName}
                             />
-                            {errors.operatorName && <span className="error-message">{errors.operatorName}</span>}
+                            {errors.operatorName && <span style={styles.errorMessage}>{FR.errorOperatorName}</span>}
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="contactPerson">Contact Person *</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="contactPerson" style={styles.label}>{FR.contactPerson}</label>
                             <input
                                 type="text"
                                 id="contactPerson"
                                 name="contactPerson"
                                 value={formData.contactPerson}
                                 onChange={handleChange}
-                                className={errors.contactPerson ? 'error' : ''}
-                                placeholder="Contact person name"
+                                style={{ ...styles.input, ...(errors.contactPerson ? styles.inputError : {}) }}
+                                placeholder={FR.contactPerson}
                             />
-                            {errors.contactPerson && <span className="error-message">{errors.contactPerson}</span>}
+                            {errors.contactPerson && <span style={styles.errorMessage}>{FR.errorContactPerson}</span>}
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="contactPhone">Contact Phone</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="contactPhone" style={styles.label}>{FR.contactPhone}</label>
                             <input
                                 type="tel"
                                 id="contactPhone"
                                 name="contactPhone"
                                 value={formData.contactPhone}
                                 onChange={handleChange}
+                                style={styles.input}
                                 placeholder="+228 XX XX XX XX"
                             />
                         </div>
                     </div>
 
-                    <div className="form-group full-width">
-                        <label htmlFor="specialInstructions">Special Instructions</label>
+                    <div style={{ ...styles.formGroup, gridColumn: '1 / -1' }}>
+                        <label htmlFor="specialInstructions" style={styles.label}>{FR.specialInstructions}</label>
                         <textarea
                             id="specialInstructions"
                             name="specialInstructions"
                             value={formData.specialInstructions}
                             onChange={handleChange}
+                            style={styles.textarea}
                             rows="4"
-                            placeholder="Any special instructions or notes for this slot"
+                            placeholder={FR.specialInstructions}
                         />
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Status and Settings</h3>
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <label htmlFor="status">Status</label>
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>{FR.statusSettings}</h3>
+                    <div style={styles.grid}>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="status" style={styles.label}>{FR.status}</label>
                             <select
                                 id="status"
                                 name="status"
                                 value={formData.status}
                                 onChange={handleChange}
+                                style={styles.select}
                             >
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                                <option value="maintenance">Under Maintenance</option>
-                                <option value="suspended">Suspended</option>
+                                {FR.statusOptions.map(opt => (
+                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                ))}
                             </select>
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="visibility">Visibility</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="visibility" style={styles.label}>{FR.visibility}</label>
                             <select
                                 id="visibility"
                                 name="visibility"
                                 value={formData.visibility}
                                 onChange={handleChange}
+                                style={styles.select}
                             >
-                                <option value="public">Public</option>
-                                <option value="private">Private</option>
-                                <option value="restricted">Restricted</option>
+                                {FR.visibilityOptions.map(opt => (
+                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                ))}
                             </select>
                         </div>
 
-                        <div className="form-group">
-                            <label className="checkbox-label">
+                        <div style={styles.formGroup}>
+                            <label style={styles.checkboxLabel}>
                                 <input
                                     type="checkbox"
                                     name="autoConfirm"
                                     checked={formData.autoConfirm}
                                     onChange={handleChange}
+                                    style={styles.checkbox}
                                 />
-                                <span>Auto-confirm reservations</span>
+                                <span style={styles.checkboxText}>{FR.autoConfirm}</span>
                             </label>
                         </div>
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Recurring Settings</h3>
-                    <div className="form-group">
-                        <label className="checkbox-label">
-                            <input
-                                type="checkbox"
-                                name="isRecurring"
-                                checked={formData.isRecurring}
-                                onChange={handleChange}
-                            />
-                            <span>Create recurring slot</span>
-                        </label>
-                    </div>
-
-                    {formData.isRecurring && (
-                        <>
-                            <div className="form-grid">
-                                <div className="form-group">
-                                    <label htmlFor="recurringPattern">Recurring Pattern</label>
-                                    <select
-                                        id="recurringPattern"
-                                        name="recurringPattern"
-                                        value={formData.recurringPattern}
-                                        onChange={handleChange}
-                                    >
-                                        <option value="daily">Daily</option>
-                                        <option value="weekly">Weekly</option>
-                                        <option value="monthly">Monthly</option>
-                                        <option value="custom">Custom Days</option>
-                                    </select>
-                                </div>
-
-                                <div className="form-group">
-                                    <label htmlFor="recurringEndDate">End Date</label>
-                                    <input
-                                        type="date"
-                                        id="recurringEndDate"
-                                        name="recurringEndDate"
-                                        value={formData.recurringEndDate}
-                                        onChange={handleChange}
-                                        min={formData.slotDate}
-                                    />
-                                </div>
-                            </div>
-
-                            {formData.recurringPattern === 'custom' && (
-                                <div className="subsection">
-                                    <h4>Select Days</h4>
-                                    <div className="checkbox-group">
-                                        {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
-                                            <label key={day} className="checkbox-label">
-                                                <input
-                                                    type="checkbox"
-                                                    name="recurringDays"
-                                                    value={day}
-                                                    checked={formData.recurringDays.includes(day)}
-                                                    onChange={handleChange}
-                                                />
-                                                <span>{day}</span>
-                                            </label>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </>
-                    )}
-                </div>
-
-                <div className="form-actions">
-                    <button type="button" onClick={onCancel} className="btn-secondary">
-                        Cancel
+                <div style={styles.actions}>
+                    <button type="button" onClick={handleCancel} style={styles.cancelButton}>
+                        {FR.cancel}
                     </button>
-                    <button type="submit" className="btn-primary">
-                        Create Slot
+                    <button type="submit" style={styles.submitButton}>
+                        {FR.createSlot}
                     </button>
                 </div>
             </form>
         </div>
     )
+}
+
+const styles = {
+    container: {
+        maxWidth: '800px',
+        margin: '20px auto',
+        padding: '20px',
+        backgroundColor: '#ffffff',
+        borderRadius: '12px',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+    },
+    header: {
+        textAlign: 'center',
+        marginBottom: '32px',
+        paddingBottom: '24px',
+        borderBottom: '2px solid #f1f5f9'
+    },
+    title: {
+        fontSize: '28px',
+        fontWeight: '700',
+        color: '#1f2937',
+        marginBottom: '8px'
+    },
+    subtitle: {
+        fontSize: '16px',
+        color: '#6b7280'
+    },
+    form: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '32px'
+    },
+    section: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '20px'
+    },
+    sectionTitle: {
+        fontSize: '20px',
+        fontWeight: '600',
+        color: '#1f2937',
+        marginBottom: '4px',
+        paddingBottom: '8px',
+        borderBottom: '1px solid #e5e7eb'
+    },
+    subsection: {
+        marginTop: '20px',
+        paddingTop: '16px',
+        borderTop: '1px solid #e5e7eb'
+    },
+    subsectionTitle: {
+        fontSize: '16px',
+        fontWeight: '600',
+        color: '#1f2937',
+        marginBottom: '12px'
+    },
+    grid: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+        gap: '20px'
+    },
+    formGroup: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '6px'
+    },
+    label: {
+        fontSize: '14px',
+        fontWeight: '500',
+        color: '#374151'
+    },
+    input: {
+        padding: '12px 16px',
+        border: '2px solid #e5e7eb',
+        borderRadius: '8px',
+        fontSize: '16px',
+        transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+        backgroundColor: '#ffffff'
+    },
+    select: {
+        padding: '12px 16px',
+        border: '2px solid #e5e7eb',
+        borderRadius: '8px',
+        fontSize: '16px',
+        transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+        backgroundColor: '#ffffff'
+    },
+    textarea: {
+        padding: '12px 16px',
+        border: '2px solid #e5e7eb',
+        borderRadius: '8px',
+        fontSize: '16px',
+        transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+        backgroundColor: '#ffffff',
+        resize: 'vertical'
+    },
+    inputError: {
+        borderColor: '#ef4444'
+    },
+    errorMessage: {
+        fontSize: '12px',
+        color: '#ef4444',
+        marginTop: '4px'
+    },
+    routeStops: {
+        marginTop: '16px'
+    },
+    routeStopConfig: {
+        backgroundColor: '#f9fafb',
+        borderRadius: '8px',
+        padding: '16px',
+        marginBottom: '12px',
+        border: '1px solid #e5e7eb'
+    },
+    checkboxGrid: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '12px',
+        marginTop: '8px'
+    },
+    checkboxLabel: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        cursor: 'pointer',
+        padding: '8px 12px',
+        borderRadius: '8px',
+        transition: 'background 0.2s ease'
+    },
+    checkbox: {
+        width: '16px',
+        height: '16px',
+        margin: '0'
+    },
+    checkboxText: {
+        fontSize: '14px',
+        color: '#374151'
+    },
+    addButton: {
+        padding: '8px 16px',
+        borderRadius: '6px',
+        fontSize: '14px',
+        fontWeight: '500',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
+        border: '1px solid #10b981',
+        backgroundColor: '#10b981',
+        color: '#ffffff'
+    },
+    removeButton: {
+        padding: '8px 16px',
+        borderRadius: '6px',
+        fontSize: '14px',
+        fontWeight: '500',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
+        border: '1px solid #ef4444',
+        backgroundColor: '#ef4444',
+        color: '#ffffff'
+    },
+    actions: {
+        display: 'flex',
+        justifyContent: 'flex-end',
+        gap: '16px',
+        paddingTop: '24px',
+        borderTop: '2px solid #f1f5f9'
+    },
+    cancelButton: {
+        padding: '12px 24px',
+        borderRadius: '8px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
+        border: '2px solid #d1d5db',
+        backgroundColor: '#ffffff',
+        color: '#6b7280'
+    },
+    submitButton: {
+        padding: '12px 24px',
+        borderRadius: '8px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
+        border: '2px solid #3b82f6',
+        backgroundColor: '#3b82f6',
+        color: '#ffffff'
+    }
 }
 
 export default AdminSlotCreation

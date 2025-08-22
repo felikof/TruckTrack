@@ -59,7 +59,7 @@ const DriverRegistration = ({ onSubmit, onCancel }) => {
         }
 
         // Phone validation (basic)
-        const phoneRegex = /^[\\+]?[0-9\s\-\\(\\)]{8,}$/
+        const phoneRegex = /^[+]?[0-9\s\-\d()]{8,20}$/
         if (formData.phoneNumber && !phoneRegex.test(formData.phoneNumber)) {
             newErrors.phoneNumber = 'Please enter a valid phone number'
         }
@@ -71,128 +71,163 @@ const DriverRegistration = ({ onSubmit, onCancel }) => {
     const handleSubmit = (e) => {
         e.preventDefault()
         if (validateForm()) {
-            onSubmit(formData)
+            if (onSubmit) {
+                onSubmit(formData)
+            } else {
+                console.log('Driver registration data:', formData)
+                alert('Driver registered successfully!')
+            }
+        }
+    }
+
+    const handleCancel = () => {
+        if (onCancel) {
+            onCancel()
+        } else {
+            if (window.confirm('Are you sure you want to cancel? All data will be lost.')) {
+                setFormData({
+                    firstName: '',
+                    lastName: '',
+                    dateOfBirth: '',
+                    nationalId: '',
+                    phoneNumber: '',
+                    email: '',
+                    address: '',
+                    city: '',
+                    licenseNumber: '',
+                    licenseType: 'Class C',
+                    licenseExpiry: '',
+                    emergencyContact: '',
+                    emergencyPhone: '',
+                    experience: '',
+                    languages: []
+                })
+                setErrors({})
+            }
         }
     }
 
     return (
-        <div className="form-container">
-            <div className="form-header">
-                <h2>Driver Registration</h2>
-                <p>Register a new driver for port operations</p>
+        <div style={styles.container}>
+            <div style={styles.header}>
+                <h2 style={styles.title}>Enregistrement du Chauffeur</h2>
+                <p style={styles.subtitle}>Enregistrez un nouveau chauffeur pour les opérations portuaires</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="registration-form">
-                <div className="form-section">
-                    <h3>Personal Information</h3>
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <label htmlFor="firstName">First Name *</label>
+            <form onSubmit={handleSubmit} style={styles.form}>
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Informations Personnelles</h3>
+                    <div style={styles.grid}>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="firstName" style={styles.label}>Prénom *</label>
                             <input
                                 type="text"
                                 id="firstName"
                                 name="firstName"
                                 value={formData.firstName}
                                 onChange={handleChange}
-                                className={errors.firstName ? 'error' : ''}
-                                placeholder="Enter first name"
+                                style={{ ...styles.input, ...(errors.firstName ? styles.inputError : {}) }}
+                                placeholder="Entrez le prénom"
                             />
-                            {errors.firstName && <span className="error-message">{errors.firstName}</span>}
+                            {errors.firstName && <span style={styles.errorMessage}>{errors.firstName}</span>}
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="lastName">Last Name *</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="lastName" style={styles.label}>Nom *</label>
                             <input
                                 type="text"
                                 id="lastName"
                                 name="lastName"
                                 value={formData.lastName}
                                 onChange={handleChange}
-                                className={errors.lastName ? 'error' : ''}
-                                placeholder="Enter last name"
+                                style={{ ...styles.input, ...(errors.lastName ? styles.inputError : {}) }}
+                                placeholder="Entrez le nom"
                             />
-                            {errors.lastName && <span className="error-message">{errors.lastName}</span>}
+                            {errors.lastName && <span style={styles.errorMessage}>{errors.lastName}</span>}
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="dateOfBirth">Date of Birth</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="dateOfBirth" style={styles.label}>Date de naissance</label>
                             <input
                                 type="date"
                                 id="dateOfBirth"
                                 name="dateOfBirth"
                                 value={formData.dateOfBirth}
                                 onChange={handleChange}
+                                style={styles.input}
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="nationalId">National ID *</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="nationalId" style={styles.label}>Numéro d'identité nationale *</label>
                             <input
                                 type="text"
                                 id="nationalId"
                                 name="nationalId"
                                 value={formData.nationalId}
                                 onChange={handleChange}
-                                className={errors.nationalId ? 'error' : ''}
-                                placeholder="Enter national ID number"
+                                style={{ ...styles.input, ...(errors.nationalId ? styles.inputError : {}) }}
+                                placeholder="Entrez le numéro d'identité"
                             />
-                            {errors.nationalId && <span className="error-message">{errors.nationalId}</span>}
+                            {errors.nationalId && <span style={styles.errorMessage}>{errors.nationalId}</span>}
                         </div>
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Contact Information</h3>
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <label htmlFor="phoneNumber">Phone Number *</label>
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Informations de Contact</h3>
+                    <div style={styles.grid}>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="phoneNumber" style={styles.label}>Numéro de téléphone *</label>
                             <input
                                 type="tel"
                                 id="phoneNumber"
                                 name="phoneNumber"
                                 value={formData.phoneNumber}
                                 onChange={handleChange}
-                                className={errors.phoneNumber ? 'error' : ''}
+                                style={{ ...styles.input, ...(errors.phoneNumber ? styles.inputError : {}) }}
                                 placeholder="+228 XX XX XX XX"
                             />
-                            {errors.phoneNumber && <span className="error-message">{errors.phoneNumber}</span>}
+                            {errors.phoneNumber && <span style={styles.errorMessage}>{errors.phoneNumber}</span>}
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="email">Email Address *</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="email" style={styles.label}>Adresse Email *</label>
                             <input
                                 type="email"
                                 id="email"
                                 name="email"
                                 value={formData.email}
                                 onChange={handleChange}
-                                className={errors.email ? 'error' : ''}
-                                placeholder="driver@example.com"
+                                style={{ ...styles.input, ...(errors.email ? styles.inputError : {}) }}
+                                placeholder="chauffeur@exemple.com"
                             />
-                            {errors.email && <span className="error-message">{errors.email}</span>}
+                            {errors.email && <span style={styles.errorMessage}>{errors.email}</span>}
                         </div>
 
-                        <div className="form-group full-width">
-                            <label htmlFor="address">Address</label>
+                        <div style={{ ...styles.formGroup, gridColumn: '1 / -1' }}>
+                            <label htmlFor="address" style={styles.label}>Adresse</label>
                             <input
                                 type="text"
                                 id="address"
                                 name="address"
                                 value={formData.address}
                                 onChange={handleChange}
-                                placeholder="Street address"
+                                style={styles.input}
+                                placeholder="Adresse complète"
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="city">City</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="city" style={styles.label}>Ville</label>
                             <select
                                 id="city"
                                 name="city"
                                 value={formData.city}
                                 onChange={handleChange}
+                                style={styles.select}
                             >
-                                <option value="">Select city</option>
+                                <option value="">Sélectionnez la ville</option>
                                 <option value="Lomé">Lomé</option>
                                 <option value="Kara">Kara</option>
                                 <option value="Sokodé">Sokodé</option>
@@ -203,128 +238,269 @@ const DriverRegistration = ({ onSubmit, onCancel }) => {
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>License Information</h3>
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <label htmlFor="licenseNumber">License Number *</label>
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Informations sur le Permis</h3>
+                    <div style={styles.grid}>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="licenseNumber" style={styles.label}>Numéro du permis *</label>
                             <input
                                 type="text"
                                 id="licenseNumber"
                                 name="licenseNumber"
                                 value={formData.licenseNumber}
                                 onChange={handleChange}
-                                className={errors.licenseNumber ? 'error' : ''}
-                                placeholder="Enter license number"
+                                style={{ ...styles.input, ...(errors.licenseNumber ? styles.inputError : {}) }}
+                                placeholder="Entrez le numéro du permis"
                             />
-                            {errors.licenseNumber && <span className="error-message">{errors.licenseNumber}</span>}
+                            {errors.licenseNumber && <span style={styles.errorMessage}>{errors.licenseNumber}</span>}
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="licenseType">License Type</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="licenseType" style={styles.label}>Type de permis</label>
                             <select
                                 id="licenseType"
                                 name="licenseType"
                                 value={formData.licenseType}
                                 onChange={handleChange}
+                                style={styles.select}
                             >
-                                <option value="Class C">Class C - Standard Vehicle</option>
-                                <option value="Class B">Class B - Heavy Vehicle</option>
-                                <option value="Class A">Class A - Commercial Vehicle</option>
-                                <option value="CDL">CDL - Commercial Driver's License</option>
+                                <option value="Class C">Classe C - Véhicule standard</option>
+                                <option value="Class B">Classe B - Véhicule lourd</option>
+                                <option value="Class A">Classe A - Véhicule commercial</option>
+                                <option value="CDL">CDL - Permis de conduire commercial</option>
                             </select>
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="licenseExpiry">License Expiry Date *</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="licenseExpiry" style={styles.label}>Date d'expiration du permis *</label>
                             <input
                                 type="date"
                                 id="licenseExpiry"
                                 name="licenseExpiry"
                                 value={formData.licenseExpiry}
                                 onChange={handleChange}
-                                className={errors.licenseExpiry ? 'error' : ''}
+                                style={{ ...styles.input, ...(errors.licenseExpiry ? styles.inputError : {}) }}
                             />
-                            {errors.licenseExpiry && <span className="error-message">{errors.licenseExpiry}</span>}
+                            {errors.licenseExpiry && <span style={styles.errorMessage}>{errors.licenseExpiry}</span>}
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="experience">Years of Experience</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="experience" style={styles.label}>Années d'expérience</label>
                             <select
                                 id="experience"
                                 name="experience"
                                 value={formData.experience}
                                 onChange={handleChange}
+                                style={styles.select}
                             >
-                                <option value="">Select experience</option>
-                                <option value="0-1">0-1 years</option>
-                                <option value="2-5">2-5 years</option>
-                                <option value="6-10">6-10 years</option>
-                                <option value="11-15">11-15 years</option>
-                                <option value="15+">15+ years</option>
+                                <option value="">Sélectionnez l'expérience</option>
+                                <option value="0-1">0-1 an</option>
+                                <option value="2-5">2-5 ans</option>
+                                <option value="6-10">6-10 ans</option>
+                                <option value="11-15">11-15 ans</option>
+                                <option value="15+">15+ ans</option>
                             </select>
                         </div>
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Emergency Contact</h3>
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <label htmlFor="emergencyContact">Emergency Contact Name</label>
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Contact d'Urgence</h3>
+                    <div style={styles.grid}>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="emergencyContact" style={styles.label}>Nom du contact d'urgence</label>
                             <input
                                 type="text"
                                 id="emergencyContact"
                                 name="emergencyContact"
                                 value={formData.emergencyContact}
                                 onChange={handleChange}
-                                placeholder="Full name"
+                                style={styles.input}
+                                placeholder="Nom complet"
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="emergencyPhone">Emergency Contact Phone</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="emergencyPhone" style={styles.label}>Téléphone du contact d'urgence</label>
                             <input
                                 type="tel"
                                 id="emergencyPhone"
                                 name="emergencyPhone"
                                 value={formData.emergencyPhone}
                                 onChange={handleChange}
+                                style={styles.input}
                                 placeholder="+228 XX XX XX XX"
                             />
                         </div>
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Languages</h3>
-                    <div className="checkbox-group">
-                        {['French', 'English', 'Ewe', 'Kabye', 'Tem'].map(language => (
-                            <label key={language} className="checkbox-label">
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Langues</h3>
+                    <div style={styles.checkboxGrid}>
+                        {['Français', 'Anglais', 'Ewé', 'Kabyè', 'Tem'].map(language => (
+                            <label key={language} style={styles.checkboxLabel}>
                                 <input
                                     type="checkbox"
                                     name="languages"
                                     value={language}
                                     checked={formData.languages.includes(language)}
                                     onChange={handleChange}
+                                    style={styles.checkbox}
                                 />
-                                <span>{language}</span>
+                                <span style={styles.checkboxText}>{language}</span>
                             </label>
                         ))}
                     </div>
                 </div>
 
-                <div className="form-actions">
-                    <button type="button" onClick={onCancel} className="btn-secondary">
-                        Cancel
+                <div style={styles.actions}>
+                    <button type="button" onClick={handleCancel} style={styles.cancelButton}>
+                        Annuler
                     </button>
-                    <button type="submit" className="btn-primary">
-                        Register Driver
+                    <button type="submit" style={styles.submitButton}>
+                        Enregistrer le Chauffeur
                     </button>
                 </div>
             </form>
         </div>
     )
+}
+
+const styles = {
+    container: {
+        maxWidth: '800px',
+        margin: '20px auto',
+        padding: '20px',
+        backgroundColor: '#ffffff',
+        borderRadius: '12px',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+    },
+    header: {
+        textAlign: 'center',
+        marginBottom: '32px',
+        paddingBottom: '24px',
+        borderBottom: '2px solid #f1f5f9'
+    },
+    title: {
+        fontSize: '28px',
+        fontWeight: '700',
+        color: '#1f2937',
+        marginBottom: '8px'
+    },
+    subtitle: {
+        fontSize: '16px',
+        color: '#6b7280'
+    },
+    form: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '32px'
+    },
+    section: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '20px'
+    },
+    sectionTitle: {
+        fontSize: '20px',
+        fontWeight: '600',
+        color: '#1f2937',
+        marginBottom: '4px',
+        paddingBottom: '8px',
+        borderBottom: '1px solid #e5e7eb'
+    },
+    grid: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+        gap: '20px'
+    },
+    formGroup: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '6px'
+    },
+    label: {
+        fontSize: '14px',
+        fontWeight: '500',
+        color: '#374151'
+    },
+    input: {
+        padding: '12px 16px',
+        border: '2px solid #e5e7eb',
+        borderRadius: '8px',
+        fontSize: '16px',
+        transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+        backgroundColor: '#ffffff'
+    },
+    select: {
+        padding: '12px 16px',
+        border: '2px solid #e5e7eb',
+        borderRadius: '8px',
+        fontSize: '16px',
+        transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+        backgroundColor: '#ffffff'
+    },
+    inputError: {
+        borderColor: '#ef4444'
+    },
+    errorMessage: {
+        fontSize: '12px',
+        color: '#ef4444',
+        marginTop: '4px'
+    },
+    checkboxGrid: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '12px',
+        marginTop: '8px'
+    },
+    checkboxLabel: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        cursor: 'pointer',
+        padding: '8px 12px',
+        borderRadius: '8px',
+        transition: 'background 0.2s ease'
+    },
+    checkbox: {
+        width: '16px',
+        height: '16px',
+        margin: '0'
+    },
+    checkboxText: {
+        fontSize: '14px',
+        color: '#374151'
+    },
+    actions: {
+        display: 'flex',
+        justifyContent: 'flex-end',
+        gap: '16px',
+        paddingTop: '24px',
+        borderTop: '2px solid #f1f5f9'
+    },
+    cancelButton: {
+        padding: '12px 24px',
+        borderRadius: '8px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
+        border: '2px solid #d1d5db',
+        backgroundColor: '#ffffff',
+        color: '#6b7280'
+    },
+    submitButton: {
+        padding: '12px 24px',
+        borderRadius: '8px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
+        border: '2px solid #3b82f6',
+        backgroundColor: '#3b82f6',
+        color: '#ffffff'
+    }
 }
 
 export default DriverRegistration

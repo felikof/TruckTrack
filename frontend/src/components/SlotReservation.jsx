@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
 
 const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
     const [formData, setFormData] = useState({
@@ -69,6 +70,11 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
         }
     }
 
+    function isValidPhone(phone) {
+        const phoneNumber = parsePhoneNumberFromString(phone);
+        return phoneNumber?.isValid() || false;
+    }
+
     const validateForm = () => {
         const newErrors = {}
 
@@ -90,7 +96,7 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
         }
 
         // Phone validation
-        const phoneRegex = /^[\+]?[0-9\s\-\(\)]{8,}$/
+        const phoneRegex = /^[+]?[0-9\s\-\d()]{8,20}$/
         if (formData.driverPhone && !phoneRegex.test(formData.driverPhone)) {
             newErrors.driverPhone = 'Please enter a valid phone number'
         }
@@ -98,6 +104,8 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
         setErrors(newErrors)
         return Object.keys(newErrors).length === 0
     }
+
+    
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -113,7 +121,50 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
                 status: 'pending',
                 createdAt: new Date().toISOString()
             }
-            onSubmit(reservationData)
+
+            if (onSubmit) {
+                onSubmit(reservationData)
+            } else {
+                console.log('Slot reservation data:', reservationData)
+                alert('Slot reserved successfully!')
+            }
+        }
+        const phone = "+228 23456789";
+        console.log(isValidPhone(phone));
+    }
+
+    const handleCancel = () => {
+        if (onCancel) {
+            onCancel()
+        } else {
+            if (window.confirm('Are you sure you want to cancel? All data will be lost.')) {
+                setFormData({
+                    truckPlateNumber: '',
+                    truckType: 'Standard',
+                    cargoType: 'Container',
+                    cargoWeight: '',
+                    cargoDescription: '',
+                    containerNumber: '',
+                    sealNumber: '',
+                    driverName: '',
+                    driverLicense: '',
+                    driverPhone: '',
+                    carrierName: '',
+                    carrierContact: '',
+                    origin: selectedSlot?.gate || 'Gate A1',
+                    destination: selectedSlot?.terminal || 'Terminal 3',
+                    estimatedArrival: '',
+                    additionalServices: [],
+                    specialRequirements: '',
+                    billOfLading: '',
+                    customsDeclaration: '',
+                    emergencyContactName: '',
+                    emergencyContactPhone: '',
+                    acceptTerms: false,
+                    acceptPricing: false
+                })
+                setErrors({})
+            }
         }
     }
 
@@ -121,439 +172,668 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
         return `${currency} ${price?.toLocaleString() || '0'}`
     }
 
+    // Default slot data for standalone use
+    const defaultSlot = {
+        id: 1,
+        timeSlot: '08:00',
+        gate: 'Gate A1',
+        terminal: 'Terminal 3',
+        duration: '2h 30m',
+        price: 45000,
+        currency: 'CFA'
+    }
+
+    const slot = selectedSlot || defaultSlot
+
     return (
-        <div className="form-container">
-            <div className="form-header">
-                <h2>Reserve Slot</h2>
-                <p>Complete your slot reservation for {selectedSlot?.timeSlot} - {selectedSlot?.gate} to {selectedSlot?.terminal}</p>
-                {selectedSlot && (
-                    <div className="slot-summary">
-                        <div className="summary-item">
-                            <span className="label">Time Slot:</span>
-                            <span className="value">{selectedSlot.timeSlot}</span>
-                        </div>
-                        <div className="summary-item">
-                            <span className="label">Route:</span>
-                            <span className="value">{selectedSlot.gate} → {selectedSlot.terminal}</span>
-                        </div>
-                        <div className="summary-item">
-                            <span className="label">Duration:</span>
-                            <span className="value">{selectedSlot.duration}</span>
-                        </div>
-                        <div className="summary-item">
-                            <span className="label">Price:</span>
-                            <span className="value price">{formatPrice(selectedSlot.price, selectedSlot.currency)}</span>
-                        </div>
+        <div style={styles.container}>
+            <div style={styles.header}>
+                <h2 style={styles.title}>Réserver un créneau</h2>
+                <p style={styles.subtitle}>Complétez votre réservation pour {slot.timeSlot} - {slot.gate} vers {slot.terminal}</p>
+                <div style={styles.slotSummary}>
+                    <div style={styles.summaryItem}>
+                        <span style={styles.summaryLabel}>Créneau horaire :</span>
+                        <span style={styles.summaryValue}>{slot.timeSlot}</span>
                     </div>
-                )}
+                    <div style={styles.summaryItem}>
+                        <span style={styles.summaryLabel}>Itinéraire :</span>
+                        <span style={styles.summaryValue}>{slot.gate} → {slot.terminal}</span>
+                    </div>
+                    <div style={styles.summaryItem}>
+                        <span style={styles.summaryLabel}>Durée :</span>
+                        <span style={styles.summaryValue}>{slot.duration}</span>
+                    </div>
+                    <div style={styles.summaryItem}>
+                        <span style={styles.summaryLabel}>Prix :</span>
+                        <span style={{ ...styles.summaryValue, color: '#3b82f6', fontSize: '18px' }}>{formatPrice(slot.price, slot.currency)}</span>
+                    </div>
+                </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="registration-form">
-                <div className="form-section">
-                    <h3>Truck Information</h3>
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <label htmlFor="truckPlateNumber">Truck Plate Number *</label>
+            <form onSubmit={handleSubmit} style={styles.form}>
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Informations sur le camion</h3>
+                    <div style={styles.grid}>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="truckPlateNumber" style={styles.label}>Immatriculation du camion *</label>
                             <input
                                 type="text"
                                 id="truckPlateNumber"
                                 name="truckPlateNumber"
                                 value={formData.truckPlateNumber}
                                 onChange={handleChange}
-                                className={errors.truckPlateNumber ? 'error' : ''}
+                                style={{ ...styles.input, ...(errors.truckPlateNumber ? styles.inputError : {}), textTransform: 'uppercase' }}
                                 placeholder="TG-1234-AB"
-                                style={{ textTransform: 'uppercase' }}
                             />
-                            {errors.truckPlateNumber && <span className="error-message">{errors.truckPlateNumber}</span>}
+                            {errors.truckPlateNumber && <span style={styles.errorMessage}>{errors.truckPlateNumber}</span>}
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="truckType">Truck Type</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="truckType" style={styles.label}>Type de camion</label>
                             <select
                                 id="truckType"
                                 name="truckType"
                                 value={formData.truckType}
                                 onChange={handleChange}
+                                style={styles.select}
                             >
-                                <option value="Standard">Standard Truck</option>
-                                <option value="Heavy Duty">Heavy Duty</option>
-                                <option value="Container">Container Truck</option>
-                                <option value="Flatbed">Flatbed</option>
-                                <option value="Tanker">Tanker</option>
-                                <option value="Refrigerated">Refrigerated</option>
+                                <option value="Standard">Camion standard</option>
+                                <option value="Heavy Duty">Poids lourd</option>
+                                <option value="Container">Camion porte-conteneur</option>
+                                <option value="Flatbed">Plateau</option>
+                                <option value="Tanker">Citerne</option>
+                                <option value="Refrigerated">Frigorifique</option>
                             </select>
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="cargoType">Cargo Type</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="cargoType" style={styles.label}>Type de cargaison</label>
                             <select
                                 id="cargoType"
                                 name="cargoType"
                                 value={formData.cargoType}
                                 onChange={handleChange}
+                                style={styles.select}
                             >
-                                <option value="Container">Container</option>
-                                <option value="Bulk">Bulk Cargo</option>
-                                <option value="General">General Cargo</option>
-                                <option value="Liquid">Liquid</option>
-                                <option value="Hazardous">Hazardous Materials</option>
-                                <option value="Refrigerated">Refrigerated Goods</option>
+                                <option value="Container">Conteneur</option>
+                                <option value="Bulk">Marchandise en vrac</option>
+                                <option value="General">Marchandise générale</option>
+                                <option value="Liquid">Liquide</option>
+                                <option value="Hazardous">Matières dangereuses</option>
+                                <option value="Refrigerated">Produits réfrigérés</option>
                             </select>
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="cargoWeight">Cargo Weight (tons) *</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="cargoWeight" style={styles.label}>Poids de la cargaison (tonnes) *</label>
                             <input
                                 type="number"
                                 id="cargoWeight"
                                 name="cargoWeight"
                                 value={formData.cargoWeight}
                                 onChange={handleChange}
-                                className={errors.cargoWeight ? 'error' : ''}
+                                style={{ ...styles.input, ...(errors.cargoWeight ? styles.inputError : {}) }}
                                 min="0.1"
                                 step="0.1"
-                                placeholder="e.g., 25.5"
+                                placeholder="ex : 25.5"
                             />
-                            {errors.cargoWeight && <span className="error-message">{errors.cargoWeight}</span>}
+                            {errors.cargoWeight && <span style={styles.errorMessage}>{errors.cargoWeight}</span>}
                         </div>
 
-                        <div className="form-group full-width">
-                            <label htmlFor="cargoDescription">Cargo Description</label>
+                        <div style={{ ...styles.formGroup, gridColumn: '1 / -1' }}>
+                            <label htmlFor="cargoDescription" style={styles.label}>Description de la cargaison</label>
                             <textarea
                                 id="cargoDescription"
                                 name="cargoDescription"
                                 value={formData.cargoDescription}
                                 onChange={handleChange}
+                                style={styles.textarea}
                                 rows="3"
-                                placeholder="Describe the cargo being transported"
+                                placeholder="Décrivez la cargaison transportée"
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="containerNumber">Container Number</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="containerNumber" style={styles.label}>Numéro du conteneur</label>
                             <input
                                 type="text"
                                 id="containerNumber"
                                 name="containerNumber"
                                 value={formData.containerNumber}
                                 onChange={handleChange}
-                                placeholder="Container ID (if applicable)"
+                                style={styles.input}
+                                placeholder="ID du conteneur (si applicable)"
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="sealNumber">Seal Number</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="sealNumber" style={styles.label}>Numéro du plomb</label>
                             <input
                                 type="text"
                                 id="sealNumber"
                                 name="sealNumber"
                                 value={formData.sealNumber}
                                 onChange={handleChange}
-                                placeholder="Container seal number"
+                                style={styles.input}
+                                placeholder="Numéro du plomb du conteneur"
                             />
                         </div>
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Driver Information</h3>
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <label htmlFor="driverName">Driver Name *</label>
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Informations sur le conducteur</h3>
+                    <div style={styles.grid}>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="driverName" style={styles.label}>Nom du conducteur *</label>
                             <input
                                 type="text"
                                 id="driverName"
                                 name="driverName"
                                 value={formData.driverName}
                                 onChange={handleChange}
-                                className={errors.driverName ? 'error' : ''}
-                                placeholder="Full name of driver"
+                                style={{ ...styles.input, ...(errors.driverName ? styles.inputError : {}) }}
+                                placeholder="Nom complet du conducteur"
                             />
-                            {errors.driverName && <span className="error-message">{errors.driverName}</span>}
+                            {errors.driverName && <span style={styles.errorMessage}>{errors.driverName}</span>}
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="driverLicense">Driver License Number *</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="driverLicense" style={styles.label}>Numéro du permis *</label>
                             <input
                                 type="text"
                                 id="driverLicense"
                                 name="driverLicense"
                                 value={formData.driverLicense}
                                 onChange={handleChange}
-                                className={errors.driverLicense ? 'error' : ''}
-                                placeholder="License number"
+                                style={{ ...styles.input, ...(errors.driverLicense ? styles.inputError : {}) }}
+                                placeholder="Numéro du permis"
                             />
-                            {errors.driverLicense && <span className="error-message">{errors.driverLicense}</span>}
+                            {errors.driverLicense && <span style={styles.errorMessage}>{errors.driverLicense}</span>}
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="driverPhone">Driver Phone *</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="driverPhone" style={styles.label}>Téléphone du conducteur *</label>
                             <input
                                 type="tel"
                                 id="driverPhone"
                                 name="driverPhone"
                                 value={formData.driverPhone}
                                 onChange={handleChange}
-                                className={errors.driverPhone ? 'error' : ''}
+                                style={{ ...styles.input, ...(errors.driverPhone ? styles.inputError : {}) }}
                                 placeholder="+228 XX XX XX XX"
                             />
-                            {errors.driverPhone && <span className="error-message">{errors.driverPhone}</span>}
+                            {errors.driverPhone && <span style={styles.errorMessage}>{errors.driverPhone}</span>}
                         </div>
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Carrier Information</h3>
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <label htmlFor="carrierName">Carrier/Company Name *</label>
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Informations sur le transporteur</h3>
+                    <div style={styles.grid}>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="carrierName" style={styles.label}>Nom du transporteur / entreprise *</label>
                             <input
                                 type="text"
                                 id="carrierName"
                                 name="carrierName"
                                 value={formData.carrierName}
                                 onChange={handleChange}
-                                className={errors.carrierName ? 'error' : ''}
-                                placeholder="Company or carrier name"
+                                style={{ ...styles.input, ...(errors.carrierName ? styles.inputError : {}) }}
+                                placeholder="Nom de l'entreprise ou du transporteur"
                             />
-                            {errors.carrierName && <span className="error-message">{errors.carrierName}</span>}
+                            {errors.carrierName && <span style={styles.errorMessage}>{errors.carrierName}</span>}
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="carrierContact">Carrier Contact</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="carrierContact" style={styles.label}>Contact du transporteur</label>
                             <input
                                 type="tel"
                                 id="carrierContact"
                                 name="carrierContact"
                                 value={formData.carrierContact}
                                 onChange={handleChange}
+                                style={styles.input}
                                 placeholder="+228 XX XX XX XX"
                             />
                         </div>
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Route & Timing</h3>
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <label htmlFor="origin">Origin Gate</label>
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Itinéraire & horaire</h3>
+                    <div style={styles.grid}>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="origin" style={styles.label}>Porte d'origine</label>
                             <select
                                 id="origin"
                                 name="origin"
                                 value={formData.origin}
                                 onChange={handleChange}
+                                style={styles.select}
                             >
-                                <option value="Gate A1">Gate A1</option>
-                                <option value="Gate A2">Gate A2</option>
-                                <option value="Gate B1">Gate B1</option>
-                                <option value="Gate B2">Gate B2</option>
-                                <option value="Gate C1">Gate C1</option>
-                                <option value="Gate C2">Gate C2</option>
+                                <option value="Gate A1">Porte A1</option>
+                                <option value="Gate A2">Porte A2</option>
+                                <option value="Gate B1">Porte B1</option>
+                                <option value="Gate B2">Porte B2</option>
+                                <option value="Gate C1">Porte C1</option>
+                                <option value="Gate C2">Porte C2</option>
                             </select>
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="destination">Destination Terminal</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="destination" style={styles.label}>Terminal de destination</label>
                             <select
                                 id="destination"
                                 name="destination"
                                 value={formData.destination}
                                 onChange={handleChange}
+                                style={styles.select}
                             >
                                 <option value="Terminal 1">Terminal 1</option>
                                 <option value="Terminal 2">Terminal 2</option>
                                 <option value="Terminal 3">Terminal 3</option>
-                                <option value="Container Yard">Container Yard</option>
-                                <option value="Bulk Terminal">Bulk Terminal</option>
+                                <option value="Container Yard">Parc à conteneurs</option>
+                                <option value="Bulk Terminal">Terminal vrac</option>
                             </select>
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="estimatedArrival">Estimated Arrival Time *</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="estimatedArrival" style={styles.label}>Heure d'arrivée estimée *</label>
                             <input
                                 type="time"
                                 id="estimatedArrival"
                                 name="estimatedArrival"
                                 value={formData.estimatedArrival}
                                 onChange={handleChange}
-                                className={errors.estimatedArrival ? 'error' : ''}
+                                style={{ ...styles.input, ...(errors.estimatedArrival ? styles.inputError : {}) }}
                             />
-                            {errors.estimatedArrival && <span className="error-message">{errors.estimatedArrival}</span>}
+                            {errors.estimatedArrival && <span style={styles.errorMessage}>{errors.estimatedArrival}</span>}
                         </div>
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Additional Services</h3>
-                    <div className="checkbox-group">
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Services additionnels</h3>
+                    <div style={styles.checkboxGrid}>
                         {[
-                            'Priority Processing',
-                            'Escort Service',
-                            'Customs Clearance',
-                            'Weighbridge Service',
-                            'Security Inspection',
-                            'Documentation Assistance',
-                            'Loading/Unloading Assistance',
-                            'Temporary Storage'
-                        ].map(service => (
-                            <label key={service} className="checkbox-label">
+                            'Traitement prioritaire',
+                            'Service d\'escorte',
+                            'Dédouanement',
+                            'Service de pesage',
+                            'Inspection de sécurité',
+                            'Assistance documentaire',
+                            'Aide au chargement/déchargement',
+                            'Stockage temporaire'
+                        ].map((service) => (
+                            <label key={service} style={styles.checkboxLabel}>
                                 <input
                                     type="checkbox"
                                     name="additionalServices"
                                     value={service}
                                     checked={formData.additionalServices.includes(service)}
                                     onChange={handleChange}
+                                    style={styles.checkbox}
                                 />
-                                <span>{service}</span>
+                                <span style={styles.checkboxText}>{service}</span>
                             </label>
                         ))}
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Special Requirements</h3>
-                    <div className="form-group full-width">
-                        <label htmlFor="specialRequirements">Special Requirements or Notes</label>
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Exigences particulières</h3>
+                    <div style={{ ...styles.formGroup, gridColumn: '1 / -1' }}>
+                        <label htmlFor="specialRequirements" style={styles.label}>Exigences ou remarques particulières</label>
                         <textarea
                             id="specialRequirements"
                             name="specialRequirements"
                             value={formData.specialRequirements}
                             onChange={handleChange}
+                            style={styles.textarea}
                             rows="4"
-                            placeholder="Any special handling requirements, restrictions, or additional information"
+                            placeholder="Exigences spécifiques, restrictions ou informations complémentaires"
                         />
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Documentation</h3>
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <label htmlFor="billOfLading">Bill of Lading Number</label>
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Documents</h3>
+                    <div style={styles.grid}>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="billOfLading" style={styles.label}>Numéro du connaissement</label>
                             <input
                                 type="text"
                                 id="billOfLading"
                                 name="billOfLading"
                                 value={formData.billOfLading}
                                 onChange={handleChange}
-                                placeholder="B/L number"
+                                style={styles.input}
+                                placeholder="Numéro du connaissement"
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="customsDeclaration">Customs Declaration Number</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="customsDeclaration" style={styles.label}>Numéro de déclaration douanière</label>
                             <input
                                 type="text"
                                 id="customsDeclaration"
                                 name="customsDeclaration"
                                 value={formData.customsDeclaration}
                                 onChange={handleChange}
-                                placeholder="Customs declaration number"
+                                style={styles.input}
+                                placeholder="Numéro de déclaration douanière"
                             />
                         </div>
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Emergency Contact</h3>
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <label htmlFor="emergencyContactName">Emergency Contact Name</label>
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Contact d'urgence</h3>
+                    <div style={styles.grid}>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="emergencyContactName" style={styles.label}>Nom du contact d'urgence</label>
                             <input
                                 type="text"
                                 id="emergencyContactName"
                                 name="emergencyContactName"
                                 value={formData.emergencyContactName}
                                 onChange={handleChange}
-                                placeholder="Emergency contact person"
+                                style={styles.input}
+                                placeholder="Personne à contacter en urgence"
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="emergencyContactPhone">Emergency Contact Phone</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="emergencyContactPhone" style={styles.label}>Téléphone d'urgence</label>
                             <input
                                 type="tel"
                                 id="emergencyContactPhone"
                                 name="emergencyContactPhone"
                                 value={formData.emergencyContactPhone}
                                 onChange={handleChange}
+                                style={styles.input}
                                 placeholder="+228 XX XX XX XX"
                             />
                         </div>
                     </div>
                 </div>
 
-                <div className="form-section">
-                    <h3>Terms and Conditions</h3>
-                    <div className="terms-section">
-                        <label className="checkbox-label">
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Conditions générales</h3>
+                    <div style={styles.termsSection}>
+                        <label style={styles.checkboxLabel}>
                             <input
                                 type="checkbox"
                                 name="acceptTerms"
                                 checked={formData.acceptTerms}
                                 onChange={handleChange}
-                                className={errors.acceptTerms ? 'error' : ''}
+                                style={{ ...styles.checkbox, ...(errors.acceptTerms ? styles.inputError : {}) }}
                             />
-                            <span>I accept the terms and conditions for port operations *</span>
+                            <span style={styles.checkboxText}>J'accepte les conditions générales des opérations portuaires *</span>
                         </label>
-                        {errors.acceptTerms && <span className="error-message">{errors.acceptTerms}</span>}
+                        {errors.acceptTerms && <span style={styles.errorMessage}>{errors.acceptTerms}</span>}
 
-                        <label className="checkbox-label">
+                        <label style={styles.checkboxLabel}>
                             <input
                                 type="checkbox"
                                 name="acceptPricing"
                                 checked={formData.acceptPricing}
                                 onChange={handleChange}
-                                className={errors.acceptPricing ? 'error' : ''}
+                                style={{ ...styles.checkbox, ...(errors.acceptPricing ? styles.inputError : {}) }}
                             />
-                            <span>I accept the pricing terms and understand all fees *</span>
+                            <span style={styles.checkboxText}>J'accepte les conditions tarifaires et comprends tous les frais *</span>
                         </label>
-                        {errors.acceptPricing && <span className="error-message">{errors.acceptPricing}</span>}
+                        {errors.acceptPricing && <span style={styles.errorMessage}>{errors.acceptPricing}</span>}
                     </div>
                 </div>
 
-                <div className="reservation-summary">
-                    <h3>Reservation Summary</h3>
-                    <div className="summary-details">
-                        <div className="summary-row">
-                            <span>Slot Time:</span>
-                            <span>{selectedSlot?.timeSlot}</span>
+                <div style={styles.reservationSummary}>
+                    <h3 style={styles.sectionTitle}>Résumé de la réservation</h3>
+                    <div style={styles.summaryDetails}>
+                        <div style={styles.summaryRow}>
+                            <span>Créneau horaire :</span>
+                            <span>{slot.timeSlot}</span>
                         </div>
-                        <div className="summary-row">
-                            <span>Route:</span>
+                        <div style={styles.summaryRow}>
+                            <span>Itinéraire :</span>
                             <span>{formData.origin} → {formData.destination}</span>
                         </div>
-                        <div className="summary-row">
-                            <span>Duration:</span>
-                            <span>{selectedSlot?.duration}</span>
+                        <div style={styles.summaryRow}>
+                            <span>Durée :</span>
+                            <span>{slot.duration}</span>
                         </div>
-                        <div className="summary-row">
-                            <span>Base Price:</span>
-                            <span>{formatPrice(selectedSlot?.price, selectedSlot?.currency)}</span>
+                        <div style={styles.summaryRow}>
+                            <span>Prix de base :</span>
+                            <span>{formatPrice(slot.price, slot.currency)}</span>
                         </div>
-                        <div className="summary-row">
-                            <span>Additional Services:</span>
-                            <span>{formData.additionalServices.length} selected</span>
+                        <div style={styles.summaryRow}>
+                            <span>Services additionnels :</span>
+                            <span>{formData.additionalServices.length} sélectionné(s)</span>
                         </div>
-                        <div className="summary-row total">
-                            <span>Total Price:</span>
-                            <span>{formatPrice(selectedSlot?.price, selectedSlot?.currency)}</span>
+                        <div style={{ ...styles.summaryRow, ...styles.summaryTotal }}>
+                            <span>Prix total :</span>
+                            <span>{formatPrice(slot.price, slot.currency)}</span>
                         </div>
                     </div>
                 </div>
 
-                <div className="form-actions">
-                    <button type="button" onClick={onCancel} className="btn-secondary">
-                        Cancel
+                <div style={styles.actions}>
+                    <button type="button" onClick={handleCancel} style={styles.cancelButton}>
+                        Annuler
                     </button>
-                    <button type="submit" className="btn-primary">
-                        Reserve Slot
+                    <button type="submit" style={styles.submitButton}>
+                        Réserver le créneau
                     </button>
                 </div>
             </form>
         </div>
     )
+}
+
+const styles = {
+    container: {
+        maxWidth: '800px',
+        margin: '20px auto',
+        padding: '20px',
+        backgroundColor: '#ffffffff',
+        borderRadius: '12px',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+    },
+    header: {
+        textAlign: 'center',
+        marginBottom: '32px',
+        paddingBottom: '24px',
+        borderBottom: '2px solid #f1f5f9'
+    },
+    title: {
+        fontSize: '28px',
+        fontWeight: '700',
+        color: '#1f2937',
+        marginBottom: '8px'
+    },
+    subtitle: {
+        fontSize: '16px',
+        color: '#6b7280',
+        marginBottom: '16px'
+    },
+    slotSummary: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+        gap: '16px',
+        padding: '20px',
+        backgroundColor: '#f8fafc',
+        borderRadius: '12px'
+    },
+    summaryItem: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '4px'
+    },
+    summaryLabel: {
+        fontSize: '12px',
+        color: '#6b7280',
+        fontWeight: '500',
+        textTransform: 'uppercase'
+    },
+    summaryValue: {
+        fontSize: '16px',
+        color: '#1f2937',
+        fontWeight: '600'
+    },
+    form: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '32px'
+    },
+    section: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '20px'
+    },
+    sectionTitle: {
+        fontSize: '20px',
+        fontWeight: '600',
+        color: '#1f2937',
+        marginBottom: '4px',
+        paddingBottom: '8px',
+        borderBottom: '1px solid #e5e7eb'
+    },
+    grid: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+        gap: '20px'
+    },
+    formGroup: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '6px'
+    },
+    label: {
+        fontSize: '14px',
+        fontWeight: '500',
+        color: '#374151'
+    },
+    input: {
+        padding: '12px 16px',
+        border: '2px solid #e5e7eb',
+        borderRadius: '8px',
+        fontSize: '16px',
+        transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+        backgroundColor: '#ffffff'
+    },
+    select: {
+        padding: '12px 16px',
+        border: '2px solid #e5e7eb',
+        borderRadius: '8px',
+        fontSize: '16px',
+        transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+        backgroundColor: '#ffffff'
+    },
+    textarea: {
+        padding: '12px 16px',
+        border: '2px solid #e5e7eb',
+        borderRadius: '8px',
+        fontSize: '16px',
+        transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+        backgroundColor: '#ffffff',
+        resize: 'vertical'
+    },
+    inputError: {
+        borderColor: '#ef4444'
+    },
+    errorMessage: {
+        fontSize: '12px',
+        color: '#ef4444',
+        marginTop: '4px'
+    },
+    checkboxGrid: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '12px',
+        marginTop: '8px'
+    },
+    checkboxLabel: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        cursor: 'pointer',
+        padding: '8px 12px',
+        borderRadius: '8px',
+        transition: 'background 0.2s ease'
+    },
+    checkbox: {
+        width: '16px',
+        height: '16px',
+        margin: '0'
+    },
+    checkboxText: {
+        fontSize: '14px',
+        color: '#374151'
+    },
+    termsSection: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '12px',
+        padding: '16px',
+        backgroundColor: '#f9fafb',
+        borderRadius: '8px',
+        border: '1px solid #e5e7eb'
+    },
+    reservationSummary: {
+        backgroundColor: '#f8fafc',
+        borderRadius: '12px',
+        padding: '24px'
+    },
+    summaryDetails: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '12px'
+    },
+    summaryRow: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '8px 0',
+        borderBottom: '1px solid #e5e7eb'
+    },
+    summaryTotal: {
+        fontWeight: '700',
+        fontSize: '18px',
+        color: '#3b82f6',
+        borderTop: '2px solid #3b82f6',
+        paddingTop: '12px',
+        marginTop: '8px',
+        borderBottom: 'none'
+    },
+    actions: {
+        display: 'flex',
+        justifyContent: 'flex-end',
+        gap: '16px',
+        paddingTop: '24px',
+        borderTop: '2px solid #f1f5f9'
+    },
+    cancelButton: {
+        padding: '12px 24px',
+        borderRadius: '8px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
+        border: '2px solid #d1d5db',
+        backgroundColor: '#ffffff',
+        color: '#6b7280'
+    },
+    submitButton: {
+        padding: '12px 24px',
+        borderRadius: '8px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
+        border: '2px solid #3b82f6',
+        backgroundColor: '#3b82f6',
+        color: '#ffffff'
+    }
 }
 
 export default SlotReservation
