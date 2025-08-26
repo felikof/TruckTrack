@@ -24,7 +24,7 @@ function App() {
                 <Route path="/Dashboard" element={<Dashboard />} />
                 <Route path="/Acceuil" element={<PageAcceuil />} />
                 <Route path="/Booking" element={<Booking />} />
-                <Route path="/Book.jsx" element={<Book />} />
+                <Route path="/Book" element={<Book />} />
                 <Route path="/Creneau" element={<AdminSlotCreation />} />
                 <Route path="/Reserv" element={<SlotReservation />} />
                 <Route path="/Truck" element={<TruckRegistration />} />
