@@ -2,11 +2,12 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine
 from models import utilisateur as models
+from models import admin as models
 from schemas import utilisateur as schemas
 from schemas.utilisateur_login import UtilisateurLogin
+from schemas import admin as schemas
 from security import hasher, verifier_mdp
 from fastapi.middleware.cors import CORSMiddleware
-import hashlib
         
 models.Base.metadata.create_all(bind=engine)
 
@@ -56,3 +57,32 @@ def connexion_utilisateur(user: UtilisateurLogin, db: Session = Depends(get_db))
         raise HTTPException(status_code=401, detail="Mot de passe incorrect")
 
     return {"message": "Connexion réussie", "id": db_user.id, "nom": db_user.nom}
+
+@app.post("/admins/inscription")
+def inscrire_admin(admin: schemas.AdminCreate, db: Session = Depends(get_db)):
+    db_admin = db.query(models.Admin).filter(models.Admin.email == admin.email).first()
+    if db_admin:
+        raise HTTPException(status_code=400, detail="Email déjà utilisé")
+
+    nouvel_admin = models.Admin(
+        badge_number=admin.badge_number,
+        nom=admin.nom,
+        prenom=admin.prenom,
+        email=admin.email,
+        mot_de_passe=hasher(admin.mot_de_passe)
+    )
+    db.add(nouvel_admin)
+    db.commit()
+    db.refresh(nouvel_admin)
+    return {"message": "Inscription admin réussie", "id": nouvel_admin.id}
+
+@app.post("/admins/connexion")
+def connexion_admin(admin: UtilisateurLogin, db: Session = Depends(get_db)):
+    db_admin = db.query(models.Admin).filter(models.Admin.email == admin.email).first()
+    if not db_admin:
+        raise HTTPException(status_code=404, detail="Admin non trouvé")
+
+    if not verifier_mdp(admin.mot_de_passe, db_admin.mot_de_passe):
+        raise HTTPException(status_code=401, detail="Mot de passe incorrect")
+
+    return {"message": "Connexion admin réussie", "id": db_admin.id, "nom": db_admin.nom}

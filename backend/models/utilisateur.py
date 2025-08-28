@@ -11,6 +11,3 @@ class Utilisateur(Base):
     prenom = Column(String, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     mot_de_passe = Column(String, nullable=False)
-    profil_id = Column(Integer, ForeignKey("profils.id"))
-
-    profil = relationship("Profil", back_populates="utilisateur", uselist=False)

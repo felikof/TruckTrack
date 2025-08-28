@@ -12,6 +12,8 @@ import SlotReservation from './components/SlotReservation';
 import TruckRegistration from './components/TruckRegistration';
 import CarrierRegistration from './components/CarrierRegistration';
 import DriverRegistration from './components/DriverRegistration';
+import AdminLogin from './components/AdminLogin';
+import AdminRegister from './components/AdminRegister';
 
 function App() {
     return (
@@ -30,6 +32,8 @@ function App() {
                 <Route path="/Truck" element={<TruckRegistration />} />
                 <Route path="/Trans" element={<CarrierRegistration />} />
                 <Route path="/Driver" element={<DriverRegistration/>}/>
+                <Route path="/AdminL" element={<AdminLogin/>}/>
+                <Route path="/AdminR" element={<AdminRegister/>}/>
             </Routes>
         </Router>
     );
