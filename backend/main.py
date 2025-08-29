@@ -1,15 +1,15 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine
-from models import utilisateur as models
-from models import admin as models
-from schemas import utilisateur as schemas
+from models.admin import Admin
+from models.utilisateur import Utilisateur, Base
 from schemas.utilisateur_login import UtilisateurLogin
-from schemas import admin as schemas
+from schemas.admin import AdminCreate
+from schemas.utilisateur import UtilisateurCreate
 from security import hasher, verifier_mdp
 from fastapi.middleware.cors import CORSMiddleware
         
-models.Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
@@ -31,12 +31,12 @@ def get_db():
         db.close()
 
 @app.post("/utilisateurs/inscription")
-def inscrire_utilisateur(user: schemas.UtilisateurCreate, db: Session = Depends(get_db)):
-    db_user = db.query(models.Utilisateur).filter(models.Utilisateur.email == user.email).first()
+def inscrire_utilisateur(user: UtilisateurCreate, db: Session = Depends(get_db)):
+    db_user = db.query(Utilisateur).filter(Utilisateur.email == user.email).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Email déjà utilisé")
 
-    nouvel_utilisateur = models.Utilisateur(
+    nouvel_utilisateur = Utilisateur(
         nom=user.nom,
         prenom=user.prenom,
         email=user.email,
@@ -49,7 +49,7 @@ def inscrire_utilisateur(user: schemas.UtilisateurCreate, db: Session = Depends(
 
 @app.post("/utilisateurs/connexion")
 def connexion_utilisateur(user: UtilisateurLogin, db: Session = Depends(get_db)):
-    db_user = db.query(models.Utilisateur).filter(models.Utilisateur.email == user.email).first()
+    db_user = db.query(Utilisateur).filter(Utilisateur.email == user.email).first()
     if not db_user:
         raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
 
@@ -58,13 +58,14 @@ def connexion_utilisateur(user: UtilisateurLogin, db: Session = Depends(get_db))
 
     return {"message": "Connexion réussie", "id": db_user.id, "nom": db_user.nom}
 
+
 @app.post("/admins/inscription")
-def inscrire_admin(admin: schemas.AdminCreate, db: Session = Depends(get_db)):
-    db_admin = db.query(models.Admin).filter(models.Admin.email == admin.email).first()
+def inscrire_admin(admin: AdminCreate, db: Session = Depends(get_db)):
+    db_admin = db.query(Admin).filter(Admin.email == admin.email).first()
     if db_admin:
         raise HTTPException(status_code=400, detail="Email déjà utilisé")
 
-    nouvel_admin = models.Admin(
+    nouvel_admin = Admin(
         badge_number=admin.badge_number,
         nom=admin.nom,
         prenom=admin.prenom,
@@ -78,7 +79,7 @@ def inscrire_admin(admin: schemas.AdminCreate, db: Session = Depends(get_db)):
 
 @app.post("/admins/connexion")
 def connexion_admin(admin: UtilisateurLogin, db: Session = Depends(get_db)):
-    db_admin = db.query(models.Admin).filter(models.Admin.email == admin.email).first()
+    db_admin = db.query(Admin).filter(Admin.email == admin.email).first()
     if not db_admin:
         raise HTTPException(status_code=404, detail="Admin non trouvé")
 

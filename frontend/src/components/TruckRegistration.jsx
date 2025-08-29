@@ -839,7 +839,7 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
-    
+
     if (type === 'checkbox') {
       if (name === 'gpsInstalled') {
         setFormData(prev => ({
@@ -849,7 +849,7 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
       } else if (['specialEquipment', 'certifications', 'operatingPermits'].includes(name)) {
         setFormData(prev => ({
           ...prev,
-          [name]: checked 
+          [name]: checked
             ? [...prev[name], value]
             : prev[name].filter(item => item !== value)
         }))
@@ -873,12 +873,12 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
 
   const validateStep = (step) => {
     const newErrors = {}
-    
+
     switch (step) {
       case 1:
         if (!formData.plateNumber.trim()) newErrors.plateNumber = 'Plate number is required'
         if (!formData.chassisNumber.trim()) newErrors.chassisNumber = 'Chassis number is required'
-        
+
         const plateRegex = /^[A-Z]{2}-\d{4}-[A-Z]{2}$/
         if (formData.plateNumber && !plateRegex.test(formData.plateNumber)) {
           newErrors.plateNumber = 'Plate number format should be XX-0000-XX'
@@ -970,6 +970,7 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
     switch (currentStep) {
       case 1:
         return (
+
           <div style={styles.stepContent}>
             <h3 style={styles.stepTitle}>Vehicle Identification</h3>
             <div style={styles.formGrid}>
@@ -980,7 +981,7 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
                   name="plateNumber"
                   value={formData.plateNumber}
                   onChange={handleChange}
-                  style={{...styles.input, ...(errors.plateNumber ? styles.inputError : {}), textTransform: 'uppercase'}}
+                  style={{ ...styles.input, ...(errors.plateNumber ? styles.inputError : {}), textTransform: 'uppercase' }}
                   placeholder="TG-1234-AB"
                 />
                 {errors.plateNumber && <span style={styles.errorMessage}>{errors.plateNumber}</span>}
@@ -993,7 +994,7 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
                   name="chassisNumber"
                   value={formData.chassisNumber}
                   onChange={handleChange}
-                  style={{...styles.input, ...(errors.chassisNumber ? styles.inputError : {})}}
+                  style={{ ...styles.input, ...(errors.chassisNumber ? styles.inputError : {}) }}
                   placeholder="Enter chassis number"
                 />
                 {errors.chassisNumber && <span style={styles.errorMessage}>{errors.chassisNumber}</span>}
@@ -1061,7 +1062,7 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
                   name="make"
                   value={formData.make}
                   onChange={handleChange}
-                  style={{...styles.select, ...(errors.make ? styles.inputError : {})}}
+                  style={{ ...styles.select, ...(errors.make ? styles.inputError : {}) }}
                 >
                   <option value="">Select make</option>
                   <option value="Mercedes-Benz">Mercedes-Benz</option>
@@ -1085,7 +1086,7 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
                   name="model"
                   value={formData.model}
                   onChange={handleChange}
-                  style={{...styles.input, ...(errors.model ? styles.inputError : {})}}
+                  style={{ ...styles.input, ...(errors.model ? styles.inputError : {}) }}
                   placeholder="Enter model"
                 />
                 {errors.model && <span style={styles.errorMessage}>{errors.model}</span>}
@@ -1098,7 +1099,7 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
                   name="year"
                   value={formData.year}
                   onChange={handleChange}
-                  style={{...styles.input, ...(errors.year ? styles.inputError : {})}}
+                  style={{ ...styles.input, ...(errors.year ? styles.inputError : {}) }}
                   min="1990"
                   max={new Date().getFullYear() + 1}
                   placeholder="YYYY"
@@ -1141,7 +1142,7 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
                   name="maxWeight"
                   value={formData.maxWeight}
                   onChange={handleChange}
-                  style={{...styles.input, ...(errors.maxWeight ? styles.inputError : {})}}
+                  style={{ ...styles.input, ...(errors.maxWeight ? styles.inputError : {}) }}
                   min="1"
                   max="100"
                   step="0.1"
@@ -1270,7 +1271,7 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
                   name="ownerName"
                   value={formData.ownerName}
                   onChange={handleChange}
-                  style={{...styles.input, ...(errors.ownerName ? styles.inputError : {})}}
+                  style={{ ...styles.input, ...(errors.ownerName ? styles.inputError : {}) }}
                   placeholder="Owner/Company name"
                 />
                 {errors.ownerName && <span style={styles.errorMessage}>{errors.ownerName}</span>}
@@ -1391,7 +1392,7 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
               <div style={styles.completionIcon}>✅</div>
               <h3 style={styles.completionTitle}>Review & Complete</h3>
               <p style={styles.completionText}>Please review your information before submitting</p>
-              
+
               <div style={styles.summaryGrid}>
                 <div style={styles.summarySection}>
                   <h4 style={styles.summaryTitle}>Vehicle Info</h4>
@@ -1474,35 +1475,35 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
         {renderStepContent()}
 
         <div style={styles.actions}>
-          <button 
-            type="button" 
-            onClick={handleCancel} 
+          <button
+            type="button"
+            onClick={handleCancel}
             style={styles.cancelButton}
           >
             Cancel
           </button>
-          
+
           <div style={styles.navigationButtons}>
             {currentStep > 1 && (
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={handlePrevious}
                 style={styles.previousButton}
               >
                 Previous
               </button>
             )}
-            
+
             {currentStep < steps.length ? (
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={handleNext}
                 style={styles.nextButton}
               >
                 Next
               </button>
             ) : (
-              <button 
+              <button
                 type="submit"
                 style={styles.submitButton}
               >
@@ -1594,15 +1595,15 @@ const styles = {
     color: '#6366f1',
     fontWeight: '600'
   },
-//   stepConnector: {
-//     position: 'absolute',
-//     top: '24px',
-//     left: '60%',
-//     right: '-40%',
-//     height: '2px',
-//     backgroundColor: '#e5e7eb',
-//     transition: 'all 0.3s ease'
-//   },
+  //   stepConnector: {
+  //     position: 'absolute',
+  //     top: '24px',
+  //     left: '60%',
+  //     right: '-40%',
+  //     height: '2px',
+  //     backgroundColor: '#e5e7eb',
+  //     transition: 'all 0.3s ease'
+  //   },
   stepConnectorActive: {
     backgroundColor: '#6366f1'
   },
