@@ -879,7 +879,7 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
         if (!formData.plateNumber.trim()) newErrors.plateNumber = 'Plate number is required'
         if (!formData.chassisNumber.trim()) newErrors.chassisNumber = 'Chassis number is required'
 
-        const plateRegex = /^[A-Z]{2}-\d{4}-[A-Z]{2}$/
+        const plateRegex = /^[A-Z]{2}[-–— ]\d{4}[-–— ][A-Z]{2}$/
         if (formData.plateNumber && !plateRegex.test(formData.plateNumber)) {
           newErrors.plateNumber = 'Plate number format should be XX-0000-XX'
         }
