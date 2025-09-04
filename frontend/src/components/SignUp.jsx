@@ -397,7 +397,8 @@ const styles = {
     subtitle: {
         fontSize: '14px',
         color: '#6b7280',
-        margin: '0'
+        margin: '0',
+        marginBottom: '5px'
     },
     form: {
         display: 'flex',
@@ -472,7 +473,7 @@ const styles = {
         textAlign: 'center',
         paddingTop: '20px',
         borderTop: '1px solid #e5e7eb',
-        marginTop: '10px'
+        marginTop: '0px'
     },
     footerText: {
         fontSize: '14px',
@@ -480,6 +481,7 @@ const styles = {
         margin: '0'
     },
     footerLink: {
+        cursor: 'pointer',
         fontWeight: '500',
         textDecoration: 'none',
         ':hover': {

@@ -85,7 +85,7 @@ const AdminRegister = () => {
 
     const handleServerErrors = (errorData) => {
         const newErrors = {};
-        
+
         // Format standard FastAPI pour les erreurs de validation
         if (errorData.detail && Array.isArray(errorData.detail)) {
             errorData.detail.forEach(error => {
@@ -98,7 +98,7 @@ const AdminRegister = () => {
                 const clientFieldName = fieldMap[fieldName] || fieldName;
                 newErrors[clientFieldName] = error.msg;
             });
-        } 
+        }
         // Autre format possible
         else if (typeof errorData.detail === 'string') {
             newErrors.general = errorData.detail;
@@ -151,23 +151,6 @@ const AdminRegister = () => {
 
                     <div style={styles.grid}>
                         <div style={styles.inputGroup}>
-                            <label htmlFor="prenom" style={styles.label}>Prénom *</label>
-                            <input
-                                id="prenom"
-                                name="prenom"
-                                type="text"
-                                value={formData.prenom}
-                                onChange={handleChange}
-                                style={{
-                                    ...styles.input,
-                                    ...(errors.prenom && styles.inputError)
-                                }}
-                                placeholder="Jean"
-                            />
-                            {errors.prenom && <p style={styles.errorText}>{errors.prenom}</p>}
-                        </div>
-
-                        <div style={styles.inputGroup}>
                             <label htmlFor="nom" style={styles.label}>Nom *</label>
                             <input
                                 id="nom"
@@ -182,6 +165,23 @@ const AdminRegister = () => {
                                 placeholder="Dupont"
                             />
                             {errors.nom && <p style={styles.errorText}>{errors.nom}</p>}
+                        </div>
+
+                        <div style={styles.inputGroup}>
+                            <label htmlFor="prenom" style={styles.label}>Prénom *</label>
+                            <input
+                                id="prenom"
+                                name="prenom"
+                                type="text"
+                                value={formData.prenom}
+                                onChange={handleChange}
+                                style={{
+                                    ...styles.input,
+                                    ...(errors.prenom && styles.inputError)
+                                }}
+                                placeholder="Jean"
+                            />
+                            {errors.prenom && <p style={styles.errorText}>{errors.prenom}</p>}
                         </div>
                     </div>
 
@@ -201,40 +201,42 @@ const AdminRegister = () => {
                         />
                         {errors.email && <p style={styles.errorText}>{errors.email}</p>}
                     </div>
+                    <div style={styles.grid}>
+                        <div style={styles.inputGroup}>
+                            <label htmlFor="mot_de_passe" style={styles.label}>Mot de passe *</label>
+                            <input
+                                id="mot_de_passe"
+                                name="mot_de_passe"
+                                type="password"
+                                value={formData.mot_de_passe}
+                                onChange={handleChange}
+                                style={{
+                                    ...styles.input,
+                                    ...(errors.mot_de_passe && styles.inputError)
+                                }}
+                                placeholder="••••••••"
+                            />
+                            {errors.mot_de_passe && <p style={styles.errorText}>{errors.mot_de_passe}</p>}
+                        </div>
 
-                    <div style={styles.inputGroup}>
-                        <label htmlFor="mot_de_passe" style={styles.label}>Mot de passe *</label>
-                        <input
-                            id="mot_de_passe"
-                            name="mot_de_passe"
-                            type="password"
-                            value={formData.mot_de_passe}
-                            onChange={handleChange}
-                            style={{
-                                ...styles.input,
-                                ...(errors.mot_de_passe && styles.inputError)
-                            }}
-                            placeholder="••••••••"
-                        />
-                        {errors.mot_de_passe && <p style={styles.errorText}>{errors.mot_de_passe}</p>}
+                        <div style={styles.inputGroup}>
+                            <label htmlFor="confirmPassword" style={styles.label}>Confirmer le mot de passe *</label>
+                            <input
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                type="password"
+                                value={formData.confirmPassword}
+                                onChange={handleChange}
+                                style={{
+                                    ...styles.input,
+                                    ...(errors.confirmPassword && styles.inputError)
+                                }}
+                                placeholder="••••••••"
+                            />
+                            {errors.confirmPassword && <p style={styles.errorText}>{errors.confirmPassword}</p>}
+                        </div>
                     </div>
 
-                    <div style={styles.inputGroup}>
-                        <label htmlFor="confirmPassword" style={styles.label}>Confirmer le mot de passe *</label>
-                        <input
-                            id="confirmPassword"
-                            name="confirmPassword"
-                            type="password"
-                            value={formData.confirmPassword}
-                            onChange={handleChange}
-                            style={{
-                                ...styles.input,
-                                ...(errors.confirmPassword && styles.inputError)
-                            }}
-                            placeholder="••••••••"
-                        />
-                        {errors.confirmPassword && <p style={styles.errorText}>{errors.confirmPassword}</p>}
-                    </div>
 
                     <div style={styles.inputGroup}>
                         <label htmlFor="adminCode" style={styles.label}>Code administrateur *</label>
@@ -301,12 +303,15 @@ const styles = {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#f9fafb',
+        backgroundImage: `url("/portnight.jpg")`,
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
         padding: '20px',
         fontFamily: "'Inter', sans-serif"
     },
     card: {
-        backgroundColor: 'white',
+        backgroundColor: '#f9fafbea',
         borderRadius: '12px',
         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         padding: '40px',
