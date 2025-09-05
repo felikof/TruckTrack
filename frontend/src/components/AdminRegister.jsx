@@ -307,16 +307,16 @@ const styles = {
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center',
-        padding: '20px',
+        padding: '10px',
         fontFamily: "'Inter', sans-serif"
     },
     card: {
         backgroundColor: '#f9fafbea',
         borderRadius: '12px',
         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-        padding: '40px',
+        padding: '10px 40px 10px 40px',
         width: '100%',
-        maxWidth: '480px'
+        maxWidth: '580px'
     },
     header: {
         textAlign: 'center',
