@@ -12,5 +12,3 @@ class Chauffeur(Base):
     email = Column(String, unique=True)
     telephone = Column(String, nullable=False)
     transporteur_id = Column(Integer, ForeignKey("transporteurs.id"))
-
-    transporteur = relationship("Transporteur", back_populates="chauffeur", uselist=False)

@@ -18,11 +18,3 @@ class Camion(Base):
     # even_id = Column(Integer, ForeignKey("even_logistique.id"))
     # position_id = Column(Integer, ForeignKey("positions_gps.id"), nullable=True)
     # trajectoire_id = Column(Integer, ForeignKey("trajectoires_camion.id"))
-
-    chauffeur = relationship("Chauffeur", back_populates="camions", uselist=False)
-    transporteur = relationship("Transporteur", back_populates="camion", uselist=False)
-    reservations = relationship("Reservation", back_populates="camion")
-    # even_logistique = relationship("EvenLogistique", back_populates="camion")
-    # position_gps = relationship("PositionGPS", back_populates="camion", uselist=False)
-    # trajectoire = relationship("TrajectoireCamion", back_populates="camion", uselist=False)
-    # type_conteneurs = relationship("TypeConteneur", back_populates="camions")

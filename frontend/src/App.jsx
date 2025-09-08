@@ -14,6 +14,7 @@ import CarrierRegistration from './components/CarrierRegistration';
 import DriverRegistration from './components/DriverRegistration';
 import AdminLogin from './components/AdminLogin';
 import AdminRegister from './components/AdminRegister';
+import AdminSlotManagement from './components/AdminSlotManagement';
 
 function App() {
     return (
@@ -34,6 +35,7 @@ function App() {
                 <Route path="/Driver" element={<DriverRegistration/>}/>
                 <Route path="/AdminL" element={<AdminLogin/>}/>
                 <Route path="/AdminR" element={<AdminRegister/>}/>
+                <Route path="/Slot" element={<AdminSlotManagement/>}/>
             </Routes>
         </Router>
     );

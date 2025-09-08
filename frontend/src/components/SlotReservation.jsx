@@ -105,7 +105,7 @@
 //         return Object.keys(newErrors).length === 0
 //     }
 
-    
+
 
 //     const handleSubmit = (e) => {
 //         e.preventDefault()
@@ -852,33 +852,33 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
     cargoDescription: '',
     containerNumber: '',
     sealNumber: '',
-    
+
     // Driver Information
     driverName: '',
     driverLicense: '',
     driverPhone: '',
-    
+
     // Carrier Information
     carrierName: '',
     carrierContact: '',
-    
+
     // Route Information
     origin: selectedSlot?.gate || 'Gate A1',
     destination: selectedSlot?.terminal || 'Terminal 3',
     estimatedArrival: '',
-    
+
     // Additional Services
     additionalServices: [],
     specialRequirements: '',
-    
+
     // Documentation
     billOfLading: '',
     customsDeclaration: '',
-    
+
     // Emergency Contact
     emergencyContactName: '',
     emergencyContactPhone: '',
-    
+
     // Terms and Conditions
     acceptTerms: false,
     acceptPricing: false
@@ -908,12 +908,12 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
-    
+
     if (type === 'checkbox') {
       if (name === 'additionalServices') {
         setFormData(prev => ({
           ...prev,
-          additionalServices: checked 
+          additionalServices: checked
             ? [...prev.additionalServices, value]
             : prev.additionalServices.filter(service => service !== value)
         }))
@@ -933,12 +933,12 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
 
   const validateStep = (step) => {
     const newErrors = {}
-    
+
     switch (step) {
       case 1:
         if (!formData.truckPlateNumber.trim()) newErrors.truckPlateNumber = 'Truck plate number is required'
         if (!formData.cargoWeight) newErrors.cargoWeight = 'Cargo weight is required'
-        
+
         const plateRegex = /^[A-Z]{2}-\d{4}-[A-Z]{2}$/
         if (formData.truckPlateNumber && !plateRegex.test(formData.truckPlateNumber)) {
           newErrors.truckPlateNumber = 'Plate number format should be XX-0000-XX'
@@ -950,7 +950,7 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
         if (!formData.driverPhone.trim()) newErrors.driverPhone = 'Driver phone is required'
         if (!formData.carrierName.trim()) newErrors.carrierName = 'Carrier name is required'
         if (!formData.estimatedArrival) newErrors.estimatedArrival = 'Estimated arrival time is required'
-        
+
         const phoneRegex = /^[\+]?[0-9\s\-\(\)]{8,}$/
         if (formData.driverPhone && !phoneRegex.test(formData.driverPhone)) {
           newErrors.driverPhone = 'Please enter a valid phone number'
@@ -990,7 +990,7 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
         status: 'pending',
         createdAt: new Date().toISOString()
       }
-      
+
       if (onSubmit) {
         onSubmit(reservationData)
       } else {
@@ -1054,7 +1054,7 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
                   name="truckPlateNumber"
                   value={formData.truckPlateNumber}
                   onChange={handleChange}
-                  style={{...styles.input, ...(errors.truckPlateNumber ? styles.inputError : {}), textTransform: 'uppercase'}}
+                  style={{ ...styles.input, ...(errors.truckPlateNumber ? styles.inputError : {}), textTransform: 'uppercase' }}
                   placeholder="TG-1234-AB"
                 />
                 {errors.truckPlateNumber && <span style={styles.errorMessage}>{errors.truckPlateNumber}</span>}
@@ -1101,7 +1101,7 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
                   name="cargoWeight"
                   value={formData.cargoWeight}
                   onChange={handleChange}
-                  style={{...styles.input, ...(errors.cargoWeight ? styles.inputError : {})}}
+                  style={{ ...styles.input, ...(errors.cargoWeight ? styles.inputError : {}) }}
                   min="0.1"
                   step="0.1"
                   placeholder="e.g., 25.5"
@@ -1109,7 +1109,7 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
                 {errors.cargoWeight && <span style={styles.errorMessage}>{errors.cargoWeight}</span>}
               </div>
 
-              <div style={{...styles.formGroup, gridColumn: '1 / -1'}}>
+              <div style={{ ...styles.formGroup, gridColumn: '1 / -1' }}>
                 <label style={styles.label}>Cargo Description</label>
                 <textarea
                   name="cargoDescription"
@@ -1160,7 +1160,7 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
                   name="driverName"
                   value={formData.driverName}
                   onChange={handleChange}
-                  style={{...styles.input, ...(errors.driverName ? styles.inputError : {})}}
+                  style={{ ...styles.input, ...(errors.driverName ? styles.inputError : {}) }}
                   placeholder="Full name of driver"
                 />
                 {errors.driverName && <span style={styles.errorMessage}>{errors.driverName}</span>}
@@ -1173,7 +1173,7 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
                   name="driverLicense"
                   value={formData.driverLicense}
                   onChange={handleChange}
-                  style={{...styles.input, ...(errors.driverLicense ? styles.inputError : {})}}
+                  style={{ ...styles.input, ...(errors.driverLicense ? styles.inputError : {}) }}
                   placeholder="License number"
                 />
                 {errors.driverLicense && <span style={styles.errorMessage}>{errors.driverLicense}</span>}
@@ -1186,7 +1186,7 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
                   name="driverPhone"
                   value={formData.driverPhone}
                   onChange={handleChange}
-                  style={{...styles.input, ...(errors.driverPhone ? styles.inputError : {})}}
+                  style={{ ...styles.input, ...(errors.driverPhone ? styles.inputError : {}) }}
                   placeholder="+228 XX XX XX XX"
                 />
                 {errors.driverPhone && <span style={styles.errorMessage}>{errors.driverPhone}</span>}
@@ -1199,7 +1199,7 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
                   name="carrierName"
                   value={formData.carrierName}
                   onChange={handleChange}
-                  style={{...styles.input, ...(errors.carrierName ? styles.inputError : {})}}
+                  style={{ ...styles.input, ...(errors.carrierName ? styles.inputError : {}) }}
                   placeholder="Company or carrier name"
                 />
                 {errors.carrierName && <span style={styles.errorMessage}>{errors.carrierName}</span>}
@@ -1224,7 +1224,7 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
                   name="estimatedArrival"
                   value={formData.estimatedArrival}
                   onChange={handleChange}
-                  style={{...styles.input, ...(errors.estimatedArrival ? styles.inputError : {})}}
+                  style={{ ...styles.input, ...(errors.estimatedArrival ? styles.inputError : {}) }}
                 />
                 {errors.estimatedArrival && <span style={styles.errorMessage}>{errors.estimatedArrival}</span>}
               </div>
@@ -1303,7 +1303,7 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
         return (
           <div style={styles.stepContent}>
             <h3 style={styles.stepTitle}>Additional Services & Documentation</h3>
-            
+
             <div style={styles.servicesSection}>
               <label style={styles.label}>Additional Services</label>
               <div style={styles.checkboxGrid}>
@@ -1362,7 +1362,7 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
             </div>
 
             <div style={styles.requirementsSection}>
-              <div style={{...styles.formGroup, gridColumn: '1 / -1'}}>
+              <div style={{ ...styles.formGroup, gridColumn: '1 / -1' }}>
                 <label style={styles.label}>Special Requirements or Notes</label>
                 <textarea
                   name="specialRequirements"
@@ -1384,7 +1384,7 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
                     name="acceptTerms"
                     checked={formData.acceptTerms}
                     onChange={handleChange}
-                    style={{...styles.checkbox, ...(errors.acceptTerms ? styles.inputError : {})}}
+                    style={{ ...styles.checkbox, ...(errors.acceptTerms ? styles.inputError : {}) }}
                   />
                   <span style={styles.checkboxText}>I accept the terms and conditions for port operations *</span>
                 </label>
@@ -1396,7 +1396,7 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
                     name="acceptPricing"
                     checked={formData.acceptPricing}
                     onChange={handleChange}
-                    style={{...styles.checkbox, ...(errors.acceptPricing ? styles.inputError : {})}}
+                    style={{ ...styles.checkbox, ...(errors.acceptPricing ? styles.inputError : {}) }}
                   />
                   <span style={styles.checkboxText}>I accept the pricing terms and understand all fees *</span>
                 </label>
@@ -1413,7 +1413,7 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
               <div style={styles.completionIcon}>✅</div>
               <h3 style={styles.completionTitle}>Review & Complete Reservation</h3>
               <p style={styles.completionText}>Please review your reservation details before submitting</p>
-              
+
               <div style={styles.summaryGrid}>
                 <div style={styles.summarySection}>
                   <h4 style={styles.summaryTitle}>Slot Details</h4>
@@ -1443,7 +1443,7 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
                   <h4 style={styles.summaryTitle}>Services & Pricing</h4>
                   <p><strong>Additional Services:</strong> {formData.additionalServices.length} selected</p>
                   <p><strong>Base Price:</strong> {formatPrice(slot.price, slot.currency)}</p>
-                  <p style={{color: '#3b82f6', fontWeight: '600', fontSize: '18px'}}>
+                  <p style={{ color: '#3b82f6', fontWeight: '600', fontSize: '18px' }}>
                     <strong>Total:</strong> {formatPrice(slot.price, slot.currency)}
                   </p>
                 </div>
@@ -1462,7 +1462,7 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
       <div style={styles.header}>
         <h2 style={styles.title}>RESERVE SLOT</h2>
         <p style={styles.subtitle}>Complete your slot reservation for {slot.timeSlot} - {slot.gate} to {slot.terminal}</p>
-        
+
         <div style={styles.slotSummary}>
           <div style={styles.summaryItem}>
             <span style={styles.summaryLabel}>Time Slot:</span>
@@ -1478,7 +1478,7 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
           </div>
           <div style={styles.summaryItem}>
             <span style={styles.summaryLabel}>Price:</span>
-            <span style={{...styles.summaryValue, color: '#3b82f6', fontSize: '18px'}}>{formatPrice(slot.price, slot.currency)}</span>
+            <span style={{ ...styles.summaryValue, color: '#3b82f6', fontSize: '18px' }}>{formatPrice(slot.price, slot.currency)}</span>
           </div>
         </div>
       </div>
@@ -1517,35 +1517,35 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
         {renderStepContent()}
 
         <div style={styles.actions}>
-          <button 
-            type="button" 
-            onClick={handleCancel} 
+          <button
+            type="button"
+            onClick={handleCancel}
             style={styles.cancelButton}
           >
             Cancel
           </button>
-          
+
           <div style={styles.navigationButtons}>
             {currentStep > 1 && (
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={handlePrevious}
                 style={styles.previousButton}
               >
                 Previous
               </button>
             )}
-            
+
             {currentStep < steps.length ? (
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={handleNext}
                 style={styles.nextButton}
               >
                 Next
               </button>
             ) : (
-              <button 
+              <button
                 type="submit"
                 style={styles.submitButton}
               >
