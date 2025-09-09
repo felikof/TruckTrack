@@ -7,7 +7,7 @@
 //         nom: '',
 //         prenom: '',
 //         email: '',
-//         mot_de_passe: '',
+//         password: '',
 //         confirmPassword: '',
 //     });
 
@@ -27,7 +27,7 @@
 
 //     const handleSubmit = async (e) => {
 //         e.preventDefault();
-//         if (formData.mot_de_passe !== formData.confirmPassword) {
+//         if (formData.password !== formData.confirmPassword) {
 //             alert("Les mots de passe ne correspondent pas");
 //             return;
 //         }
@@ -37,7 +37,7 @@
 //                 nom: formData.nom,
 //                 prenom: formData.prenom,
 //                 email: formData.email,
-//                 mot_de_passe: formData.mot_de_passe
+//                 password: formData.password
 //             }, {
 //                     headers: {
 //                         "Content-Type": "application/json"
@@ -63,7 +63,7 @@
 //                     <input type="text" name="nom" placeholder="Nom" required value={formData.nom} onChange={handleChange} style={inputStyle} />
 //                     <input type="text" name="prenom" placeholder="Prénom" required value={formData.prenom} onChange={handleChange} style={inputStyle} />
 //                     <input type="email" name="email" placeholder="Email" required value={formData.email} onChange={handleChange} style={inputStyle} />
-//                     <input type="password" name="mot_de_passe" placeholder="Mot de passe" required value={formData.mot_de_passe} onChange={handleChange} style={inputStyle} />
+//                     <input type="password" name="password" placeholder="Mot de passe" required value={formData.password} onChange={handleChange} style={inputStyle} />
 //                     <input type="password" name="confirmPassword" placeholder="Confirmer mot de passe" required value={formData.confirmPassword} onChange={handleChange} style={inputStyle} />
 
 //                     <button type="reset" style={resetButtonStyle}>Annuler</button>
@@ -121,12 +121,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const SignUp = ({ onRegister, showLoginLink = true }) => {
+const SignUp = () => {
     const [formData, setFormData] = useState({
-        nom: '',
-        prenom: '',
+        name: '',
+        first_name: '',
         email: '',
-        mot_de_passe: '',
+        password: '',
         confirmPassword: '',
     });
 
@@ -139,14 +139,14 @@ const SignUp = ({ onRegister, showLoginLink = true }) => {
 
     const validateForm = () => {
         const newErrors = {};
-        if (!formData.prenom) newErrors.prenom = 'Le prénom est requis';
-        if (!formData.nom) newErrors.nom = 'Le nom est requis';
+        if (!formData.first_name) newErrors.first_name = 'Le prénom est requis';
+        if (!formData.name) newErrors.name = 'Le nom est requis';
         if (!formData.email) newErrors.email = 'L\'email est requis';
         else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Format d\'email invalide';
-        if (!formData.mot_de_passe) newErrors.mot_de_passe = 'Le mot de passe est requis';
-        else if (formData.mot_de_passe.length < 8) newErrors.mot_de_passe = 'Le mot de passe doit contenir au moins 8 caractères';
+        if (!formData.password) newErrors.password = 'Le mot de passe est requis';
+        else if (formData.password.length < 8) newErrors.password = 'Le mot de passe doit contenir au moins 8 caractères';
         if (!formData.confirmPassword) newErrors.confirmPassword = 'La confirmation du mot de passe est requise';
-        else if (formData.mot_de_passe !== formData.confirmPassword) newErrors.confirmPassword = 'Les mots de passe ne correspondent pas';
+        else if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Les mots de passe ne correspondent pas';
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -170,7 +170,7 @@ const SignUp = ({ onRegister, showLoginLink = true }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (formData.mot_de_passe !== formData.confirmPassword) {
+        if (formData.password !== formData.confirmPassword) {
             alert("Les mots de passe ne correspondent pas");
             return;
         }
@@ -179,11 +179,11 @@ const SignUp = ({ onRegister, showLoginLink = true }) => {
         setIsLoading(true);
         navigate("/SignIn");
         try {
-            await axios.post("http://localhost:8000/utilisateurs/inscription", {
-                nom: formData.nom,
-                prenom: formData.prenom,
+            await axios.post("http://localhost:8000/user/sign", {
+                name: formData.name,
+                first_name: formData.first_name,
                 email: formData.email,
-                mot_de_passe: formData.mot_de_passe
+                password: formData.password
             }, {
                 headers: {
                     "Content-Type": "application/json"
@@ -221,37 +221,37 @@ const SignUp = ({ onRegister, showLoginLink = true }) => {
 
                     <div style={styles.grid}>
                         <div style={styles.inputGroup}>
-                            <label htmlFor="nom" style={styles.label}>Nom</label>
+                            <label htmlFor="name" style={styles.label}>Nom</label>
                             <input
-                                id="nom"
-                                name="nom"
+                                id="name"
+                                name="name"
                                 type="text"
-                                value={formData.nom}
+                                value={formData.name}
                                 onChange={handleChange}
                                 style={{
                                     ...styles.input,
-                                    ...(errors.nom && styles.inputError)
+                                    ...(errors.name && styles.inputError)
                                 }}
                                 placeholder="Dupont"
                             />
-                            {errors.nom && <p style={styles.errorText}>{errors.nom}</p>}
+                            {errors.name && <p style={styles.errorText}>{errors.name}</p>}
                         </div>
 
                         <div style={styles.inputGroup}>
-                            <label htmlFor="prenom" style={styles.label}>Prénom</label>
+                            <label htmlFor="first_name" style={styles.label}>Prénom</label>
                             <input
-                                id="prenom"
-                                name="prenom"
+                                id="first_name"
+                                name="first_name"
                                 type="text"
-                                value={formData.prenom}
+                                value={formData.first_name}
                                 onChange={handleChange}
                                 style={{
                                     ...styles.input,
-                                    ...(errors.prenom && styles.inputError)
+                                    ...(errors.first_name && styles.inputError)
                                 }}
                                 placeholder="Jean"
                             />
-                            {errors.prenom && <p style={styles.errorText}>{errors.prenom}</p>}
+                            {errors.first_name && <p style={styles.errorText}>{errors.first_name}</p>}
                         </div>
 
                     </div>
@@ -274,20 +274,20 @@ const SignUp = ({ onRegister, showLoginLink = true }) => {
                     </div>
 
                     <div style={styles.inputGroup}>
-                        <label htmlFor="mot_de_passe" style={styles.label}>Mot de passe</label>
+                        <label htmlFor="password" style={styles.label}>Mot de passe</label>
                         <input
-                            id="mot_de_passe"
-                            name="mot_de_passe"
+                            id="password"
+                            name="password"
                             type="password"
-                            value={formData.mot_de_passe}
+                            value={formData.password}
                             onChange={handleChange}
                             style={{
                                 ...styles.input,
-                                ...(errors.mot_de_passe && styles.inputError)
+                                ...(errors.password && styles.inputError)
                             }}
                             placeholder="••••••••"
                         />
-                        {errors.mot_de_passe && <p style={styles.errorText}>{errors.mot_de_passe}</p>}
+                        {errors.password && <p style={styles.errorText}>{errors.password}</p>}
                     </div>
 
                     <div style={styles.inputGroup}>

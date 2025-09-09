@@ -4,15 +4,15 @@ from sqlalchemy import ForeignKey
 from database import Base
 
 class Reservation(Base):
-    __tablename__ = "reservations"
+    __tablename__ = "reservation"
     
     id = Column(Integer, primary_key=True, index=True)
     date = Column(Date, nullable=False)
     statut = Column(String, nullable=False)
-    transporteur_id = Column(Integer, ForeignKey("transporteurs.id"))
-    camion_id = Column(Integer, ForeignKey("camions.id"))
-    chauffeur_id = Column(Integer, ForeignKey("chauffeurs.id"))
-    creneau_id = Column(Integer, ForeignKey("creneaux.id"))
+    carrier_id = Column(Integer, ForeignKey("carrier.id"))
+    truck_id = Column(Integer, ForeignKey("truck.id"))
+    driver_id = Column(Integer, ForeignKey("driver.id"))
+    slot_id = Column(Integer, ForeignKey("slot.id"))
     # conteneur_num = Column(String, ForeignKey("type_conteneurs.num"))
 
-    creneaux = relationship("Creneau", back_populates="reservation", uselist=False)
+    slot = relationship("Slot", back_populates="reservation", uselist=False)

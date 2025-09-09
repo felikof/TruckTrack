@@ -3,8 +3,8 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import ForeignKey
 from database import Base
 
-class Creneau(Base):
-    __tablename__ = "creneaux"
+class Slot(Base):
+    __tablename__ = "slot"
     
     id = Column(Integer, primary_key=True, index=True)
     heure_debut = Column(DateTime, nullable=False)
@@ -12,5 +12,4 @@ class Creneau(Base):
     statut = Column(String, nullable=False)
     # alerte_id = Column(Integer, ForeignKey("alertes.id"))
 
-    # alerte = relationship("Alerte", back_populates="creneaux", uselist=False)
-    reservations = relationship("Reservation", back_populates="creneaux")
+    reservation = relationship("Reservation", back_populates="slot")

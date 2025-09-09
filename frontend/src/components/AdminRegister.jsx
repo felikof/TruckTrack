@@ -5,10 +5,10 @@ import { useNavigate } from 'react-router-dom';
 const AdminRegister = () => {
     const [formData, setFormData] = useState({
         badgeNumber: '',
-        nom: '',
-        prenom: '',
+        name: '',
+        first_name: '',
         email: '',
-        mot_de_passe: '',
+        password: '',
         confirmPassword: '',
         adminCode: ''
     });
@@ -34,14 +34,14 @@ const AdminRegister = () => {
         const newErrors = {};
         if (!formData.badgeNumber) newErrors.badgeNumber = 'Le numéro de badge est requis';
         else if (!/^[A-Z]{3}\d{4}$/.test(formData.badgeNumber)) newErrors.badgeNumber = 'Format invalide (ex: ADM1234)';
-        if (!formData.prenom) newErrors.prenom = 'Le prénom est requis';
-        if (!formData.nom) newErrors.nom = 'Le nom est requis';
+        if (!formData.first_name) newErrors.first_name = 'Le prénom est requis';
+        if (!formData.name) newErrors.name = 'Le nom est requis';
         if (!formData.email) newErrors.email = 'L\'email est requis';
         else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Format d\'email invalide';
-        if (!formData.mot_de_passe) newErrors.mot_de_passe = 'Le mot de passe est requis';
-        else if (formData.mot_de_passe.length < 8) newErrors.mot_de_passe = 'Le mot de passe doit contenir au moins 8 caractères';
+        if (!formData.password) newErrors.password = 'Le mot de passe est requis';
+        else if (formData.password.length < 8) newErrors.password = 'Le mot de passe doit contenir au moins 8 caractères';
         if (!formData.confirmPassword) newErrors.confirmPassword = 'La confirmation du mot de passe est requise';
-        else if (formData.mot_de_passe !== formData.confirmPassword) newErrors.confirmPassword = 'Les mots de passe ne correspondent pas';
+        else if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Les mots de passe ne correspondent pas';
         if (!formData.adminCode) newErrors.adminCode = 'Le code administrateur est requis';
         else if (formData.adminCode !== 'ADMIN2024') newErrors.adminCode = 'Code administrateur incorrect';
 
@@ -56,12 +56,12 @@ const AdminRegister = () => {
         setIsLoading(true);
 
         try {
-            const response = await axios.post("http://localhost:8000/admins/inscription", {
+            const response = await axios.post("http://localhost:8000/admins/sign", {
                 badge_number: formData.badgeNumber, // Ajout du badgeNumber
-                nom: formData.nom,
-                prenom: formData.prenom,
+                name: formData.name,
+                first_name: formData.first_name,
                 email: formData.email,
-                mot_de_passe: formData.mot_de_passe
+                password: formData.password
             }, {
                 headers: {
                     "Content-Type": "application/json"
@@ -93,7 +93,7 @@ const AdminRegister = () => {
                 // Mapping des noms de champs entre le frontend et le backend
                 const fieldMap = {
                     'badge_number': 'badgeNumber',
-                    'mot_de_passe': 'mot_de_passe'
+                    'password': 'password'
                 };
                 const clientFieldName = fieldMap[fieldName] || fieldName;
                 newErrors[clientFieldName] = error.msg;
@@ -168,20 +168,20 @@ const AdminRegister = () => {
                         </div>
 
                         <div style={styles.inputGroup}>
-                            <label htmlFor="prenom" style={styles.label}>Prénom *</label>
+                            <label htmlFor="first_name" style={styles.label}>Prénom *</label>
                             <input
-                                id="prenom"
-                                name="prenom"
+                                id="first_name"
+                                name="first_name"
                                 type="text"
-                                value={formData.prenom}
+                                value={formData.first_name}
                                 onChange={handleChange}
                                 style={{
                                     ...styles.input,
-                                    ...(errors.prenom && styles.inputError)
+                                    ...(errors.first_name && styles.inputError)
                                 }}
                                 placeholder="Jean"
                             />
-                            {errors.prenom && <p style={styles.errorText}>{errors.prenom}</p>}
+                            {errors.first_name && <p style={styles.errorText}>{errors.first_name}</p>}
                         </div>
                     </div>
 
@@ -203,20 +203,20 @@ const AdminRegister = () => {
                     </div>
                     <div style={styles.grid}>
                         <div style={styles.inputGroup}>
-                            <label htmlFor="mot_de_passe" style={styles.label}>Mot de passe *</label>
+                            <label htmlFor="password" style={styles.label}>Mot de passe *</label>
                             <input
-                                id="mot_de_passe"
-                                name="mot_de_passe"
+                                id="password"
+                                name="password"
                                 type="password"
-                                value={formData.mot_de_passe}
+                                value={formData.password}
                                 onChange={handleChange}
                                 style={{
                                     ...styles.input,
-                                    ...(errors.mot_de_passe && styles.inputError)
+                                    ...(errors.password && styles.inputError)
                                 }}
                                 placeholder="••••••••"
                             />
-                            {errors.mot_de_passe && <p style={styles.errorText}>{errors.mot_de_passe}</p>}
+                            {errors.password && <p style={styles.errorText}>{errors.password}</p>}
                         </div>
 
                         <div style={styles.inputGroup}>

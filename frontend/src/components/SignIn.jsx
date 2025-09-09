@@ -195,7 +195,7 @@ import { useNavigate } from "react-router-dom";
 const SignIn = () => {
     const [formData, setFormData] = useState({
         email: '',
-        mot_de_passe: ''
+        password: ''
     });
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
@@ -225,8 +225,8 @@ const SignIn = () => {
         const newErrors = {};
         if (!formData.email) newErrors.email = 'L\'email est requis';
         else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Format d\'email invalide';
-        if (!formData.mot_de_passe) newErrors.mot_de_passe = 'Le mot de passe est requis';
-        else if (formData.mot_de_passe.length < 6) newErrors.mot_de_passe = 'Le mot de passe doit contenir au moins 6 caractères';
+        if (!formData.password) newErrors.password = 'Le mot de passe est requis';
+        else if (formData.password.length < 6) newErrors.password = 'Le mot de passe doit contenir au moins 6 caractères';
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -236,9 +236,9 @@ const SignIn = () => {
         if (!validateForm()) return;
         setIsLoading(true);
         try {
-            await axios.post("http://localhost:8000/utilisateurs/connexion", {
+            await axios.post("http://localhost:8000/user/login", {
                 email: formData.email,
-                mot_de_passe: formData.mot_de_passe
+                password: formData.password
             }, {
                 headers: {
                     "Content-Type": "application/json"
@@ -292,20 +292,20 @@ const SignIn = () => {
                     </div>
 
                     <div style={styles.inputGroup}>
-                        <label htmlFor="mot_de_passe" style={styles.label}>Mot de passe</label>
+                        <label htmlFor="password" style={styles.label}>Mot de passe</label>
                         <input
-                            id="mot_de_passe"
-                            name="mot_de_passe"
+                            id="password"
+                            name="password"
                             type="password"
-                            value={formData.mot_de_passe}
+                            value={formData.password}
                             onChange={handleChange}
                             style={{
                                 ...styles.input,
-                                ...(errors.mot_de_passe && styles.inputError)
+                                ...(errors.password && styles.inputError)
                             }}
                             placeholder="••••••••"
                         />
-                        {errors.mot_de_passe && <p style={styles.errorText}>{errors.mot_de_passe}</p>}
+                        {errors.password && <p style={styles.errorText}>{errors.password}</p>}
                     </div>
 
                     <div style={styles.options}>

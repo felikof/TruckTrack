@@ -2,10 +2,10 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine
 from models.admin import Admin
-from models.utilisateur import Utilisateur, Base
-from schemas.utilisateur_login import UtilisateurLogin
-from schemas.admin import AdminCreate
-from schemas.utilisateur import UtilisateurCreate
+from user import User, Base
+from backend.schemas.user_login import UserLogin
+from schemas.admin import CreateAdmin
+from backend.schemas.user import CreateUser
 from security import hasher, verifier_mdp
 from fastapi.middleware.cors import CORSMiddleware
         
@@ -30,60 +30,60 @@ def get_db():
     finally:
         db.close()
 
-@app.post("/utilisateurs/inscription")
-def inscrire_utilisateur(user: UtilisateurCreate, db: Session = Depends(get_db)):
-    db_user = db.query(Utilisateur).filter(Utilisateur.email == user.email).first()
+@app.post("/users/sign")
+def user_registration(user: CreateUser, db: Session = Depends(get_db)):
+    db_user = db.query(User).filter(User.email == user.email).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Email déjà utilisé")
 
-    nouvel_utilisateur = Utilisateur(
-        nom=user.nom,
-        prenom=user.prenom,
+    new_user = User(
+        name=user.name,
+        first_name=user.first_name,
         email=user.email,
-        mot_de_passe=hasher(user.mot_de_passe)
+        password=hasher(user.password)
     )
-    db.add(nouvel_utilisateur)
+    db.add(new_user)
     db.commit()
-    db.refresh(nouvel_utilisateur)
-    return {"message": "Inscription réussie", "id": nouvel_utilisateur.id}
+    db.refresh(new_user)
+    return {"message": "Inscription réussie", "id": new_user.id}
 
-@app.post("/utilisateurs/connexion")
-def connexion_utilisateur(user: UtilisateurLogin, db: Session = Depends(get_db)):
-    db_user = db.query(Utilisateur).filter(Utilisateur.email == user.email).first()
+@app.post("/users/login")
+def user_login(user: UserLogin, db: Session = Depends(get_db)):
+    db_user = db.query(User).filter(User.email == user.email).first()
     if not db_user:
         raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
 
-    if not verifier_mdp(user.mot_de_passe, db_user.mot_de_passe):
+    if not verifier_mdp(user.password, db_user.password):
         raise HTTPException(status_code=401, detail="Mot de passe incorrect")
 
-    return {"message": "Connexion réussie", "id": db_user.id, "nom": db_user.nom}
+    return {"message": "Connexion réussie", "id": db_user.id, "nom": db_user.name}
 
 
-@app.post("/admins/inscription")
-def inscrire_admin(admin: AdminCreate, db: Session = Depends(get_db)):
+@app.post("/admins/sign")
+def admin_registration(admin: CreateAdmin, db: Session = Depends(get_db)):
     db_admin = db.query(Admin).filter(Admin.email == admin.email).first()
     if db_admin:
         raise HTTPException(status_code=400, detail="Email déjà utilisé")
 
-    nouvel_admin = Admin(
+    new_admin = Admin(
         badge_number=admin.badge_number,
-        nom=admin.nom,
-        prenom=admin.prenom,
+        name=admin.name,
+        first_name=admin.first_name,
         email=admin.email,
-        mot_de_passe=hasher(admin.mot_de_passe)
+        password=hasher(admin.password)
     )
-    db.add(nouvel_admin)
+    db.add(new_admin)
     db.commit()
-    db.refresh(nouvel_admin)
-    return {"message": "Inscription admin réussie", "id": nouvel_admin.id}
+    db.refresh(new_admin)
+    return {"message": "Inscription admin réussie", "id": new_admin.id}
 
-@app.post("/admins/connexion")
-def connexion_admin(admin: UtilisateurLogin, db: Session = Depends(get_db)):
+@app.post("/admins/login")
+def admin_login(admin: UserLogin, db: Session = Depends(get_db)):
     db_admin = db.query(Admin).filter(Admin.email == admin.email).first()
     if not db_admin:
         raise HTTPException(status_code=404, detail="Admin non trouvé")
 
-    if not verifier_mdp(admin.mot_de_passe, db_admin.mot_de_passe):
+    if not verifier_mdp(admin.password, db_admin.password):
         raise HTTPException(status_code=401, detail="Mot de passe incorrect")
 
     return {"message": "Connexion admin réussie", "id": db_admin.id, "nom": db_admin.nom}

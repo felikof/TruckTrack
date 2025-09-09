@@ -1,8 +1,8 @@
 from pydantic import BaseModel, EmailStr
 
-class AdminCreate(BaseModel):
+class CreateAdmin(BaseModel):
     badge_number: str
-    nom: str
-    prenom: str
+    name: str
+    first_name: str
     email: EmailStr
-    mot_de_passe: str
+    password: str

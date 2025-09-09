@@ -1,9 +1,9 @@
 from sqlalchemy import Column, Integer, String, Enum
 from database import Base
 
-class Alerte(Base):
-    __tablename__ = "alertes"
+class Alert(Base):
+    __tablename__ = "alert"
     
     id = Column(Integer, primary_key=True, index=True)
     message = Column(String, nullable=False)
-    niveau = Column(Enum("info", "warning", "high", "critical", name="alerte_niveau"), nullable=False)
+    level = Column(Enum("info", "warning", "high", "critical", name="alert_level"), nullable=False)
