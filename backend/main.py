@@ -2,10 +2,10 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine
 from models.admin import Admin
-from user import User, Base
-from backend.schemas.user_login import UserLogin
+from models.user import User, Base
+from schemas.user_login import UserLogin
 from schemas.admin import CreateAdmin
-from backend.schemas.user import CreateUser
+from schemas.user import CreateUser
 from security import hasher, verifier_mdp
 from fastapi.middleware.cors import CORSMiddleware
         

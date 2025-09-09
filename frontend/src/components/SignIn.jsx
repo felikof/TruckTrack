@@ -236,7 +236,7 @@ const SignIn = () => {
         if (!validateForm()) return;
         setIsLoading(true);
         try {
-            await axios.post("http://localhost:8000/user/login", {
+            await axios.post("http://localhost:8000/users/login", {
                 email: formData.email,
                 password: formData.password
             }, {

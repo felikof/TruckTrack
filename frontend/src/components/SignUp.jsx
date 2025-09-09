@@ -179,7 +179,7 @@ const SignUp = () => {
         setIsLoading(true);
         navigate("/SignIn");
         try {
-            await axios.post("http://localhost:8000/user/sign", {
+            await axios.post("http://localhost:8000/users/sign", {
                 name: formData.name,
                 first_name: formData.first_name,
                 email: formData.email,
