@@ -214,7 +214,7 @@ const AdminSlotManagement = ({ onSlotCreated, onSlotUpdated, onSlotDeleted }) =>
                     <div style={styles.statIcon}>💰</div>
                     <div style={styles.statContent}>
                         <h3 style={styles.statNumber}>CFA {(slots.reduce((sum, s) => sum + (s.basePrice * s.reservedSlots), 0)).toLocaleString()}</h3>
-                        <p style={styles.statLabel}>Revenue</p>
+                        <p style={styles.statLabel}>Earning</p>
                     </div>
                 </div>
             </div>

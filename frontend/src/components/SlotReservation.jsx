@@ -1659,18 +1659,18 @@ const styles = {
     color: '#6366f1',
     fontWeight: '600'
   },
-  stepConnector: {
-    position: 'absolute',
-    top: '24px',
-    left: '60%',
-    right: '-40%',
-    height: '2px',
-    backgroundColor: '#e5e7eb',
-    transition: 'all 0.3s ease'
-  },
-  stepConnectorActive: {
-    backgroundColor: '#6366f1'
-  },
+  // stepConnector: {
+  //   position: 'absolute',
+  //   top: '24px',
+  //   left: '60%',
+  //   right: '-40%',
+  //   height: '2px',
+  //   backgroundColor: '#e5e7eb',
+  //   transition: 'all 0.3s ease'
+  // },
+  // stepConnectorActive: {
+  //   backgroundColor: '#6366f1'
+  // },
   stepInfo: {
     textAlign: 'right',
     marginBottom: '24px'

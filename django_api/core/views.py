@@ -1,12 +1,12 @@
 from django.shortcuts import render
 
 # Create your views here.
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from .models import User, Slot
-from .serializers import UserSerializer, SlotSerializer
+from .models import *
+from .serializers import *
 
 # Inscription utilisateur
 class UserSignView(generics.CreateAPIView):
@@ -60,7 +60,12 @@ def cancel_booking(request, pk):
 
 @api_view(["GET"])
 @permission_classes([permissions.IsAuthenticated])
-def available_slots(request):
-    slot = Slot.objects.filter(statut="disponible")
+def available_slots():
+    slot = Slot.objects.filter(statut="available")
     serializer = SlotSerializer(slot, many=True)
     return Response(serializer.data)
+
+class DriverViewSet(viewsets.ModelViewSet):
+    queryset = Driver.objects.all()
+    serializer_class = DriverSerializer
+    permission_classes = [permissions.IsAuthenticated]
