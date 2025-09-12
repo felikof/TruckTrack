@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { parsePhoneNumberFromString } from "libphonenumber-js"
 
-const DriverRegistration = ({ onSubmit, onCancel }) => {
+const DriverRegistration = ({ onCancel }) => {
     const [currentStep, setCurrentStep] = useState(1)
+    const [languages, setLanguages] = useState([])
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -19,6 +21,12 @@ const DriverRegistration = ({ onSubmit, onCancel }) => {
         experience: '',
         languages: []
     })
+
+    useEffect(() => {
+        fetch("http://localhost:8000/languages/")
+            .then((res) => res.json())
+            .then((data) => setLanguages(data));
+    }, []);
 
     const [errors, setErrors] = useState({})
 
@@ -49,6 +57,33 @@ const DriverRegistration = ({ onSubmit, onCancel }) => {
         }
     }
 
+    //     const handleChange = (e) => {
+    //     setForm({ ...form, [e.target.name]: e.target.value });
+    //   };
+
+    const handleLanguageChange = (e) => {
+        const value = Array.from(
+            e.target.selectedOptions,
+            (option) => parseInt(option.value)
+        );
+        setFormData(prev => ({ ...prev, languages: value }));
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        fetch("http://localhost:8000/drivers/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                console.log("Driver créé :", data);
+            });
+    };
+
     const validateStep = (step) => {
         const newErrors = {}
 
@@ -67,10 +102,18 @@ const DriverRegistration = ({ onSubmit, onCancel }) => {
                     newErrors.email = 'Please enter a valid email address'
                 }
 
-                const phoneRegex = /^[\+]?[0-9\s\-\(\)]{8,}$/
-                if (formData.phoneNumber && !phoneRegex.test(formData.phoneNumber)) {
-                    newErrors.phoneNumber = 'Please enter a valid phone number'
+                // const phoneRegex = parsePhoneNumberFromString(phone)
+                // if (formData.phoneNumber && !phoneRegex.test(formData.phoneNumber)) {
+                //     newErrors.phoneNumber = 'Please enter a valid phone number'
+                // }
+
+                if (formData.phoneNumber) {
+                    const phoneNumber = parsePhoneNumberFromString(formData.phoneNumber, "TG") // "TG" = pays par défaut
+                    if (!phoneNumber || !phoneNumber.isValid()) {
+                        newErrors.phoneNumber = "Please enter a valid phone number"
+                    }
                 }
+
                 break
             case 3:
                 if (!formData.licenseNumber.trim()) newErrors.licenseNumber = 'License number is required'
@@ -92,17 +135,17 @@ const DriverRegistration = ({ onSubmit, onCancel }) => {
         setCurrentStep(prev => Math.max(prev - 1, 1))
     }
 
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        if (validateStep(currentStep)) {
-            if (onSubmit) {
-                onSubmit(formData)
-            } else {
-                console.log('Driver registration data:', formData)
-                alert('Driver registered successfully!')
-            }
-        }
-    }
+    // const handleSubmit = (e) => {
+    //     e.preventDefault()
+    //     if (validateStep(currentStep)) {
+    //         if (onSubmit) {
+    //             onSubmit(formData)
+    //         } else {
+    //             console.log('Driver registration data:', formData)
+    //             alert('Driver registered successfully!')
+    //         }
+    //     }
+    // }
 
     const handleCancel = () => {
         if (onCancel) {
@@ -343,6 +386,13 @@ const DriverRegistration = ({ onSubmit, onCancel }) => {
                         </div>
 
                         <div style={styles.languageSection}>
+                            <select multiple onChange={handleLanguageChange} style={styles.select}>
+                                {languages.map((lang) => (
+                                    <option key={lang.id} value={lang.id}>
+                                        {lang.name}
+                                    </option>
+                                ))}
+                            </select>
                             <label style={styles.label}>Languages Spoken</label>
                             <div style={styles.checkboxGrid}>
                                 {['French', 'English', 'Ewe', 'Kabye', 'Tem'].map(language => (
@@ -631,6 +681,7 @@ const styles = {
         backgroundColor: '#ffffff'
     },
     select: {
+        width: '100%',
         padding: '12px 16px',
         border: '2px solid #e5e7eb',
         borderRadius: '8px',

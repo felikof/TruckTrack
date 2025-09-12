@@ -78,7 +78,6 @@ class DriverAPITestCase(APITestCase):
             "emergency_phone": "+22899887766",
             "experience": 5,
         }
-        
 
         response = self.client.post(url, data, format="json")
 

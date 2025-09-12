@@ -148,25 +148,8 @@ class LanguageSerializer(serializers.ModelSerializer):
         fields = ["id", "name"]
 
 class DriverSerializer(serializers.ModelSerializer):
-    languages = LanguageSerializer(many=True, read_only=True)
+    languages = LanguageSerializer(many=True, read_only=True, queryset=list(Language.objects.values_list("name", flat=True)))
 
     class Meta:
         model = Driver
-        fields = [
-            "first_name",
-            "last_name",
-            "date_of_birth",
-            "national_id",
-            "phone_number",
-            "email",
-            "address",
-            "city",
-            "license_number",
-            "license_type",
-            "license_expiry",
-            "emergency_contact",
-            "emergency_phone",
-            "experience",
-            "languages",
-            "created_at",
-        ]
+        fields = "__all__"

@@ -274,7 +274,7 @@ class Driver(models.Model):
     emergency_phone = models.CharField(max_length=50, blank=True)
 
     experience = models.PositiveIntegerField(null=True, blank=True)  # années d'expérience
-    languages = models.ManyToManyField(Language, blank=True)
+    languages = models.ManyToManyField("Language", blank=True, related_name="drivers")
 
     created_at = models.DateTimeField(auto_now_add=True)
 
