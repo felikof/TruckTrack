@@ -52,7 +52,6 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
         operatorName: '',
         contactPerson: '',
         contactPhone: '',
-        specialInstructions: '',
 
         // Status and Visibility
         status: 'active',
@@ -265,7 +264,6 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
                     operatorName: '',
                     contactPerson: '',
                     contactPhone: '',
-                    specialInstructions: '',
                     status: 'active',
                     visibility: 'public',
                     autoConfirm: true,
@@ -675,17 +673,6 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
                             </div>
                         </div>
 
-                        <div style={{ ...styles.formGroup, gridColumn: '1 / -1' }}>
-                            <label style={styles.label}>Special Instructions</label>
-                            <textarea
-                                name="specialInstructions"
-                                value={formData.specialInstructions}
-                                onChange={handleChange}
-                                style={styles.textarea}
-                                rows="4"
-                                placeholder="Any special instructions or notes for this slot"
-                            />
-                        </div>
                     </div>
                 )
 
