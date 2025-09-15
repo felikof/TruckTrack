@@ -65,6 +65,11 @@ def available_slots():
     serializer = SlotSerializer(slot, many=True)
     return Response(serializer.data)
 
+class LanguageViewSet(viewsets.ModelViewSet):
+    queryset = Language.objects.all()
+    serializer_class = LanguageSerializer
+    # permission_classes = [permissions.IsAuthenticated]
+    
 class DriverViewSet(viewsets.ModelViewSet):
     queryset = Driver.objects.all()
     serializer_class = DriverSerializer

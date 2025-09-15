@@ -1,15 +1,11 @@
 from django.urls import include, path
-from .views import (
-    UserSignView, SlotListCreateView, SlotDetailView,
-    book_slot, cancel_booking, available_slots
-)
+from .views import *
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.routers import DefaultRouter
-from .views import DriverViewSet
 
 router = DefaultRouter()
 router.register(r'drivers', DriverViewSet, basename='driver')
-urlpatterns = router.urls
+router.register(r'languages', LanguageViewSet, basename='language')
 
 urlpatterns = [
     path("users/sign/", UserSignView.as_view(), name="sign"),
@@ -25,6 +21,6 @@ urlpatterns = [
     path("users/slots/<int:pk>/book/", book_slot, name="book"),
     path("users/slots/<int:pk>/cancel/", cancel_booking, name="cancel"),
     
-    path('', include(router.urls)),
+    path("", include(router.urls)),
 ]
 

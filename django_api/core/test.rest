@@ -1,0 +1,37 @@
+POST http://127.0.0.1:8000/languages/
+Content-Type: application/json
+
+{
+    "name": "English"
+}
+
+###
+GET http://127.0.0.1:8000/languages/
+
+###
+POST http://127.0.0.1:8000/drivers/
+Content-Type: application/json
+
+{
+    "first_name": "Alice",
+    "last_name": "Bernard",
+    "date_of_birth": "1988-11-10",
+    "national_id": "288111000456789",
+    "phone_number": "+33712345678",
+    "email": "michel.bernard@example.com",
+    "address": "78 Boulevard Saint-Michel",
+    "city": "Marseille",
+    "license_number": "DL-456789123",
+    "license_type": "Class B",
+    "license_expiry": "2025-09-15",
+    "emergency_contact": "Claire Bernard",
+    "emergency_phone": "+33787654321",
+    "experience": 8,
+    "languages": ["English", "French"]
+}
+
+###
+GET http://127.0.0.1:8000/drivers/
+
+###
+DELETE http://127.0.0.1:8000/drivers/1/

@@ -8,6 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "email", "name", "first_name", "password"]
+        read_only_fields = ["id"]
 
     def create(self, validated_data):
         user = User.objects.create_user(
@@ -42,21 +43,24 @@ class SlotSerializer(serializers.ModelSerializer):
     class Meta:
         model = Slot
         fields = [
-            "slot_id", "slot_date", "start_time", "end_time", "duration",
+            "id", "slot_id", "slot_date", "start_time", "end_time", "duration",
             "origin_gate", "destination_terminal", "total_slots", "available_slots",
             "reserved_slots", "base_price", "currency", "status", "operator_name",
             "contact_person", "created_at", "route_stops", "available_facilities"
         ]
+        read_only_fields = ["id", "created_at"]
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
         fields = ["id", "name"]
+        read_only_fields = ["id"]
 
 class RouteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Route
         fields = ["id", "name"]
+        read_only_fields = ["id"]
 
 
 class CompanySerializer(serializers.ModelSerializer):
@@ -66,6 +70,7 @@ class CompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = Company
         fields = [
+            "id",
             "company_name",
             "registration_number",
             "tax_id",
@@ -97,11 +102,13 @@ class SpecialEquipmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = SpecialEquipment
         fields = ["id", "name"]
+        read_only_fields = ["id"]
 
 class OperatingPermitSerializer(serializers.ModelSerializer):
     class Meta:
         model = OperatingPermit
         fields = ["id", "name"]
+        read_only_fields = ["id"]
 
 class TruckSerializer(serializers.ModelSerializer):
     special_equipment = SpecialEquipmentSerializer(many=True, read_only=True)
@@ -110,6 +117,7 @@ class TruckSerializer(serializers.ModelSerializer):
     class Meta:
         model = Truck
         fields = [
+            "id",
             "plate_number",
             "chassis_number",
             "engine_number",
@@ -140,6 +148,9 @@ class TruckSerializer(serializers.ModelSerializer):
             "operating_permits",
             "created_at",
         ]
+        
+        read_only_fields = ["id", "created_at"]
+        
 
 
 class LanguageSerializer(serializers.ModelSerializer):
@@ -148,8 +159,13 @@ class LanguageSerializer(serializers.ModelSerializer):
         fields = ["id", "name"]
 
 class DriverSerializer(serializers.ModelSerializer):
-    languages = LanguageSerializer(many=True, read_only=True, queryset=list(Language.objects.values_list("name", flat=True)))
+    languages = serializers.SlugRelatedField(
+        many=True,
+        slug_field='name',
+        queryset=Language.objects.all()
+    )
 
     class Meta:
         model = Driver
-        fields = "__all__"
+        fields = "id", "first_name", "last_name", "date_of_birth", "national_id", "phone_number", "email", "address", "city", "license_number", "license_type", "license_expiry", "emergency_contact", "emergency_phone", "experience", "languages", "created_at"
+        read_only_fields = ["id", "created_at"]
