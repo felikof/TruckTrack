@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
@@ -42,10 +43,20 @@ class User(AbstractBaseUser, PermissionsMixin):
         return f"{self.first_name} {self.name}"
 
 class Facility(models.Model):
+    id = models.AutoField(primary_key=True, editable=False)
     name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
+    
+class RouteStop(models.Model):
+    id = models.AutoField(primary_key=True, editable=False)
+    location = models.CharField(max_length=100)
+    estimated_time = models.TimeField()
+    transfer_time = models.PositiveIntegerField(help_text="Minutes de transfert")
+
+    def __str__(self):
+        return f"{self.location} ({self.estimated_time})"
 
 class Slot(models.Model):
     STATUS_CHOICES = [
@@ -64,7 +75,7 @@ class Slot(models.Model):
         ("CFA", "CFA Franc")
     ]
 
-    id = models.IntegerField(primary_key=True, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     slot_id = models.CharField(max_length=20, unique=True)  # ex: SLOT-002
     slot_date = models.DateField()
     start_time = models.TimeField()
@@ -88,6 +99,7 @@ class Slot(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
 
+    route_stops = models.ManyToManyField(RouteStop, related_name="slots", blank=True)
     available_facilities = models.ManyToManyField(Facility, related_name="slots", blank=True)
     
     class Meta:
@@ -97,19 +109,8 @@ class Slot(models.Model):
         return f"{self.slot_id} - {self.origin_gate} → {self.destination_terminal} ({self.status}) on {self.slot_date} at {self.start_time} to {self.end_time}"
 
 
-class RouteStop(models.Model):
-    id = models.IntegerField(primary_key=True, editable=False)
-    slot = models.ForeignKey(Slot, related_name="route_stops", on_delete=models.CASCADE)
-    location = models.CharField(max_length=100)
-    estimated_time = models.TimeField()
-    transfer_time = models.PositiveIntegerField(help_text="Minutes de transfert")
-
-    def __str__(self):
-        return f"{self.location} ({self.estimated_time})"
-
-
 class Service(models.Model):
-    id = models.IntegerField(primary_key=True, editable=False)
+    id = models.AutoField(primary_key=True, editable=False)
     name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
@@ -117,7 +118,7 @@ class Service(models.Model):
 
 
 class Route(models.Model):
-    id = models.IntegerField(primary_key=True, editable=False)
+    id = models.AutoField(primary_key=True, editable=False)
     name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
@@ -131,7 +132,7 @@ class Company(models.Model):
         ("Government", "Government"),
     ]
 
-    id = models.IntegerField(primary_key=True, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     company_name = models.CharField(max_length=200)
     registration_number = models.CharField(max_length=100, blank=True)
     tax_id = models.CharField(max_length=100, blank=True)
@@ -168,14 +169,14 @@ class Company(models.Model):
 
 
 class SpecialEquipment(models.Model):
-    id = models.IntegerField(primary_key=True, editable=False)
+    id = models.AutoField(primary_key=True, editable=False)
     name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
 
 class OperatingPermit(models.Model):
-    id = models.IntegerField(primary_key=True, editable=False)
+    id = models.AutoField(primary_key=True, editable=False)
     name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
@@ -204,7 +205,7 @@ class Truck(models.Model):
         ("Individual", "Individual"),
     ]
 
-    id = models.IntegerField(primary_key=True, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     plate_number = models.CharField(max_length=20, unique=True)
     chassis_number = models.CharField(max_length=50, blank=True)
     engine_number = models.CharField(max_length=50, blank=True)
@@ -247,6 +248,7 @@ class Truck(models.Model):
     
 
 class Language(models.Model):
+    id = models.AutoField(primary_key=True, editable=False)
     name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
@@ -260,7 +262,7 @@ class Driver(models.Model):
         ("Class D", "Class D"),
     ]
 
-    # id = models.IntegerField(primary_key=True, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     date_of_birth = models.DateField(null=True, blank=True)

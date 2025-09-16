@@ -2,7 +2,7 @@ POST http://127.0.0.1:8000/languages/
 Content-Type: application/json
 
 {
-    "name": "English"
+    "name": "Español"
 }
 
 ###
@@ -13,21 +13,21 @@ POST http://127.0.0.1:8000/drivers/
 Content-Type: application/json
 
 {
-    "first_name": "Alice",
-    "last_name": "Bernard",
-    "date_of_birth": "1988-11-10",
-    "national_id": "288111000456789",
-    "phone_number": "+33712345678",
-    "email": "michel.bernard@example.com",
-    "address": "78 Boulevard Saint-Michel",
-    "city": "Marseille",
-    "license_number": "DL-456789123",
+    "first_name": "Samuel",
+    "last_name": "Agba",
+    "date_of_birth": "1999-01-10",
+    "national_id": "288908090456789",
+    "phone_number": "+22890343456",
+    "email": "samagba@gmail.com",
+    "address": "90 Boulevard 15 aout",
+    "city": "Lomé",
+    "license_number": "DL-456790123",
     "license_type": "Class B",
-    "license_expiry": "2025-09-15",
-    "emergency_contact": "Claire Bernard",
-    "emergency_phone": "+33787654321",
-    "experience": 8,
-    "languages": ["English", "French"]
+    "license_expiry": "2026-08-02",
+    "emergency_contact": "Clara Agbo",
+    "emergency_phone": "+22890478890",
+    "experience": 9,
+    "languages": ["English", "Français"]
 }
 
 ###
@@ -35,3 +35,58 @@ GET http://127.0.0.1:8000/drivers/
 
 ###
 DELETE http://127.0.0.1:8000/drivers/1/
+
+###
+POST http://127.0.0.1:8000/routeStops/
+Content-Type: application/json
+
+{
+    "location": "Terminal 3 - Quai 5",
+    "estimated_time": "08:45", 
+    "transfer_time": "10"
+}
+
+###
+GET http://127.0.0.1:8000/routeStops/
+
+###
+POST http://127.0.0.1:8000/facilities/
+Content-Type: application/json
+
+{
+    "name": "Parking Area"
+}
+
+###
+Get  http://127.0.0.1:8000/facilities/
+
+###
+POST http://127.0.0.1:8000/slots/
+Content-Type: application/json
+
+{
+    "slot_id": "SLOT-004",
+    "slot_date": "2024-01-25",
+    "start_time": "08:00:00",
+    "end_time": "10:30:00",
+    "duration": "1h50m",
+    "origin_gate": "Porte A - Terminal Nord",
+    "destination_terminal": "Terminal Principal - Quai 3",
+    "total_slots": 20,
+    "available_slots": 15,
+    "reserved_slots": 5,
+    "base_price": 125.50,
+    "currency": "EUR",
+    "status": "active",
+    "operator_name": "TransLogistics SARL",
+    "contact_person": "Jean Dupont - +33123456789",
+    "created_at": "2024-01-20T14:30:00Z",
+    "route_stops": [2, 3],
+    "available_facilities": [1, 2]
+}
+
+###
+GET http://127.0.0.1:8000/slots/
+
+###
+DELETE http://127.0.0.1:8000/slots/28ca5ab4-a135-4234-9527-af23d694e2f3/

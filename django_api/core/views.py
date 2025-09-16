@@ -16,55 +16,55 @@ class UserSignView(generics.CreateAPIView):
 
 
 # Liste / création créneaux (seulement admin)
-class SlotListCreateView(generics.ListCreateAPIView):
+class SlotViewSet(viewsets.ModelViewSet):
     queryset = Slot.objects.all()
     serializer_class = SlotSerializer
-    permission_classes = [permissions.IsAdminUser]
+    # permission_classes = [permissions.IsAdminUser]
 
+# @api_view(["POST"])
+# @permission_classes([permissions.IsAuthenticated])
+# def book_slot(request, pk):
+#     try:
+#         slot = Slot.objects.get(pk=pk)
+#     except Slot.DoesNotExist:
+#         return Response({"detail": "Créneau introuvable"}, status=status.HTTP_404_NOT_FOUND)
 
-# Détail / suppression créneau
-class SlotDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Slot.objects.all()
-    serializer_class = SlotSerializer
-    permission_classes = [permissions.IsAdminUser]
+#     if slot.statut != "disponible":
+#         return Response({"detail": "Ce créneau est déjà réservé"}, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(["POST"])
-@permission_classes([permissions.IsAuthenticated])
-def book_slot(request, pk):
-    try:
-        slot = Slot.objects.get(pk=pk)
-    except Slot.DoesNotExist:
-        return Response({"detail": "Créneau introuvable"}, status=status.HTTP_404_NOT_FOUND)
+#     slot.statut = "réservé"
+#     slot.user = request.user
+#     slot.save()
+#     return Response({"message": "Créneau réservé avec succès"})
 
-    if slot.statut != "disponible":
-        return Response({"detail": "Ce créneau est déjà réservé"}, status=status.HTTP_400_BAD_REQUEST)
+# @api_view(["POST"])
+# @permission_classes([permissions.IsAuthenticated])
+# def cancel_booking(request, pk):
+#     try:
+#         slot = Slot.objects.get(pk=pk, user=request.user)
+#     except Slot.DoesNotExist:
+#         return Response({"detail": "Réservation introuvable"}, status=status.HTTP_404_NOT_FOUND)
 
-    slot.statut = "réservé"
-    slot.user = request.user
-    slot.save()
-    return Response({"message": "Créneau réservé avec succès"})
+#     slot.statut = "disponible"
+#     slot.user = None
+#     slot.save()
+#     return Response({"message": "Réservation annulée avec succès"})
 
+# @api_view(["GET"])
+# @permission_classes([permissions.IsAuthenticated])
+# def available_slots():
+#     slot = Slot.objects.filter(statut="available")
+#     serializer = SlotSerializer(slot, many=True)
+#     return Response(serializer.data)
 
-@api_view(["POST"])
-@permission_classes([permissions.IsAuthenticated])
-def cancel_booking(request, pk):
-    try:
-        slot = Slot.objects.get(pk=pk, user=request.user)
-    except Slot.DoesNotExist:
-        return Response({"detail": "Réservation introuvable"}, status=status.HTTP_404_NOT_FOUND)
-
-    slot.statut = "disponible"
-    slot.user = None
-    slot.save()
-    return Response({"message": "Réservation annulée avec succès"})
-
-@api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated])
-def available_slots():
-    slot = Slot.objects.filter(statut="available")
-    serializer = SlotSerializer(slot, many=True)
-    return Response(serializer.data)
-
+class FacilityViewSet(viewsets.ModelViewSet):
+    queryset = Facility.objects.all()
+    serializer_class = FacilitySerializer
+    
+class RouteStopViewSet(viewsets.ModelViewSet):
+    queryset = RouteStop.objects.all()
+    serializer_class = RouteStopSerializer
+    
 class LanguageViewSet(viewsets.ModelViewSet):
     queryset = Language.objects.all()
     serializer_class = LanguageSerializer

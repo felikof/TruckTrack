@@ -8,6 +8,7 @@ const AdminSlotManagement = ({ onSlotCreated, onSlotUpdated, onSlotDeleted }) =>
     const [filterStatus, setFilterStatus] = useState('all')
     const [filterDate, setFilterDate] = useState('')
 
+
     // Sample slots data - in real app, this would come from API
     const [slots, setSlots] = useState([
         {

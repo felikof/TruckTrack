@@ -29,24 +29,38 @@ class UserSerializer(serializers.ModelSerializer):
 class RouteStopSerializer(serializers.ModelSerializer):
     class Meta:
         model = RouteStop
-        fields = ["location", "estimated_time", "transfer_time"]
+        fields = ["id", "location", "estimated_time", "transfer_time"]
 
 class FacilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Facility
-        fields = ["name"]
+        fields = ["id", "name"]
 
 class SlotSerializer(serializers.ModelSerializer):
-    route_stops = RouteStopSerializer(many=True, read_only=True)
     available_facilities = FacilitySerializer(many=True, read_only=True)
 
     class Meta:
         model = Slot
         fields = [
-            "id", "slot_id", "slot_date", "start_time", "end_time", "duration",
-            "origin_gate", "destination_terminal", "total_slots", "available_slots",
-            "reserved_slots", "base_price", "currency", "status", "operator_name",
-            "contact_person", "created_at", "route_stops", "available_facilities"
+            "id",
+            "slot_id",
+            "slot_date",
+            "start_time",
+            "end_time",
+            "duration",
+            "origin_gate",
+            "destination_terminal",
+            "total_slots",
+            "available_slots",
+            "reserved_slots",
+            "base_price",
+            "currency",
+            "status",
+            "operator_name",
+            "contact_person",
+            "created_at",
+            "route_stops",
+            "available_facilities",
         ]
         read_only_fields = ["id", "created_at"]
 
@@ -150,8 +164,6 @@ class TruckSerializer(serializers.ModelSerializer):
         ]
         
         read_only_fields = ["id", "created_at"]
-        
-
 
 class LanguageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -167,5 +179,23 @@ class DriverSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Driver
-        fields = "id", "first_name", "last_name", "date_of_birth", "national_id", "phone_number", "email", "address", "city", "license_number", "license_type", "license_expiry", "emergency_contact", "emergency_phone", "experience", "languages", "created_at"
+        fields = [
+            "id",
+            "first_name",
+            "last_name",
+            "date_of_birth",
+            "national_id",
+            "phone_number",
+            "email",
+            "address",
+            "city",
+            "license_number",
+            "license_type",
+            "license_expiry",
+            "emergency_contact",
+            "emergency_phone",
+            "experience",
+            "languages",
+            "created_at",
+        ]
         read_only_fields = ["id", "created_at"]
