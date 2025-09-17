@@ -64,9 +64,6 @@ class Slot(models.Model):
         ("inactive", "Inactive"),
         ("cancelled", "Cancelled"),
         ("completed", "Completed"),
-        ("pending", "Pending"),
-        ("delayed", "Delayed"),
-        ("reserved", "Reserved")
     ]
 
     CURRENCY_CHOICES = [

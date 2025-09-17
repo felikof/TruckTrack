@@ -1,5 +1,9 @@
 import { useState } from 'react'
 import AdminSlotCreation from './AdminSlotCreation'
+import { useEffect } from "react";
+import { getSlots, createSlot, updateSlot, deleteSlot } from "../api/slotService";
+import { toast } from "react-hot-toast";
+
 
 const AdminSlotManagement = ({ onSlotCreated, onSlotUpdated, onSlotDeleted }) => {
     const [currentView, setCurrentView] = useState('dashboard')
@@ -10,124 +14,95 @@ const AdminSlotManagement = ({ onSlotCreated, onSlotUpdated, onSlotDeleted }) =>
 
 
     // Sample slots data - in real app, this would come from API
-    const [slots, setSlots] = useState([
-        {
-            id: 'SLOT-001',
-            slotDate: '2025-01-15',
-            startTime: '08:00',
-            endTime: '10:30',
-            duration: '2h 30m',
-            originGate: 'Gate A1',
-            destinationTerminal: 'Terminal 3',
-            totalSlots: 20,
-            availableSlots: 12,
-            reservedSlots: 8,
-            basePrice: 45000,
-            currency: 'CFA',
-            status: 'active',
-            operatorName: 'Port Authority',
-            contactPerson: 'Jean Kouassi',
-            createdAt: '2025-01-10T14:30:00Z',
-            routeStops: [
-                { location: 'Gate A1', estimatedTime: '08:00', transferTime: '15' },
-                { location: 'Weighbridge', estimatedTime: '08:15', transferTime: '20' },
-                { location: 'Terminal 3', estimatedTime: '08:45', transferTime: '0' }
-            ],
-            availableFacilities: ['Weighbridge', 'Security Check', 'Parking Area']
-        },
-        {
-            id: 'SLOT-002',
-            slotDate: '2025-01-15',
-            startTime: '10:30',
-            endTime: '13:45',
-            duration: '3h 15m',
-            originGate: 'Gate B2',
-            destinationTerminal: 'Terminal 2',
-            totalSlots: 15,
-            availableSlots: 8,
-            reservedSlots: 7,
-            basePrice: 52000,
-            currency: 'CFA',
-            status: 'active',
-            operatorName: 'Port Authority',
-            contactPerson: 'Marie Adjovi',
-            createdAt: '2025-01-10T15:45:00Z',
-            routeStops: [
-                { location: 'Gate B2', estimatedTime: '10:30', transferTime: '20' },
-                { location: 'Customs', estimatedTime: '11:00', transferTime: '45' },
-                { location: 'Weighbridge', estimatedTime: '12:15', transferTime: '15' },
-                { location: 'Terminal 2', estimatedTime: '12:45', transferTime: '0' }
-            ],
-            availableFacilities: ['Weighbridge', 'Customs Inspection', 'Security Check', 'Parking Area']
-        },
-        {
-            id: 'SLOT-003',
-            slotDate: '2025-01-16',
-            startTime: '14:20',
-            endTime: '17:05',
-            duration: '2h 45m',
-            originGate: 'Gate C1',
-            destinationTerminal: 'Terminal 1',
-            totalSlots: 25,
-            availableSlots: 25,
-            reservedSlots: 0,
-            basePrice: 48000,
-            currency: 'CFA',
-            status: 'inactive',
-            operatorName: 'Port Authority',
-            contactPerson: 'Koffi Mensah',
-            createdAt: '2025-01-11T09:20:00Z',
-            routeStops: [
-                { location: 'Gate C1', estimatedTime: '14:20', transferTime: '10' },
-                { location: 'Weighbridge', estimatedTime: '14:45', transferTime: '25' },
-                { location: 'Terminal 1', estimatedTime: '15:30', transferTime: '0' }
-            ],
-            availableFacilities: ['Weighbridge', 'Security Check', 'Parking Area', 'Loading/Unloading']
-        }
-    ])
+    const [slots, setSlots] = useState([])
 
-    const handleCreateSlot = (slotData) => {
-        const newSlot = {
-            ...slotData,
-            id: `SLOT-${Date.now()}`,
-            createdAt: new Date().toISOString(),
-            availableSlots: slotData.totalSlots - (slotData.reservedSlots || 0)
-        }
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
 
-        setSlots(prev => [...prev, newSlot])
-        setCurrentView('dashboard')
+    useEffect(() => {
+        getSlots()
+            .then(data => {
+                setSlots(data)
+                setLoading(false)
+            })
+            .catch(err => {
+                console.error("Erreur API:", err)
+                setError("Impossible de charger les slots")
+                setLoading(false)
+            })
+    }, [])
+    // const handleCreateSlot = (slotData) => {
+    //     const newSlot = {
+    //         ...slotData,
+    //         id: `SLOT-${Date.now()}`,
+    //         createdAt: new Date().toISOString(),
+    //         availableSlots: slotData.totalSlots - (slotData.reservedSlots || 0)
+    //     }
 
-        if (onSlotCreated) {
-            onSlotCreated(newSlot)
-        }
-    }
+    //     setSlots(prev => [...prev, newSlot])
+    //     setCurrentView('dashboard')
+
+    //     if (onSlotCreated) {
+    //         onSlotCreated(newSlot)
+    //     }
+    // }
+    const handleCreateSlot = async (slotData) => {
+        const newSlot = await createSlot(slotData);
+        setSlots(prev => [...prev, newSlot]);
+        setCurrentView("dashboard");
+
+        if (onSlotCreated) onSlotCreated(newSlot);
+        toast.success("Slot created successfully");
+    };
+
 
     const handleEditSlot = (slot) => {
         setSelectedSlot(slot)
         setCurrentView('edit')
     }
 
-    const handleUpdateSlot = (updatedSlot) => {
-        setSlots(prev => prev.map(slot =>
-            slot.id === updatedSlot.id ? updatedSlot : slot
-        ))
-        setCurrentView('dashboard')
-        setSelectedSlot(null)
+    // const handleUpdateSlot = (updatedSlot) => {
+    //     setSlots(prev => prev.map(slot =>
+    //         slot.id === updatedSlot.id ? updatedSlot : slot
+    //     ))
+    //     setCurrentView('dashboard')
+    //     setSelectedSlot(null)
 
-        if (onSlotUpdated) {
-            onSlotUpdated(updatedSlot)
+    //     if (onSlotUpdated) {
+    //         onSlotUpdated(updatedSlot)
+    //     }
+    // }
+
+    const handleUpdateSlot = async (updatedSlot) => {
+        const savedSlot = await updateSlot(updatedSlot.id, updatedSlot);
+        setSlots(prev => prev.map(slot => slot.id === savedSlot.id ? savedSlot : slot));
+        setCurrentView("dashboard");
+        setSelectedSlot(null);
+
+        if (onSlotUpdated) onSlotUpdated(savedSlot);
+        toast.success("Slot updated successfully");
+    };
+
+
+    // const handleDeleteSlot = (slotId) => {
+    //     if (window.confirm('Are you sure you want to delete this slot? This action cannot be undone.')) {
+    //         setSlots(prev => prev.filter(slot => slot.id !== slotId))
+
+    //         if (onSlotDeleted) {
+    //             onSlotDeleted(slotId)
+    //         }
+    //     }
+    // }
+
+    const handleDeleteSlot = async (slotId) => {
+        if (window.confirm("Are you sure you want to delete this slot?")) {
+            await deleteSlot(slotId);
+            setSlots(prev => prev.filter(slot => slot.id !== slotId));
+
+            if (onSlotDeleted) onSlotDeleted(slotId);
+            toast.success("Slot deleted successfully");
         }
-    }
-
-    const handleDeleteSlot = (slotId) => {
-        if (window.confirm('Are you sure you want to delete this slot? This action cannot be undone.')) {
-            setSlots(prev => prev.filter(slot => slot.id !== slotId))
-
-            if (onSlotDeleted) {
-                onSlotDeleted(slotId)
-            }
-        }
-    }
+    };
 
     const handleToggleStatus = (slotId) => {
         setSlots(prev => prev.map(slot =>
@@ -214,8 +189,8 @@ const AdminSlotManagement = ({ onSlotCreated, onSlotUpdated, onSlotDeleted }) =>
                 <div style={styles.statCard}>
                     <div style={styles.statIcon}>💰</div>
                     <div style={styles.statContent}>
-                        <h3 style={styles.statNumber}>CFA {(slots.reduce((sum, s) => sum + (s.basePrice * s.reservedSlots), 0)).toLocaleString()}</h3>
-                        <p style={styles.statLabel}>Earning</p>
+                        <h3 style={styles.statNumber}> {(slots.reduce((sum, s) => sum + (s.basePrice * s.reservedSlots), 0)).toLocaleString()}</h3>
+                        <p style={styles.statLabel}>{slots.reservedSlots}Earning</p>
                     </div>
                 </div>
             </div>
@@ -271,7 +246,7 @@ const AdminSlotManagement = ({ onSlotCreated, onSlotUpdated, onSlotDeleted }) =>
                         {filteredSlots.map((slot) => (
                             <tr key={slot.id} style={styles.tableRow}>
                                 <td style={styles.td}>
-                                    <div style={styles.slotId}>{slot.id}</div>
+                                    <div style={styles.slotId}>{slot.slotId}</div>
                                     <div style={styles.slotDuration}>{slot.duration}</div>
                                 </td>
                                 <td style={styles.td}>
@@ -284,7 +259,7 @@ const AdminSlotManagement = ({ onSlotCreated, onSlotUpdated, onSlotDeleted }) =>
                                         <span style={styles.routeArrow}>→</span>
                                         <span style={styles.routeTo}>{slot.destinationTerminal}</span>
                                     </div>
-                                    <div style={styles.routeStops}>{slot.routeStops.length} stops</div>
+                                    {/* <div style={styles.routeStops}>{slot.routeStops.length} stops</div> */}
                                 </td>
                                 <td style={styles.td}>
                                     <div style={styles.capacity}>
@@ -313,30 +288,39 @@ const AdminSlotManagement = ({ onSlotCreated, onSlotUpdated, onSlotDeleted }) =>
                                 </td>
                                 <td style={styles.td}>
                                     <div style={styles.actions}>
-                                        <button
-                                            style={styles.actionButton}
-                                            onClick={() => handleEditSlot(slot)}
-                                            title="Edit Slot"
-                                        >
-                                            ✏️
-                                        </button>
-                                        <button
-                                            style={{
-                                                ...styles.actionButton,
-                                                ...(slot.status === 'active' ? styles.deactivateButton : styles.activateButton)
-                                            }}
-                                            onClick={() => handleToggleStatus(slot.id)}
-                                            title={slot.status === 'active' ? 'Deactivate' : 'Activate'}
-                                        >
-                                            {slot.status === 'active' ? '⏸️' : '▶️'}
-                                        </button>
-                                        <button
-                                            style={{ ...styles.actionButton, ...styles.deleteButton }}
-                                            onClick={() => handleDeleteSlot(slot.id)}
-                                            title="Delete Slot"
-                                        >
-                                            🗑️
-                                        </button>
+                                        {slot.status !== 'completed' && (
+                                            <button
+                                                style={styles.actionButton}
+                                                onClick={() => handleEditSlot(slot)}
+                                                title="Edit Slot"
+                                            >
+                                                ✏️
+                                            </button>
+                                        )}
+
+                                        {slot.status !== 'completed' && (
+                                            <button
+                                                style={{
+                                                    ...styles.actionButton,
+                                                    ...(slot.status === 'active' ? styles.deactivateButton : styles.activateButton)
+                                                }}
+                                                onClick={() => handleToggleStatus(slot.id)}
+                                                title={slot.status === 'active' ? 'Deactivate' : 'Activate'}
+                                            >
+                                                {slot.status === 'active' ? '⏸️' : '▶️'}
+                                            </button>
+                                        )}
+
+                                        {slot.status !== 'active' && (
+                                            <button
+                                                style={{ ...styles.actionButton, ...styles.deleteButton }}
+                                                onClick={() => handleDeleteSlot(slot.id)}
+                                                title="Delete Slot"
+                                            >
+                                                🗑️
+                                            </button>
+                                        )}
+
                                     </div>
                                 </td>
                             </tr>
