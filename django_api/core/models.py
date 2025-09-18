@@ -42,21 +42,21 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return f"{self.first_name} {self.name}"
 
-class Facility(models.Model):
-    id = models.AutoField(primary_key=True, editable=False)
-    name = models.CharField(max_length=100, unique=True)
+# class Facility(models.Model):
+#     id = models.AutoField(primary_key=True, editable=False)
+#     name = models.CharField(max_length=100, unique=True)
 
-    def __str__(self):
-        return self.name
+#     def __str__(self):
+#         return self.name
     
-class RouteStop(models.Model):
-    id = models.AutoField(primary_key=True, editable=False)
-    location = models.CharField(max_length=100)
-    estimated_time = models.TimeField()
-    transfer_time = models.PositiveIntegerField(help_text="Minutes de transfert")
+# class RouteStop(models.Model):
+#     id = models.AutoField(primary_key=True, editable=False)
+#     location = models.CharField(max_length=100)
+#     estimated_time = models.TimeField()
+#     transfer_time = models.PositiveIntegerField(help_text="Minutes de transfert")
 
-    def __str__(self):
-        return f"{self.location} ({self.estimated_time})"
+#     def __str__(self):
+#         return f"{self.location} ({self.estimated_time})"
 
 class Slot(models.Model):
     STATUS_CHOICES = [
@@ -96,8 +96,10 @@ class Slot(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
 
-    route_stops = models.ManyToManyField(RouteStop, related_name="slots", blank=True)
-    available_facilities = models.ManyToManyField(Facility, related_name="slots", blank=True)
+    route_stops = models.JSONField(default=list, blank=True)
+    available_facilities = models.JSONField(default=list, blank=True)
+    # route_stops = models.ManyToManyField(RouteStop, related_name="slots", blank=True)
+    # available_facilities = models.ManyToManyField(Facility, related_name="slots", blank=True)
     
     class Meta:
         ordering = ["-slot_date", "start_time"]
@@ -106,20 +108,20 @@ class Slot(models.Model):
         return f"{self.slot_id} - {self.origin_gate} → {self.destination_terminal} ({self.status}) on {self.slot_date} at {self.start_time} to {self.end_time}"
 
 
-class Service(models.Model):
-    id = models.AutoField(primary_key=True, editable=False)
-    name = models.CharField(max_length=100, unique=True)
+# class Service(models.Model):
+#     id = models.AutoField(primary_key=True, editable=False)
+#     name = models.CharField(max_length=100, unique=True)
 
-    def __str__(self):
-        return self.name
+#     def __str__(self):
+#         return self.name
 
 
-class Route(models.Model):
-    id = models.AutoField(primary_key=True, editable=False)
-    name = models.CharField(max_length=100, unique=True)
+# class Route(models.Model):
+#     id = models.AutoField(primary_key=True, editable=False)
+#     name = models.CharField(max_length=100, unique=True)
 
-    def __str__(self):
-        return self.name
+#     def __str__(self):
+#         return self.name
 
 
 class Company(models.Model):
@@ -156,8 +158,10 @@ class Company(models.Model):
     insurance_policy_number = models.CharField(max_length=100, blank=True)
     insurance_expiry = models.DateField(null=True, blank=True)
 
-    services_offered = models.ManyToManyField(Service, blank=True)
-    operating_routes = models.ManyToManyField(Route, blank=True)
+    services_offered = models.JSONField(default=list, blank=True)  # ex: ["Freight Transport", "Logistics"]
+    operating_routes = models.JSONField(default=list, blank=True)  # ex: ["Route A", "Route B"]
+    # services_offered = models.ManyToManyField(Service, blank=True)
+    # operating_routes = models.ManyToManyField(Route, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -165,19 +169,22 @@ class Company(models.Model):
         return self.company_name
 
 
-class SpecialEquipment(models.Model):
-    id = models.AutoField(primary_key=True, editable=False)
-    name = models.CharField(max_length=100, unique=True)
+# class SpecialEquipment(models.Model):
+#     id = models.AutoField(primary_key=True, editable=False)
+#     name = models.CharField(max_length=100, unique=True)
 
-    def __str__(self):
-        return self.name
+#     def __str__(self):
+#         return self.name
 
-class OperatingPermit(models.Model):
-    id = models.AutoField(primary_key=True, editable=False)
-    name = models.CharField(max_length=100, unique=True)
+# class OperatingPermit(models.Model):
+#     id = models.AutoField(primary_key=True, editable=False)
+#     name = models.CharField(max_length=100, unique=True)
 
-    def __str__(self):
-        return self.name
+#     def __str__(self):
+#         return self.name
+
+def default_dimensions():
+    return {"length": "", "width": "", "height": "", "unit": "meters"}
 
 class Truck(models.Model):
     FUEL_CHOICES = [
@@ -215,7 +222,7 @@ class Truck(models.Model):
     cargo_type = models.CharField(max_length=20, choices=CARGO_TYPE_CHOICES, default="Container")
     max_weight = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
-    dimensions = models.JSONField(default=dict)  # ex: {"length": "", "width": "", "height": ""}
+    dimensions = models.JSONField(default=default_dimensions)  # ex: {"length": "", "width": "", "height": ""}
 
     registration_date = models.DateField(null=True, blank=True)
     registration_expiry = models.DateField(null=True, blank=True)
@@ -235,8 +242,10 @@ class Truck(models.Model):
     gps_installed = models.BooleanField(default=False)
     tracking_device_id = models.CharField(max_length=50, blank=True)
 
-    special_equipment = models.ManyToManyField(SpecialEquipment, blank=True)
-    operating_permits = models.ManyToManyField(OperatingPermit, blank=True)
+    special_equipment = models.JSONField(default=list, blank=True)  # ex: ["Liftgate", "Side Loader"]
+    operating_permits = models.JSONField(default=list, blank=True)  # ex: ["Hazmat", "Oversize Load"]
+    # special_equipment = models.ManyToManyField(SpecialEquipment, blank=True)
+    # operating_permits = models.ManyToManyField(OperatingPermit, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -244,12 +253,12 @@ class Truck(models.Model):
         return f"{self.plate_number} - {self.make} {self.model}"
     
 
-class Language(models.Model):
-    id = models.AutoField(primary_key=True, editable=False)
-    name = models.CharField(max_length=50, unique=True)
+# class Language(models.Model):
+#     id = models.AutoField(primary_key=True, editable=False)
+#     name = models.CharField(max_length=50, unique=True)
 
-    def __str__(self):
-        return self.name
+#     def __str__(self):
+#         return self.name
 
 class Driver(models.Model):
     LICENSE_TYPE_CHOICES = [
@@ -277,7 +286,8 @@ class Driver(models.Model):
     emergency_phone = models.CharField(max_length=50, blank=True)
 
     experience = models.PositiveIntegerField(null=True, blank=True)  # années d'expérience
-    languages = models.ManyToManyField("Language", blank=True, related_name="drivers")
+    # languages = models.ManyToManyField("Language", blank=True, related_name="drivers")
+    languages = models.JSONField(default=list, blank=True)  # ex: ["English", "French"]
 
     created_at = models.DateTimeField(auto_now_add=True)
 

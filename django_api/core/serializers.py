@@ -26,18 +26,18 @@ class UserSerializer(serializers.ModelSerializer):
 #         model = Slot
 #         fields = "__all__"
 
-class RouteStopSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = RouteStop
-        fields = ["id", "location", "estimated_time", "transfer_time"]
+# class RouteStopSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = RouteStop
+#         fields = ["id", "location", "estimated_time", "transfer_time"]
 
-class FacilitySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Facility
-        fields = ["id", "name"]
+# class FacilitySerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Facility
+#         fields = ["id", "name"]
 
 class SlotSerializer(serializers.ModelSerializer):
-    available_facilities = FacilitySerializer(many=True, read_only=True)
+    # available_facilities = FacilitySerializer(many=True, read_only=True)
 
     class Meta:
         model = Slot
@@ -64,22 +64,22 @@ class SlotSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["id", "created_at"]
 
-class ServiceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Service
-        fields = ["id", "name"]
-        read_only_fields = ["id"]
+# class ServiceSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Service
+#         fields = ["id", "name"]
+#         read_only_fields = ["id"]
 
-class RouteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Route
-        fields = ["id", "name"]
-        read_only_fields = ["id"]
+# class RouteSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Route
+#         fields = ["id", "name"]
+#         read_only_fields = ["id"]
 
 
 class CompanySerializer(serializers.ModelSerializer):
-    services_offered = ServiceSerializer(many=True, read_only=True)
-    operating_routes = RouteSerializer(many=True, read_only=True)
+    # services_offered = ServiceSerializer(many=True, read_only=True)
+    # operating_routes = RouteSerializer(many=True, read_only=True)
 
     class Meta:
         model = Company
@@ -112,21 +112,21 @@ class CompanySerializer(serializers.ModelSerializer):
             "created_at",
         ]
 
-class SpecialEquipmentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SpecialEquipment
-        fields = ["id", "name"]
-        read_only_fields = ["id"]
+# class SpecialEquipmentSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = SpecialEquipment
+#         fields = ["id", "name"]
+#         read_only_fields = ["id"]
 
-class OperatingPermitSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = OperatingPermit
-        fields = ["id", "name"]
-        read_only_fields = ["id"]
+# class OperatingPermitSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = OperatingPermit
+#         fields = ["id", "name"]
+#         read_only_fields = ["id"]
 
 class TruckSerializer(serializers.ModelSerializer):
-    special_equipment = SpecialEquipmentSerializer(many=True, read_only=True)
-    operating_permits = OperatingPermitSerializer(many=True, read_only=True)
+    # special_equipment = SpecialEquipmentSerializer(many=True, read_only=True)
+    # operating_permits = OperatingPermitSerializer(many=True, read_only=True)
 
     class Meta:
         model = Truck
@@ -158,24 +158,23 @@ class TruckSerializer(serializers.ModelSerializer):
             "gps_installed",
             "tracking_device_id",
             "special_equipment",
-            "certifications",
             "operating_permits",
             "created_at",
         ]
         
         read_only_fields = ["id", "created_at"]
 
-class LanguageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Language
-        fields = ["id", "name"]
+# class LanguageSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Language
+#         fields = ["id", "name"]
 
 class DriverSerializer(serializers.ModelSerializer):
-    languages = serializers.SlugRelatedField(
-        many=True,
-        slug_field='name',
-        queryset=Language.objects.all()
-    )
+    # languages = serializers.SlugRelatedField(
+    #     many=True,
+    #     slug_field='name',
+    #     queryset=Language.objects.all()
+    # )
 
     class Meta:
         model = Driver

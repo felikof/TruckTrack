@@ -57,20 +57,30 @@ class SlotViewSet(viewsets.ModelViewSet):
 #     serializer = SlotSerializer(slot, many=True)
 #     return Response(serializer.data)
 
-class FacilityViewSet(viewsets.ModelViewSet):
-    queryset = Facility.objects.all()
-    serializer_class = FacilitySerializer
+# class FacilityViewSet(viewsets.ModelViewSet):
+#     queryset = Facility.objects.all()
+#     serializer_class = FacilitySerializer
     
-class RouteStopViewSet(viewsets.ModelViewSet):
-    queryset = RouteStop.objects.all()
-    serializer_class = RouteStopSerializer
+# class RouteStopViewSet(viewsets.ModelViewSet):
+#     queryset = RouteStop.objects.all()
+#     serializer_class = RouteStopSerializer
     
-class LanguageViewSet(viewsets.ModelViewSet):
-    queryset = Language.objects.all()
-    serializer_class = LanguageSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+# class LanguageViewSet(viewsets.ModelViewSet):
+#     queryset = Language.objects.all()
+#     serializer_class = LanguageSerializer
+#     # permission_classes = [permissions.IsAuthenticated]
     
 class DriverViewSet(viewsets.ModelViewSet):
     queryset = Driver.objects.all()
     serializer_class = DriverSerializer
+    # permission_classes = [permissions.IsAuthenticated]
+    
+class TruckViewSet(viewsets.ModelViewSet):
+    queryset = Truck.objects.all()
+    serializer_class = TruckSerializer
+    # permission_classes = [permissions.IsAuthenticated]
+    
+class CompanyViewSet(viewsets.ModelViewSet):
+    queryset = Company.objects.all()
+    serializer_class = CompanySerializer
     # permission_classes = [permissions.IsAuthenticated]
