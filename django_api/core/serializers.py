@@ -111,6 +111,7 @@ class CompanySerializer(serializers.ModelSerializer):
             "certifications",
             "created_at",
         ]
+        read_only_fields = ["id", "created_at"]
 
 # class SpecialEquipmentSerializer(serializers.ModelSerializer):
 #     class Meta:

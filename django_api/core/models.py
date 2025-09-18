@@ -162,6 +162,7 @@ class Company(models.Model):
     operating_routes = models.JSONField(default=list, blank=True)  # ex: ["Route A", "Route B"]
     # services_offered = models.ManyToManyField(Service, blank=True)
     # operating_routes = models.ManyToManyField(Route, blank=True)
+    certifications = models.JSONField(default=list, blank=True)  # ex: ["ISO 9001", "ISO 14001"]
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -222,7 +223,7 @@ class Truck(models.Model):
     cargo_type = models.CharField(max_length=20, choices=CARGO_TYPE_CHOICES, default="Container")
     max_weight = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
-    dimensions = models.JSONField(default=default_dimensions)  # ex: {"length": "", "width": "", "height": ""}
+    dimensions = models.JSONField(default=list, blank=True)  # ex: {"length": "", "width": "", "height": ""}
 
     registration_date = models.DateField(null=True, blank=True)
     registration_expiry = models.DateField(null=True, blank=True)
