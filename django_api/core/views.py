@@ -56,19 +56,6 @@ class SlotViewSet(viewsets.ModelViewSet):
 #     slot = Slot.objects.filter(statut="available")
 #     serializer = SlotSerializer(slot, many=True)
 #     return Response(serializer.data)
-
-# class FacilityViewSet(viewsets.ModelViewSet):
-#     queryset = Facility.objects.all()
-#     serializer_class = FacilitySerializer
-    
-# class RouteStopViewSet(viewsets.ModelViewSet):
-#     queryset = RouteStop.objects.all()
-#     serializer_class = RouteStopSerializer
-    
-# class LanguageViewSet(viewsets.ModelViewSet):
-#     queryset = Language.objects.all()
-#     serializer_class = LanguageSerializer
-#     # permission_classes = [permissions.IsAuthenticated]
     
 class DriverViewSet(viewsets.ModelViewSet):
     queryset = Driver.objects.all()
@@ -83,4 +70,44 @@ class TruckViewSet(viewsets.ModelViewSet):
 class CompanyViewSet(viewsets.ModelViewSet):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
+    # permission_classes = [permissions.IsAuthenticated]
+    
+class BookingViewSet(viewsets.ModelViewSet):
+    queryset = Booking.objects.all()
+    serializer_class = BookingSerializer
+    # permission_classes = [permissions.IsAuthenticated]
+    
+class NotificationViewSet(viewsets.ModelViewSet):
+    queryset = Notification.objects.all()
+    serializer_class = NotificationSerializer
+    # permission_classes = [permissions.IsAuthenticated]
+    
+class AlertLogViewSet(viewsets.ModelViewSet):
+    queryset = AlertLog.objects.all()
+    serializer_class = AlertLogSerializer
+    # permission_classes = [permissions.IsAuthenticated]
+    
+class LoadViewSet(viewsets.ModelViewSet):
+    queryset = Load.objects.all()
+    serializer_class = LoadSerializer
+    # permission_classes = [permissions.IsAuthenticated]
+    
+class DeclarationViewSet(viewsets.ModelViewSet):
+    queryset = Declaration.objects.all()
+    serializer_class = DeclarationSerializer
+    # permission_classes = [permissions.IsAuthenticated]
+    
+class ContainerTypeViewSet(viewsets.ModelViewSet):
+    queryset = ContainerType.objects.all()
+    serializer_class = ContainerTypeSerializer
+    # permission_classes = [permissions.IsAuthenticated]
+    
+class TruckRouteViewSet(viewsets.ModelViewSet):
+    queryset = TruckRoute.objects.all()
+    serializer_class = TruckRouteSerializer
+    # permission_classes = [permissions.IsAuthenticated]
+    
+class GpsPositionViewSet(viewsets.ModelViewSet):
+    queryset = GpsPosition.objects.all()
+    serializer_class = GpsPositionSerializer
     # permission_classes = [permissions.IsAuthenticated]

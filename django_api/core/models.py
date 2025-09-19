@@ -22,7 +22,6 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=100)
@@ -41,22 +40,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return f"{self.first_name} {self.name}"
-
-# class Facility(models.Model):
-#     id = models.AutoField(primary_key=True, editable=False)
-#     name = models.CharField(max_length=100, unique=True)
-
-#     def __str__(self):
-#         return self.name
-    
-# class RouteStop(models.Model):
-#     id = models.AutoField(primary_key=True, editable=False)
-#     location = models.CharField(max_length=100)
-#     estimated_time = models.TimeField()
-#     transfer_time = models.PositiveIntegerField(help_text="Minutes de transfert")
-
-#     def __str__(self):
-#         return f"{self.location} ({self.estimated_time})"
 
 class Slot(models.Model):
     STATUS_CHOICES = [
@@ -98,31 +81,12 @@ class Slot(models.Model):
 
     route_stops = models.JSONField(default=list, blank=True)
     available_facilities = models.JSONField(default=list, blank=True)
-    # route_stops = models.ManyToManyField(RouteStop, related_name="slots", blank=True)
-    # available_facilities = models.ManyToManyField(Facility, related_name="slots", blank=True)
     
     class Meta:
         ordering = ["-slot_date", "start_time"]
 
     def __str__(self):
         return f"{self.slot_id} - {self.origin_gate} → {self.destination_terminal} ({self.status}) on {self.slot_date} at {self.start_time} to {self.end_time}"
-
-
-# class Service(models.Model):
-#     id = models.AutoField(primary_key=True, editable=False)
-#     name = models.CharField(max_length=100, unique=True)
-
-#     def __str__(self):
-#         return self.name
-
-
-# class Route(models.Model):
-#     id = models.AutoField(primary_key=True, editable=False)
-#     name = models.CharField(max_length=100, unique=True)
-
-#     def __str__(self):
-#         return self.name
-
 
 class Company(models.Model):
     COMPANY_TYPE_CHOICES = [
@@ -133,13 +97,13 @@ class Company(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     company_name = models.CharField(max_length=200)
-    registration_number = models.CharField(max_length=100, blank=True)
+    registration_number = models.CharField(max_length=100, blank=True, unique=True)
     tax_id = models.CharField(max_length=100, blank=True)
     company_type = models.CharField(max_length=50, choices=COMPANY_TYPE_CHOICES, default="Private")
     established_year = models.PositiveIntegerField(null=True, blank=True)
 
     phone_number = models.CharField(max_length=50, blank=True)
-    email = models.EmailField(blank=True)
+    email = models.EmailField(blank=True, unique=True)
     website = models.URLField(blank=True)
 
     address = models.CharField(max_length=200, blank=True)
@@ -160,8 +124,6 @@ class Company(models.Model):
 
     services_offered = models.JSONField(default=list, blank=True)  # ex: ["Freight Transport", "Logistics"]
     operating_routes = models.JSONField(default=list, blank=True)  # ex: ["Route A", "Route B"]
-    # services_offered = models.ManyToManyField(Service, blank=True)
-    # operating_routes = models.ManyToManyField(Route, blank=True)
     certifications = models.JSONField(default=list, blank=True)  # ex: ["ISO 9001", "ISO 14001"]
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -169,24 +131,40 @@ class Company(models.Model):
     def __str__(self):
         return self.company_name
 
+class Driver(models.Model):
+    LICENSE_TYPE_CHOICES = [
+        ("Class A", "Class A"),
+        ("Class B", "Class B"),
+        ("Class C", "Class C"),
+        ("Class D", "Class D"),
+    ]
 
-# class SpecialEquipment(models.Model):
-#     id = models.AutoField(primary_key=True, editable=False)
-#     name = models.CharField(max_length=100, unique=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    Company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="drivers")
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    date_of_birth = models.DateField(null=True, blank=True)
+    national_id = models.CharField(max_length=50, blank=True, unique=True)
+    phone_number = models.CharField(max_length=50, blank=True)
+    email = models.EmailField(blank=True, unique=True)
+    address = models.CharField(max_length=200, blank=True)
+    city = models.CharField(max_length=100, blank=True)
 
-#     def __str__(self):
-#         return self.name
+    license_number = models.CharField(max_length=50, blank=True)
+    license_type = models.CharField(max_length=20, choices=LICENSE_TYPE_CHOICES, default="Class C")
+    license_expiry = models.DateField(null=True, blank=True)
 
-# class OperatingPermit(models.Model):
-#     id = models.AutoField(primary_key=True, editable=False)
-#     name = models.CharField(max_length=100, unique=True)
+    emergency_contact = models.CharField(max_length=100, blank=True)
+    emergency_phone = models.CharField(max_length=50, blank=True)
 
-#     def __str__(self):
-#         return self.name
+    experience = models.PositiveIntegerField(null=True, blank=True)  # années d'expérience
+    languages = models.JSONField(default=list, blank=True)  # ex: ["English", "French"]
 
-def default_dimensions():
-    return {"length": "", "width": "", "height": "", "unit": "meters"}
+    created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+    
 class Truck(models.Model):
     FUEL_CHOICES = [
         ("Diesel", "Diesel"),
@@ -211,6 +189,8 @@ class Truck(models.Model):
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="trucks")
+    drivers = models.ManyToManyField(Driver, related_name="trucks", blank=True)
     plate_number = models.CharField(max_length=20, unique=True)
     chassis_number = models.CharField(max_length=50, blank=True)
     engine_number = models.CharField(max_length=50, blank=True)
@@ -245,53 +225,186 @@ class Truck(models.Model):
 
     special_equipment = models.JSONField(default=list, blank=True)  # ex: ["Liftgate", "Side Loader"]
     operating_permits = models.JSONField(default=list, blank=True)  # ex: ["Hazmat", "Oversize Load"]
-    # special_equipment = models.ManyToManyField(SpecialEquipment, blank=True)
-    # operating_permits = models.ManyToManyField(OperatingPermit, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.plate_number} - {self.make} {self.model}"
-    
 
-# class Language(models.Model):
-#     id = models.AutoField(primary_key=True, editable=False)
-#     name = models.CharField(max_length=50, unique=True)
+class Booking(models.Model):
+    STATUS_CHOICES = [
+        ("Pending", "Pending"),
+        ("Confirmed", "Confirmed"),
+        ("Cancelled", "Cancelled"),
+        ("Completed", "Completed"),
+    ]
 
-#     def __str__(self):
-#         return self.name
-
-class Driver(models.Model):
-    LICENSE_TYPE_CHOICES = [
-        ("Class A", "Class A"),
-        ("Class B", "Class B"),
-        ("Class C", "Class C"),
-        ("Class D", "Class D"),
+    PAYMENT_STATUS_CHOICES = [
+        ("Unpaid", "Unpaid"),
+        ("Paid", "Paid"),
+        ("Refunded", "Refunded"),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    date_of_birth = models.DateField(null=True, blank=True)
-    national_id = models.CharField(max_length=50, blank=True)
-    phone_number = models.CharField(max_length=50, blank=True)
-    email = models.EmailField(blank=True)
-    address = models.CharField(max_length=200, blank=True)
-    city = models.CharField(max_length=100, blank=True)
+    book_num = models.CharField(max_length=20, unique=True)  # ex: BOOK-001
+    slot = models.ForeignKey(Slot, on_delete=models.CASCADE, related_name="bookings")
+    truck = models.ForeignKey(Truck, on_delete=models.CASCADE, related_name="bookings")
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name="bookings")
+    booked_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bookings")
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="bookings", null=True, blank=True)
 
-    license_number = models.CharField(max_length=50, blank=True)
-    license_type = models.CharField(max_length=20, choices=LICENSE_TYPE_CHOICES, default="Class C")
-    license_expiry = models.DateField(null=True, blank=True)
+    booking_date = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="Pending")
+    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default="Unpaid")
 
-    emergency_contact = models.CharField(max_length=100, blank=True)
-    emergency_phone = models.CharField(max_length=50, blank=True)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    currency = models.CharField(max_length=10, choices=Slot.CURRENCY_CHOICES, default="CFA")
+    payment_method = models.CharField(max_length=50, blank=True)  # ex: Credit Card, PayPal
 
-    experience = models.PositiveIntegerField(null=True, blank=True)  # années d'expérience
-    # languages = models.ManyToManyField("Language", blank=True, related_name="drivers")
-    languages = models.JSONField(default=list, blank=True)  # ex: ["English", "French"]
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Booking {self.id} - {self.slot.slot_id} by {self.booked_by.email} for {self.company.company_name if self.company else 'Particular'}"
+
+class Notification(models.Model):
+    NOTIFICATION_TYPE_CHOICES = [
+        ("Email", "Email"),
+        ("SMS", "SMS"),
+        ("Whatsapp", "Whatsapp Notification"),
+    ],
+    STATUS_CHOICES = [
+        ("Sent", "Sent"),
+        ("Failed", "Failed"),
+        ("Pending", "Pending"),
+    ],
+    PRIORITY_CHOICES = [
+        ("Low", "Low"),
+        ("Medium", "Medium"),
+        ("High", "High"),
+    ],
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="notifications", null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications", null=True, blank=True)
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name="notifications", null=True, blank=True)
+    notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPE_CHOICES, default="Email")
+    recipient = models.CharField(max_length=100)  # email or phone number
+    subject = models.CharField(max_length=200, blank=True)
+    message = models.TextField()
+    sent_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="Sent")
+    priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES,    default="Medium")
+    created_at = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f"Notification {self.id} to {self.recipient} via {self.notification_type}"
+
+class AlertLog(models.Model):
+    ALERT_LEVEL_CHOICES = [
+        ("info", "Info"),
+        ("warning", "Warning"),
+        ("high", "High"),
+        ("critical", "Critical"),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    alert_level = models.CharField(max_length=20, choices=ALERT_LEVEL_CHOICES, default="info")
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    resolved = models.BooleanField(default=False)
+    resolved_at = models.DateTimeField(null=True, blank=True)
+    resolved_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return f"AlertLog {self.id} - {self.alert_level} - Resolved: {self.resolved}"
+
+class Load(models.Model):
+    LOAD_TYPE_CHOICES = [
+        ("Full Truckload", "Full Truckload"),
+        ("Less than Truckload", "Less than Truckload"),
+        ("Containerized", "Containerized"),
+        ("Bulk", "Bulk"),
+        ("Liquid", "Liquid"),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    container = models.ForeignKey("ContainerType", on_delete=models.CASCADE, related_name="loads")
+    description = models.CharField(max_length=200)
+    weight = models.DecimalField(max_digits=10, decimal_places=2)  # in kg
+    volume = models.DecimalField(max_digits=10, decimal_places=2)  # in cubic meters
+    load_type = models.CharField(max_length=30, choices=LOAD_TYPE_CHOICES, default="Full Truckload")
+    special_handling = models.TextField(blank=True)  # ex: Fragile, Hazardous
+
+    pickup_location = models.CharField(max_length=200)
+    delivery_location = models.CharField(max_length=200)
+    pickup_date = models.DateField(null=True, blank=True)
+    delivery_date = models.DateField(null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+        return f"Load {self.id} - {self.description} ({self.weight}kg, {self.volume}m³)"
 
+class Declaration(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    num = models.CharField(max_length=20, unique=True)  # ex: DEC-001
+    date = models.DateTimeField()
+    description = models.TextField()
+    marchandises = models.ManyToManyField("Load", related_name="declarations", blank=True)
+    container_type = models.ForeignKey("ContainerType", on_delete=models.CASCADE, related_name="declarations", null=True, blank=True)
+    transitaire = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="declarations", null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Declaration {self.num} on {self.date}"
+
+class ContainerType(models.Model):
+    TYPE_CHOICES = [
+        ("Standard", "Standard"),
+        ("Refrigerated", "Refrigerated"),
+        ("Open Top", "Open Top"),
+        ("Flat Rack", "Flat Rack"),
+        ("Tank", "Tank"),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    num = models.CharField(max_length=20, unique=True)  # ex: CONT-001
+    type = models.CharField(max_length=50, choices=TYPE_CHOICES, default="Standard")
+    length = models.DecimalField(max_digits=5, decimal_places=2)  # in meters
+    width = models.DecimalField(max_digits=5, decimal_places=2)   # in meters
+    height = models.DecimalField(max_digits=5, decimal_places=2)  # in meters
+    max_weight = models.DecimalField(max_digits=10, decimal_places=2)  # in kg
+    tare_weight = models.DecimalField(max_digits=10, decimal_places=2) # in kg
+    payload_capacity = models.DecimalField(max_digits=10, decimal_places=2) # in kg
+    volume = models.DecimalField(max_digits=10, decimal_places=2)  # in cubic meters
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.num} - {self.type} ({self.length}m x {self.width}m x {self.height}m)"
+    
+class TruckRoute(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    truck = models.ForeignKey(Truck, on_delete=models.CASCADE, related_name="routes")
+    start_location = models.CharField(max_length=200)
+    end_location = models.CharField(max_length=200)
+    waypoints = models.JSONField(default=list, blank=True)  # ex: [{"lat": "", "lng": ""}, ...]
+    distance_km = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    estimated_time = models.TimeField(null=True, blank=True)  # in minutes
+    route_date_time = models.DateTimeField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Route for {self.truck.plate_number} from {self.start_location} to {self.end_location}"
+    
+class GpsPosition(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    truck = models.ForeignKey(Truck, on_delete=models.CASCADE, related_name="gps_positions")
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)   # ex: 12.345678
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)  # ex: 98.765432
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"GPS Position of {self.truck.plate_number} at {self.timestamp}: ({self.latitude}, {self.longitude})"
+    

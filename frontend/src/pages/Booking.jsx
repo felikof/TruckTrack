@@ -1186,13 +1186,13 @@ function Booking() {
                         onCancel={handleFormCancel}
                     />
                 )
-            case 'admin-slot-creation':
-                return (
-                    <AdminSlotCreation
-                        onSubmit={(data) => handleFormSubmit('admin-slot-creation', data)}
-                        onCancel={handleFormCancel}
-                    />
-                )
+            // case 'admin-slot-creation':
+            //     return (
+            //         <AdminSlotCreation
+            //             onSubmit={(data) => handleFormSubmit('admin-slot-creation', data)}
+            //             onCancel={handleFormCancel}
+            //         />
+            //     )
             default:
                 return null
         }
@@ -1662,7 +1662,7 @@ function Booking() {
                     </nav>
 
                     <div className="header-actions">
-                        <div className="admin-actions">
+                        {/* <div className="admin-actions">
                             <button
                                 className="admin-btn"
                                 onClick={() => setCurrentForm('admin-slot-creation')}
@@ -1670,7 +1670,7 @@ function Booking() {
                             >
                                 ➕
                             </button>
-                        </div>
+                        </div> */}
                         <div className="registration-actions">
                             <button
                                 className="register-btn"

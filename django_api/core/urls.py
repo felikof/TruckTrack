@@ -5,12 +5,17 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 router.register(r'drivers', DriverViewSet, basename='driver')
-# router.register(r'languages', LanguageViewSet, basename='language')
 router.register(r'slots', SlotViewSet, basename='slot')
 router.register(r'trucks', TruckViewSet, basename='truck')
 router.register(r'companies', CompanyViewSet, basename='company')
-# router.register(r'facilities', FacilityViewSet, basename='facility')
-# router.register(r'routeStops', RouteStopViewSet, basename='routeStop')
+router.register(r'bookings', BookingViewSet, basename='booking')
+router.register(r'notifications', NotificationViewSet, basename='notification')
+router.register(r'alertlogs', AlertLogViewSet, basename='alertlog')
+router.register(r'loads', LoadViewSet, basename='load')
+router.register(r'declarations', DeclarationViewSet, basename='declaration')
+router.register(r'containertypes', ContainerTypeViewSet, basename='containertype')
+router.register(r'truckroutes', TruckRouteViewSet, basename='truckroute')
+router.register(r'gpspositions', GpsPositionViewSet, basename='gpsposition')
 
 urlpatterns = [
     path("users/sign/", UserSignView.as_view(), name="sign"),
