@@ -120,7 +120,7 @@ class DriverDetailSerializer(serializers.ModelSerializer):
         ]
         
 class TruckSerializer(serializers.ModelSerializer):
-    drivers = "DriverSerializer"(many=True, read_only=True)
+    drivers = DriverSerializer(many=True, read_only=True)
     
     class Meta:
         model = Truck

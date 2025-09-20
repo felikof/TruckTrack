@@ -269,19 +269,19 @@ class Booking(models.Model):
 
 class Notification(models.Model):
     NOTIFICATION_TYPE_CHOICES = [
-        ("Email", "Email"),
-        ("SMS", "SMS"),
-        ("Whatsapp", "Whatsapp Notification"),
+        ("email", "Email"),
+        ("sms", "SMS"),
+        ("whatsapp", "Whatsapp Notification"),
     ],
     STATUS_CHOICES = [
-        ("Sent", "Sent"),
-        ("Failed", "Failed"),
-        ("Pending", "Pending"),
+        ("sent", "Sent"),
+        ("failed", "Failed"),
+        ("pending", "Pending"),
     ],
     PRIORITY_CHOICES = [
-        ("Low", "Low"),
-        ("Medium", "Medium"),
-        ("High", "High"),
+        ("low", "Low"),
+        ("medium", "Medium"),
+        ("high", "High"),
     ],
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="notifications", null=True, blank=True)
@@ -293,7 +293,7 @@ class Notification(models.Model):
     message = models.TextField()
     sent_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="Sent")
-    priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES,    default="Medium")
+    priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES, default="Medium")
     created_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return f"Notification {self.id} to {self.recipient} via {self.notification_type}"

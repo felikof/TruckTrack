@@ -196,3 +196,287 @@ Content-Type: application/json
         "Agrément Douane"
     ]
 }
+
+###
+POST http://127.0.0.1:8000/users/sign/
+
+Content-Type: application/json
+
+{
+    "email": "user@example.com",
+    "name": "Doe",
+    "first_name": "John",
+    "is_active": true,
+    "is_staff": false,
+    "created_at": "2025-09-19T10:00:00Z"
+}
+
+###
+POST http://127.0.0.1:8000/slots/
+
+Content-Type: application/json
+
+{
+    "slot_id": "SLOT-001",
+    "slot_date": "2025-09-20",
+    "start_time": "08:00:00",
+    "end_time": "10:00:00",
+    "duration": "2h",
+    "origin_gate": "Gate A",
+    "destination_terminal": "Terminal B",
+    "total_slots": 20,
+    "available_slots": 10,
+    "reserved_slots": 10,
+    "base_price": 15000.00,
+    "currency": "CFA",
+    "status": "active",
+    "operator_name": "PAL Operator",
+    "contact_person": "Port Autonome de Lomé",
+    "contact_phone": "+228 90909090",
+    "contact_email": "portAutonomeLome@mail.tg",
+    "created_at": "2025-09-18T09:00:00Z",
+    "route_stops": [
+        {
+            "location": "Dépôt Central - Zone A",
+            "estimated_time": "08:30:00",
+            "transfer_time": "00:15:00"
+        },
+        {
+            "location": "Centre de Distribution - Quai 3",
+            "estimated_time": "10:00:00",
+            "transfer_time": "00:25:00"
+        }
+    ],
+    "available_facilities": ["Parking", "Fuel Station"]
+}
+
+###
+POST http://127.0.0.1:8000/companies/
+
+Content-Type: application/json
+
+{
+    "company_name": "TransLogistics SARL",
+    "registration_number": "RC123456",
+    "tax_id": "TG-TAX-001",
+    "company_type": "Private",
+    "established_year": 2010,
+    "phone_number": "+228 22223333",
+    "email": "contact@translogistics.tg",
+    "website": "https://translogistics.tg",
+    "address": "Rue de l’Indépendance",
+    "city": "Lomé",
+    "postal_code": "BP 123",
+    "contact_person_name": "Amavi Kodjo",
+    "contact_person_title": "Directeur Général",
+    "contact_person_phone": "+228 90909091",
+    "contact_person_email": "akodjo@translogistics.tg",
+    "fleet_size": 25,
+    "operating_license": "LIC-2025-01",
+    "license_expiry": "2026-09-01",
+    "insurance_provider": "NSIA Assurance",
+    "insurance_policy_number": "INS-45678",
+    "insurance_expiry": "2026-05-10",
+    "services_offered": ["Freight Transport", "Logistics"],
+    "operating_routes": ["Lomé-Cotonou", "Lomé-Accra"],
+    "certifications": ["ISO 9001"],
+    "created_at": "2025-09-18T09:00:00Z"
+}
+
+###
+POST http://127.0.0.1:8000/drivers/
+
+Content-Type: application/json
+
+{
+    "Company": "TransLogistics SARL",
+    "first_name": "Kossi",
+    "last_name": "Adjei",
+    "date_of_birth": "1985-06-15",
+    "national_id": "TG-NAT-98765",
+    "phone_number": "+228 90101010",
+    "email": "kadjei@drivers.tg",
+    "address": "Quartier Tokoin",
+    "city": "Lomé",
+    "license_number": "LIC-DRV-12345",
+    "license_type": "Class C",
+    "license_expiry": "2027-06-30",
+    "emergency_contact": "Ama Adjei",
+    "emergency_phone": "+228 92223344",
+    "experience": 10,
+    "languages": ["French", "English"],
+    "created_at": "2025-09-18T09:00:00Z"
+}
+
+###
+POST http://127.0.0.1:8000/trucks/
+
+Content-Type: application/json
+
+{
+    "company": "TransLogistics SARL",
+    "drivers": ["Kossi Adjei"],
+    "plate_number": "TG-1234-AB",
+    "chassis_number": "CH-98765",
+    "engine_number": "EN-54321",
+    "make": "Mercedes",
+    "model": "Actros",
+    "year": 2022,
+    "color": "White",
+    "fuel_type": "Diesel",
+    "truck_type": "Standard",
+    "cargo_type": "Container",
+    "max_weight": 25000.00,
+    "dimensions": {"length": "12m", "width": "2.5m", "height": "3.5m"},
+    "registration_date": "2023-01-01",
+    "registration_expiry": "2026-01-01",
+    "insurance_provider": "NSIA Assurance",
+    "insurance_policy_number": "TRK-INS-001",
+    "insurance_expiry": "2026-01-01",
+    "inspection_date": "2025-06-01",
+    "inspection_expiry": "2026-06-01",
+    "owner_type": "Company",
+    "owner_name": "TransLogistics SARL",
+    "owner_contact": "+228 22223333",
+    "driver_assigned": "Kossi Adjei",
+    "gps_installed": true,
+    "tracking_device_id": "GPS-001",
+    "special_equipment": ["Liftgate"],
+    "operating_permits": ["Hazmat"],
+    "created_at": "2025-09-18T09:00:00Z"
+}
+
+###
+POST http://127.0.0.1:8000/bookings/
+
+Content-Type: application/json
+
+{
+    "book_num": "BOOK-001",
+    "slot": "SLOT-001",
+    "truck": "TG-1234-AB",
+    "driver": "Kossi Adjei",
+    "booked_by": "user@example.com",
+    "company": "TransLogistics SARL",
+    "booking_date": "2025-09-18T10:00:00Z",
+    "status": "Confirmed",
+    "payment_status": "Paid",
+    "total_amount": 20000.00,
+    "currency": "CFA",
+    "payment_method": "Credit Card",
+    "created_at": "2025-09-18T10:00:00Z",
+    "updated_at": "2025-09-18T11:00:00Z"
+}
+
+###
+POST http://127.0.0.1:8000/notifications/
+
+Content-Type: application/json
+
+{
+    "company": "TransLogistics SARL",
+    "user": "user@example.com",
+    "driver": "Kossi Adjei",
+    "notification_type": "Email",
+    "recipient": "user@example.com",
+    "subject": "Booking Confirmation",
+    "message": "Votre réservation BOOK-001 est confirmée.",
+    "sent_at": "2025-09-18T11:00:00Z",
+    "status": "Sent",
+    "priority": "Medium",
+    "created_at": "2025-09-18T11:00:00Z"
+}
+
+###
+POST http://127.0.0.1:8000/alertlogs/
+
+Content-Type: application/json
+
+{
+    "alert_level": "warning",
+    "message": "Truck TG-1234-AB delayed at Gate A.",
+    "created_at": "2025-09-18T12:00:00Z",
+    "resolved": false,
+    "resolved_at": null,
+    "resolved_by": null
+}
+
+###
+POST http://127.0.0.1:8000/loads/
+
+Content-Type: application/json
+
+{
+    "container": "CONT-001",
+    "description": "20ft Container with Electronics",
+    "weight": 5000.00,
+    "volume": 30.00,
+    "load_type": "Containerized",
+    "special_handling": "Fragile",
+    "pickup_location": "Warehouse A",
+    "delivery_location": "Terminal B",
+    "pickup_date": "2025-09-20",
+    "delivery_date": "2025-09-22",
+    "created_at": "2025-09-18T09:00:00Z"
+}
+
+###
+POST http://127.0.0.1:8000/declarations/
+
+Content-Type: application/json
+
+{
+    "num": "DEC-001",
+    "date": "2025-09-18T09:00:00Z",
+    "description": "Declaration for imported electronics",
+    "marchandises": ["Load-001"],
+    "container_type": "CONT-001",
+    "transitaire": "TransLogistics SARL",
+    "created_at": "2025-09-18T09:00:00Z"
+}
+
+###
+POST http://127.0.0.1:8000/containertypes/
+
+Content-Type: application/json
+
+{
+    "num": "CONT-001",
+    "type": "Standard",
+    "length": 6.06,
+    "width": 2.44,
+    "height": 2.59,
+    "max_weight": 24000.00,
+    "tare_weight": 2300.00,
+    "payload_capacity": 21700.00,
+    "volume": 33.20,
+    "created_at": "2025-09-18T09:00:00Z"
+}
+
+###
+POST http://127.0.0.1:8000/truckroutes/
+
+Content-Type: application/json
+
+{
+    "truck": "TG-1234-AB",
+    "start_location": "Lomé",
+    "end_location": "Cotonou",
+    "waypoints": [{"lat": "6.1375", "lng": "1.2122"}],
+    "distance_km": 150.50,
+    "estimated_time": "03:30:00",
+    "route_date_time": "2025-09-19T06:00:00Z",
+    "created_at": "2025-09-18T09:00:00Z"
+}
+
+###
+POST http://127.0.0.1:8000/gpspositions/
+
+Content-Type: application/json
+
+{
+    "truck": "TG-1234-AB",
+    "latitude": 6.1319,
+    "longitude": 1.2220,
+    "timestamp": "2025-09-19T12:00:00Z"
+}
