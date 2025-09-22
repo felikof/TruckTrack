@@ -140,7 +140,7 @@ class Driver(models.Model):
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    Company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="drivers")
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="drivers")
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     date_of_birth = models.DateField(null=True, blank=True)
@@ -190,7 +190,8 @@ class Truck(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="trucks")
-    drivers = models.ManyToManyField(Driver, related_name="trucks", blank=True)
+    # drivers = models.ManyToManyField(Driver, related_name="trucks", blank=True)
+    driver_assigned = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name="trucks", blank=True)
     plate_number = models.CharField(max_length=20, unique=True)
     chassis_number = models.CharField(max_length=50, blank=True)
     engine_number = models.CharField(max_length=50, blank=True)
@@ -219,7 +220,6 @@ class Truck(models.Model):
     owner_name = models.CharField(max_length=100, blank=True)
     owner_contact = models.CharField(max_length=50, blank=True)
 
-    driver_assigned = models.CharField(max_length=100, blank=True)
     gps_installed = models.BooleanField(default=False)
     tracking_device_id = models.CharField(max_length=50, blank=True)
 
@@ -268,26 +268,27 @@ class Booking(models.Model):
         return f"Booking {self.id} - {self.slot.slot_id} by {self.booked_by.email} for {self.company.company_name if self.company else 'Particular'}"
 
 class Notification(models.Model):
-    NOTIFICATION_TYPE_CHOICES = [
+    NOTIFICATION_CHOICES = [
         ("email", "Email"),
         ("sms", "SMS"),
         ("whatsapp", "Whatsapp Notification"),
-    ],
+    ]
+    
     STATUS_CHOICES = [
         ("sent", "Sent"),
         ("failed", "Failed"),
         ("pending", "Pending"),
-    ],
+    ]
     PRIORITY_CHOICES = [
         ("low", "Low"),
         ("medium", "Medium"),
         ("high", "High"),
-    ],
+    ]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="notifications", null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications", null=True, blank=True)
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name="notifications", null=True, blank=True)
-    notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPE_CHOICES, default="Email")
+    notification_type = models.CharField(max_length=20, choices=NOTIFICATION_CHOICES, default="email")
     recipient = models.CharField(max_length=100)  # email or phone number
     subject = models.CharField(max_length=200, blank=True)
     message = models.TextField()
@@ -404,6 +405,8 @@ class GpsPosition(models.Model):
     latitude = models.DecimalField(max_digits=9, decimal_places=6)   # ex: 12.345678
     longitude = models.DecimalField(max_digits=9, decimal_places=6)  # ex: 98.765432
     timestamp = models.DateTimeField(auto_now_add=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"GPS Position of {self.truck.plate_number} at {self.timestamp}: ({self.latitude}, {self.longitude})"

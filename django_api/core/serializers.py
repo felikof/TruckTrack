@@ -120,14 +120,12 @@ class DriverDetailSerializer(serializers.ModelSerializer):
         ]
         
 class TruckSerializer(serializers.ModelSerializer):
-    drivers = DriverSerializer(many=True, read_only=True)
     
     class Meta:
         model = Truck
         fields = [
             "id",
             "company",
-            "drivers",
             "plate_number",
             "chassis_number",
             "engine_number",
