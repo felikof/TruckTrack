@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import * as yup from 'yup';
 
 const AdminRegister = () => {
     const [formData, setFormData] = useState({
@@ -32,12 +33,32 @@ const AdminRegister = () => {
 
     const validateForm = () => {
         const newErrors = {};
+        const validationSchema = yup.object({
+            email: yup
+                .string()
+                .email('Adresse email invalide')
+                .required('Email obligatoire')
+        });
         if (!formData.badgeNumber) newErrors.badgeNumber = 'Le numéro de badge est requis';
         else if (!/^[A-Z]{3}\d{4}$/.test(formData.badgeNumber)) newErrors.badgeNumber = 'Format invalide (ex: ADM1234)';
         if (!formData.first_name) newErrors.first_name = 'Le prénom est requis';
         if (!formData.name) newErrors.name = 'Le nom est requis';
         if (!formData.email) newErrors.email = 'L\'email est requis';
-        else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Format d\'email invalide';
+        else if (formData.email) {
+            try {
+                validationSchema.validateSyncAt('email', { email: formData.email });
+            } catch (err) {
+                newErrors.email = err.message;
+            }
+        }
+
+        if (formData.contactPersonEmail) {
+            try {
+                validationSchema.validateSyncAt('email', { email: formData.contactPersonEmail });
+            } catch (err) {
+                newErrors.contactPersonEmail = err.message;
+            }
+        }
         if (!formData.password) newErrors.password = 'Le mot de passe est requis';
         else if (formData.password.length < 8) newErrors.password = 'Le mot de passe doit contenir au moins 8 caractères';
         if (!formData.confirmPassword) newErrors.confirmPassword = 'La confirmation du mot de passe est requise';

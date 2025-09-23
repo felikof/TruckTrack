@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import * as yup from 'yup';
 
 const AdminLogin = () => {
     const [formData, setFormData] = useState({
@@ -27,8 +28,28 @@ const AdminLogin = () => {
 
     const validateForm = () => {
         const newErrors = {};
+        const validationSchema = yup.object({
+            email: yup
+                .string()
+                .email('Adresse email invalide')
+                .required('Email obligatoire')
+        });
         if (!formData.email) newErrors.email = 'L\'email est requis';
-        else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Format d\'email invalide';
+        else if (formData.email) {
+            try {
+                validationSchema.validateSyncAt('email', { email: formData.email });
+            } catch (err) {
+                newErrors.email = err.message;
+            }
+        }
+
+        if (formData.contactPersonEmail) {
+            try {
+                validationSchema.validateSyncAt('email', { email: formData.contactPersonEmail });
+            } catch (err) {
+                newErrors.contactPersonEmail = err.message;
+            }
+        }
         if (!formData.password) newErrors.password = 'Le mot de passe est requis';
         else if (formData.password.length < 6) newErrors.password = 'Le mot de passe doit contenir au moins 6 caractères';
         setErrors(newErrors);
@@ -51,18 +72,18 @@ const AdminLogin = () => {
             });
 
             console.log("Connexion réussie :", response.data);
-            
+
             // Stocker le token si présent dans la réponse
             if (response.data.access_token) {
                 localStorage.setItem('admin_token', response.data.access_token);
                 localStorage.setItem('admin_user', JSON.stringify(response.data.user));
             }
-            
+
             alert("Connexion réussie !");
             navigate("/Dashboard");
         } catch (error) {
             console.error("Erreur de connexion :", error);
-            
+
             // Gestion des erreurs spécifiques
             if (error.response?.status === 422) {
                 // Erreurs de validation du serveur
@@ -81,7 +102,7 @@ const AdminLogin = () => {
 
     const handleServerErrors = (errorData) => {
         const newErrors = {};
-        
+
         // Format standard FastAPI pour les erreurs de validation
         if (errorData.detail && Array.isArray(errorData.detail)) {
             errorData.detail.forEach(error => {
@@ -429,10 +450,10 @@ export default AdminLogin;
 
 //             console.log("Code envoyé :", response.data);
 //             setCurrentStep(2);
-            
+
 //         } catch (error) {
 //             console.error("Erreur de connexion :", error);
-            
+
 //             if (error.response?.status === 422) {
 //                 handleServerErrors(error.response.data);
 //             } else if (error.response?.status === 401) {
@@ -464,19 +485,19 @@ export default AdminLogin;
 //             });
 
 //             console.log("Connexion réussie :", response.data);
-            
+
 //             // Stocker le token si présent dans la réponse
 //             if (response.data.access_token) {
 //                 localStorage.setItem('admin_token', response.data.access_token);
 //                 localStorage.setItem('admin_user', JSON.stringify(response.data.user));
 //             }
-            
+
 //             alert("Connexion réussie !");
 //             navigate("/Landing");
-            
+
 //         } catch (error) {
 //             console.error("Erreur de vérification :", error);
-            
+
 //             if (error.response?.status === 422) {
 //                 handleServerErrors(error.response.data);
 //             } else if (error.response?.status === 401) {
@@ -514,7 +535,7 @@ export default AdminLogin;
 
 //     const handleServerErrors = (errorData) => {
 //         const newErrors = {};
-        
+
 //         if (errorData.detail && Array.isArray(errorData.detail)) {
 //             errorData.detail.forEach(error => {
 //                 const fieldName = error.loc[error.loc.length - 1];
@@ -654,7 +675,7 @@ export default AdminLogin;
 //                             {errors.verificationCode && (
 //                                 <p style={styles.errorText}>{errors.verificationCode}</p>
 //                             )}
-                            
+
 //                             <button
 //                                 type="button"
 //                                 onClick={handleResendCode}

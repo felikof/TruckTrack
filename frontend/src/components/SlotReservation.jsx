@@ -935,27 +935,29 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
     const newErrors = {}
 
     switch (step) {
-      case 1:
+      case 1: {
         if (!formData.truckPlateNumber.trim()) newErrors.truckPlateNumber = 'Truck plate number is required'
         if (!formData.cargoWeight) newErrors.cargoWeight = 'Cargo weight is required'
 
-        const plateRegex = /^[A-Z]{2}-\d{4}-[A-Z]{2}$/
+        const plateRegex = /^[A-Z]{2}[-–— ]\d{4}[-–— ][A-Z]{2}$/
         if (formData.truckPlateNumber && !plateRegex.test(formData.truckPlateNumber)) {
           newErrors.truckPlateNumber = 'Plate number format should be XX-0000-XX'
         }
         break
-      case 2:
+      }
+      case 2: {
         if (!formData.driverName.trim()) newErrors.driverName = 'Driver name is required'
         if (!formData.driverLicense.trim()) newErrors.driverLicense = 'Driver license is required'
         if (!formData.driverPhone.trim()) newErrors.driverPhone = 'Driver phone is required'
         if (!formData.carrierName.trim()) newErrors.carrierName = 'Carrier name is required'
         if (!formData.estimatedArrival) newErrors.estimatedArrival = 'Estimated arrival time is required'
 
-        const phoneRegex = /^[\+]?[0-9\s\-\(\)]{8,}$/
+        const phoneRegex = /^[+]?[\d\s\-()]{8,}$/
         if (formData.driverPhone && !phoneRegex.test(formData.driverPhone)) {
           newErrors.driverPhone = 'Please enter a valid phone number'
         }
         break
+      }
       case 3:
         if (!formData.acceptTerms) newErrors.acceptTerms = 'You must accept the terms and conditions'
         if (!formData.acceptPricing) newErrors.acceptPricing = 'You must accept the pricing terms'

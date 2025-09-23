@@ -10,7 +10,7 @@ import Book from "./pages/Book";
 import AdminSlotCreation from './components/AdminSlotCreation';
 import SlotReservation from './components/SlotReservation';
 import TruckRegistration from './components/TruckRegistration';
-import CarrierRegistration from './components/CarrierRegistration';
+import CompanyRegistration from './components/CompanyRegistration';
 import DriverRegistration from './components/DriverRegistration';
 import AdminLogin from './components/AdminLogin';
 import AdminRegister from './components/AdminRegister';
@@ -31,7 +31,7 @@ function App() {
                 <Route path="/Creneau" element={<AdminSlotCreation />} />
                 <Route path="/Reserv" element={<SlotReservation />} />
                 <Route path="/Truck" element={<TruckRegistration />} />
-                <Route path="/Trans" element={<CarrierRegistration />} />
+                <Route path="/Trans" element={<CompanyRegistration />} />
                 <Route path="/Driver" element={<DriverRegistration/>}/>
                 <Route path="/AdminL" element={<AdminLogin/>}/>
                 <Route path="/AdminR" element={<AdminRegister/>}/>

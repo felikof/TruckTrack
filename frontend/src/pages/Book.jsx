@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import '/src/Book.css'
 import DriverRegistration from '/src/components/DriverRegistration'
-import CarrierRegistration from '/src/components/CarrierRegistration'
+import CompanyRegistration from '/src/components/CompanyRegistration'
 import TruckRegistration from '/src/components/TruckRegistration'
 import SlotReservation from '/src/components/SlotReservation'
 import AdminSlotCreation from '/src/components/AdminSlotCreation'
@@ -769,7 +769,7 @@ function Book() {
               </button>
               <button 
                 className="register-btn"
-                title="Register Carrier"
+                title="Register Company"
               >
                 🏢
               </button>
@@ -1191,10 +1191,10 @@ export default Book
 //             onCancel={handleFormCancel}
 //           />
 //         )
-//       case 'carrier-registration':
+//       case 'Company-registration':
 //         return (
-//           <CarrierRegistration
-//             onSubmit={(data) => handleFormSubmit('carrier-registration', data)}
+//           <CompanyRegistration
+//             onSubmit={(data) => handleFormSubmit('Company-registration', data)}
 //             onCancel={handleFormCancel}
 //           />
 //         )
@@ -1708,8 +1708,8 @@ export default Book
 //               </button>
 //               <button 
 //                 className="register-btn"
-//                 onClick={() => setCurrentForm('carrier-registration')}
-//                 title="Register Carrier"
+//                 onClick={() => setCurrentForm('Company-registration')}
+//                 title="Register Company"
 //               >
 //                 🏢
 //               </button>

@@ -1,4 +1,3 @@
-// SlotCard.jsx
 import { formatPrice, getAmenityIcon, getStatusBadge } from './utils';
 
 export default function SlotCard({ slot, variant = 'browse', onBook, onCancel, onModify }) {

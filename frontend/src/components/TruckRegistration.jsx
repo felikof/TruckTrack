@@ -84,7 +84,7 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
     const newErrors = {}
 
     switch (step) {
-      case 1:
+      case 1: {
         if (!formData.plateNumber.trim()) newErrors.plateNumber = 'Plate number is required'
         if (!formData.chassisNumber.trim()) newErrors.chassisNumber = 'Chassis number is required'
 
@@ -93,15 +93,18 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
           newErrors.plateNumber = 'Plate number format should be XX-0000-XX'
         }
         break
-      case 2:
+      }
+      case 2: {
         if (!formData.make.trim()) newErrors.make = 'Make is required'
         if (!formData.model.trim()) newErrors.model = 'Model is required'
         if (!formData.year) newErrors.year = 'Year is required'
         if (!formData.maxWeight) newErrors.maxWeight = 'Maximum weight is required'
         break
-      case 3:
+      }
+      case 3: {
         if (!formData.ownerName.trim()) newErrors.ownerName = 'Owner name is required'
         break
+      }
     }
 
     setErrors(newErrors)

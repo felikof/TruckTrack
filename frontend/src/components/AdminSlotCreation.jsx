@@ -1,5 +1,3 @@
-
-
 import { useState } from 'react'
 
 const AdminSlotCreation = ({ onSubmit, onCancel }) => {

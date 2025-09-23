@@ -1,8 +1,7 @@
-import { useState } from 'react'
-import AdminSlotCreation from './AdminSlotCreation'
-import { useEffect } from "react";
-import { getSlots, createSlot, updateSlot, deleteSlot } from "../api/slotService";
+import { useEffect, useState } from 'react';
 import { toast } from "react-hot-toast";
+import { createSlot, deleteSlot, getSlots, updateSlot } from "../services/slotService";
+import AdminSlotCreation from './AdminSlotCreation';
 
 
 const AdminSlotManagement = ({ onSlotCreated, onSlotUpdated, onSlotDeleted }) => {

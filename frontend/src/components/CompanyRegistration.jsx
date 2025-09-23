@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useState } from 'react';
+import * as yup from 'yup';
+import { registerCompany } from "../services/companyService";
 
-const CarrierRegistration = ({ onSubmit, onCancel }) => {
+const CompanyRegistration = ({ onSubmit, onCancel }) => {
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState({
     companyName: '',
@@ -40,12 +42,12 @@ const CarrierRegistration = ({ onSubmit, onCancel }) => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
-    
+
     if (type === 'checkbox') {
       if (['servicesOffered', 'operatingRoutes', 'certifications'].includes(name)) {
         setFormData(prev => ({
           ...prev,
-          [name]: checked 
+          [name]: checked
             ? [...prev[name], value]
             : prev[name].filter(item => item !== value)
         }))
@@ -60,7 +62,13 @@ const CarrierRegistration = ({ onSubmit, onCancel }) => {
 
   const validateStep = (step) => {
     const newErrors = {}
-    
+    const validationSchema = yup.object({
+      email: yup
+        .string()
+        .email('Adresse email invalide')
+        .required('Email obligatoire')
+    });
+
     switch (step) {
       case 1:
         if (!formData.companyName.trim()) newErrors.companyName = 'Company name is required'
@@ -70,14 +78,31 @@ const CarrierRegistration = ({ onSubmit, onCancel }) => {
         if (!formData.phoneNumber.trim()) newErrors.phoneNumber = 'Phone number is required'
         if (!formData.email.trim()) newErrors.email = 'Email is required'
         if (!formData.contactPersonName.trim()) newErrors.contactPersonName = 'Contact person name is required'
-        
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (formData.email && !emailRegex.test(formData.email)) {
-          newErrors.email = 'Please enter a valid email address'
+
+        // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        // if (formData.email && !emailRegex.test(formData.email)) {
+        //   newErrors.email = 'Please enter a valid email address'
+        // }
+
+        // if (formData.contactPersonEmail && !emailRegex.test(formData.contactPersonEmail)) {
+        //   newErrors.contactPersonEmail = 'Please enter a valid email address'
+        // }
+
+        // Utilisation
+        if (formData.email) {
+          try {
+            validationSchema.validateSyncAt('email', { email: formData.email });
+          } catch (err) {
+            newErrors.email = err.message;
+          }
         }
-        
-        if (formData.contactPersonEmail && !emailRegex.test(formData.contactPersonEmail)) {
-          newErrors.contactPersonEmail = 'Please enter a valid email address'
+
+        if (formData.contactPersonEmail) {
+          try {
+            validationSchema.validateSyncAt('email', { email: formData.contactPersonEmail });
+          } catch (err) {
+            newErrors.contactPersonEmail = err.message;
+          }
         }
         break
       case 3:
@@ -99,17 +124,48 @@ const CarrierRegistration = ({ onSubmit, onCancel }) => {
     setCurrentStep(prev => Math.max(prev - 1, 1))
   }
 
+  // const handleSubmit = (e) => {
+  //   e.preventDefault()
+  //   if (validateStep(currentStep)) {
+  //     if (onSubmit) {
+  //       onSubmit(formData)
+  //     } else {
+  //       console.log('Company registration data:', formData)
+  //       alert('Company registered successfully!')
+  //     }
+  //   }
+  // }
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   console.log("Submitting form data:", formData);
+  //   try {
+  //     const result = await registerCompany(formData);
+  //     alert("Transporteur enregistré avec succès !");
+  //     console.log(result);
+  //     console.log("Données envoyées :", formData);
+  //     onSubmit(result);
+  //   } catch (error) {
+  //     alert("Erreur lors de l'inscription : " + JSON.stringify(error));
+  //   }
+  // };
+
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (validateStep(currentStep)) {
-      if (onSubmit) {
-        onSubmit(formData)
-      } else {
-        console.log('Carrier registration data:', formData)
-        alert('Carrier registered successfully!')
-      }
+      handleRegisterCompany();
     }
-  }
+  };
+
+  const handleRegisterCompany = async () => {
+    try {
+      const result = await registerCompany(formData);
+      alert("Company registered successfully!");
+      if (onSubmit) onSubmit(result);
+    } catch (error) {
+      alert("Registration error: " + JSON.stringify(error));
+    }
+  };
 
   const handleCancel = () => {
     if (onCancel) {
@@ -155,14 +211,14 @@ const CarrierRegistration = ({ onSubmit, onCancel }) => {
           <div style={styles.stepContent}>
             <h3 style={styles.stepTitle}>Company Information</h3>
             <div style={styles.formGrid}>
-              <div style={{...styles.formGroup, gridColumn: '1 / -1'}}>
+              <div style={{ ...styles.formGroup, gridColumn: '1 / -1' }}>
                 <label style={styles.label}>Company Name *</label>
                 <input
                   type="text"
                   name="companyName"
                   value={formData.companyName}
                   onChange={handleChange}
-                  style={{...styles.input, ...(errors.companyName ? styles.inputError : {})}}
+                  style={{ ...styles.input, ...(errors.companyName ? styles.inputError : {}) }}
                   placeholder="Enter company name"
                 />
                 {errors.companyName && <span style={styles.errorMessage}>{errors.companyName}</span>}
@@ -175,7 +231,7 @@ const CarrierRegistration = ({ onSubmit, onCancel }) => {
                   name="registrationNumber"
                   value={formData.registrationNumber}
                   onChange={handleChange}
-                  style={{...styles.input, ...(errors.registrationNumber ? styles.inputError : {})}}
+                  style={{ ...styles.input, ...(errors.registrationNumber ? styles.inputError : {}) }}
                   placeholder="Company registration number"
                 />
                 {errors.registrationNumber && <span style={styles.errorMessage}>{errors.registrationNumber}</span>}
@@ -201,11 +257,9 @@ const CarrierRegistration = ({ onSubmit, onCancel }) => {
                   onChange={handleChange}
                   style={styles.select}
                 >
-                  <option value="Private">Private Company</option>
-                  <option value="Public">Public Company</option>
-                  <option value="Partnership">Partnership</option>
-                  <option value="Sole Proprietorship">Sole Proprietorship</option>
-                  <option value="Cooperative">Cooperative</option>
+                  <option value="Private">Private</option>
+                  <option value="Public">Public</option>
+                  <option value="Government">Government</option>
                 </select>
               </div>
 
@@ -238,7 +292,7 @@ const CarrierRegistration = ({ onSubmit, onCancel }) => {
                   name="phoneNumber"
                   value={formData.phoneNumber}
                   onChange={handleChange}
-                  style={{...styles.input, ...(errors.phoneNumber ? styles.inputError : {})}}
+                  style={{ ...styles.input, ...(errors.phoneNumber ? styles.inputError : {}) }}
                   placeholder="+228 XX XX XX XX"
                 />
                 {errors.phoneNumber && <span style={styles.errorMessage}>{errors.phoneNumber}</span>}
@@ -251,13 +305,13 @@ const CarrierRegistration = ({ onSubmit, onCancel }) => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  style={{...styles.input, ...(errors.email ? styles.inputError : {})}}
+                  style={{ ...styles.input, ...(errors.email ? styles.inputError : {}) }}
                   placeholder="company@example.com"
                 />
                 {errors.email && <span style={styles.errorMessage}>{errors.email}</span>}
               </div>
 
-              <div style={{...styles.formGroup, gridColumn: '1 / -1'}}>
+              <div style={{ ...styles.formGroup, gridColumn: '1 / -1' }}>
                 <label style={styles.label}>Website</label>
                 <input
                   type="url"
@@ -269,7 +323,7 @@ const CarrierRegistration = ({ onSubmit, onCancel }) => {
                 />
               </div>
 
-              <div style={{...styles.formGroup, gridColumn: '1 / -1'}}>
+              <div style={{ ...styles.formGroup, gridColumn: '1 / -1' }}>
                 <label style={styles.label}>Address</label>
                 <input
                   type="text"
@@ -317,7 +371,7 @@ const CarrierRegistration = ({ onSubmit, onCancel }) => {
                   name="contactPersonName"
                   value={formData.contactPersonName}
                   onChange={handleChange}
-                  style={{...styles.input, ...(errors.contactPersonName ? styles.inputError : {})}}
+                  style={{ ...styles.input, ...(errors.contactPersonName ? styles.inputError : {}) }}
                   placeholder="Full name"
                 />
                 {errors.contactPersonName && <span style={styles.errorMessage}>{errors.contactPersonName}</span>}
@@ -354,7 +408,7 @@ const CarrierRegistration = ({ onSubmit, onCancel }) => {
                   name="contactPersonEmail"
                   value={formData.contactPersonEmail}
                   onChange={handleChange}
-                  style={{...styles.input, ...(errors.contactPersonEmail ? styles.inputError : {})}}
+                  style={{ ...styles.input, ...(errors.contactPersonEmail ? styles.inputError : {}) }}
                   placeholder="contact@company.com"
                 />
                 {errors.contactPersonEmail && <span style={styles.errorMessage}>{errors.contactPersonEmail}</span>}
@@ -370,20 +424,12 @@ const CarrierRegistration = ({ onSubmit, onCancel }) => {
             <div style={styles.formGrid}>
               <div style={styles.formGroup}>
                 <label style={styles.label}>Fleet Size</label>
-                <select
+                <input
                   name="fleetSize"
                   value={formData.fleetSize}
                   onChange={handleChange}
-                  style={styles.select}
-                >
-                  <option value="">Select fleet size</option>
-                  <option value="1-5">1-5 vehicles</option>
-                  <option value="6-10">6-10 vehicles</option>
-                  <option value="11-25">11-25 vehicles</option>
-                  <option value="26-50">26-50 vehicles</option>
-                  <option value="51-100">51-100 vehicles</option>
-                  <option value="100+">100+ vehicles</option>
-                </select>
+                  style={styles.input}
+                />
               </div>
 
               <div style={styles.formGroup}>
@@ -393,7 +439,7 @@ const CarrierRegistration = ({ onSubmit, onCancel }) => {
                   name="operatingLicense"
                   value={formData.operatingLicense}
                   onChange={handleChange}
-                  style={{...styles.input, ...(errors.operatingLicense ? styles.inputError : {})}}
+                  style={{ ...styles.input, ...(errors.operatingLicense ? styles.inputError : {}) }}
                   placeholder="License number"
                 />
                 {errors.operatingLicense && <span style={styles.errorMessage}>{errors.operatingLicense}</span>}
@@ -507,7 +553,7 @@ const CarrierRegistration = ({ onSubmit, onCancel }) => {
               <div style={styles.completionIcon}>✅</div>
               <h3 style={styles.completionTitle}>Review & Complete</h3>
               <p style={styles.completionText}>Please review your information before submitting</p>
-              
+
               <div style={styles.summaryGrid}>
                 <div style={styles.summarySection}>
                   <h4 style={styles.summaryTitle}>Company Info</h4>
@@ -543,14 +589,14 @@ const CarrierRegistration = ({ onSubmit, onCancel }) => {
         )
 
       default:
-        return null
+        return renderStepContent();
     }
   }
 
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <h2 style={styles.title}>REGISTER NEW CARRIER</h2>
+        <h2 style={styles.title}>REGISTER NEW Company</h2>
         <p style={styles.subtitle}>Fill all form fields to complete registration</p>
       </div>
 
@@ -588,35 +634,35 @@ const CarrierRegistration = ({ onSubmit, onCancel }) => {
         {renderStepContent()}
 
         <div style={styles.actions}>
-          <button 
-            type="button" 
-            onClick={handleCancel} 
+          <button
+            type="button"
+            onClick={handleCancel}
             style={styles.cancelButton}
           >
             Cancel
           </button>
-          
+
           <div style={styles.navigationButtons}>
             {currentStep > 1 && (
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={handlePrevious}
                 style={styles.previousButton}
               >
                 Previous
               </button>
             )}
-            
+
             {currentStep < steps.length ? (
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={handleNext}
                 style={styles.nextButton}
               >
                 Next
               </button>
             ) : (
-              <button 
+              <button
                 type="submit"
                 style={styles.submitButton}
               >
@@ -904,4 +950,4 @@ const styles = {
   }
 }
 
-export default CarrierRegistration
+export default CompanyRegistration
