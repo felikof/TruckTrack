@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { toast } from "react-hot-toast";
 import { createSlot, deleteSlot, getSlots, updateSlot } from "../services/slotService";
 import AdminSlotCreation from './AdminSlotCreation';
+import Modal from 'react-modal';
 
 
 const AdminSlotManagement = ({ onSlotCreated, onSlotUpdated, onSlotDeleted }) => {
@@ -93,10 +94,32 @@ const AdminSlotManagement = ({ onSlotCreated, onSlotUpdated, onSlotDeleted }) =>
     //     }
     // }
 
+    Modal.setAppElement('#root');
+
+    function DeleteConfirmation({ isOpen, onConfirm, onCancel, itemName }) {
+        return (
+            <Modal
+                isOpen={isOpen}
+                onRequestClose={onCancel}
+                className="modal"
+                overlayClassName="overlay"
+            >
+                <div className="confirmation-modal">
+                    <h3>Confirmer la suppression</h3>
+                    <p>Êtes-vous sûr de vouloir supprimer "{itemName}" ?</p>
+                    <div className="modal-actions">
+                        <button onClick={onCancel} className="btn-secondary">Annuler</button>
+                        <button onClick={onConfirm} className="btn-danger">Supprimer</button>
+                    </div>
+                </div>
+            </Modal>
+        );
+    }
+
     const handleDeleteSlot = async (slotId) => {
-        if (window.confirm("Are you sure you want to delete this slot?")) {
-            await deleteSlot(slotId);
-            setSlots(prev => prev.filter(slot => slot.id !== slotId));
+        if (DeleteConfirmation({ isOpen: true, itemName: slotId })) {
+            // await deleteSlot(slotId);
+            // setSlots(prev => prev.filter(slot => slot.id !== slotId));
 
             if (onSlotDeleted) onSlotDeleted(slotId);
             toast.success("Slot deleted successfully");
@@ -188,7 +211,7 @@ const AdminSlotManagement = ({ onSlotCreated, onSlotUpdated, onSlotDeleted }) =>
                 <div style={styles.statCard}>
                     <div style={styles.statIcon}>💰</div>
                     <div style={styles.statContent}>
-                        <h3 style={styles.statNumber}> {(slots.reduce((sum, s) => sum + (s.basePrice * s.reservedSlots), 0)).toLocaleString()}</h3>
+                        <h3 style={styles.statNumber}> {(slots.reduce((sum, s) => sum + (s.basePrice * s.reservedSlots), 0)).toLocaleString()} $</h3>
                         <p style={styles.statLabel}>{slots.reservedSlots}Earning</p>
                     </div>
                 </div>

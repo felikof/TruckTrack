@@ -1,196 +1,7 @@
-// import axios from "axios";
-// import { useState } from "react";
-// import { useNavigate } from "react-router-dom";
-
-// const SignIn = () => {
-//     const [isLoading, setIsLoading] = useState(false);
-
-//     const [formData, setFormData] = useState({
-//         email: "",
-//         mot_de_passe: "",
-//     });
-
-//     const handleChange = (e) => {
-//         setFormData({
-//             ...formData,
-//             [e.target.name]: e.target.value,
-//         });
-//     };
-
-//     const navigate = useNavigate();
-//     const navigateUp = useNavigate();
-
-//     const handleSignUp = () => {
-//         navigateUp("/SignUp");
-//     };
-
-//     const handleSubmit = async (e) => {
-//         e.preventDefault();
-//         setIsLoading(true);
-
-//         const isValid = formData.mot_de_passe.length >= 8;
-
-//         if (!isValid) {
-//             alert("Mot de passe moins de 8 caractères");
-//             return;
-//         }
-
-//         try {
-//             const response = await axios.post("http://localhost:8000/utilisateurs/connexion", {
-//                 email: formData.email,
-//                 mot_de_passe: formData.mot_de_passe
-//             }, {
-//                 headers: {
-//                     "Content-Type": "application/json"
-//                 }
-//             }
-//             );
-//             console.log("Connexion réussie :", response.data);
-//             alert("Connexion réussie !");
-//             navigate("/Booking"); // Redirection vers la page Dashboard.jsx
-//         } catch (error) {
-//             console.error("Erreur de connexion :", error);
-//             alert("Erreur lors de la connexion !");
-//         }
-//     };
-
-//     <div className="login-container">
-//         <form onSubmit={handleSubmit}>
-//             {/* Vos champs de formulaire ici */}
-//             <button type="submit" disabled={isLoading}>
-//                 {isLoading ? "Connexion en cours..." : "Se connecter"}
-//             </button>
-//         </form>
-//     </div>;
-
-//     return (
-//         <div
-//             style={{
-//                 minHeight: "100vh",
-//                 minWidth: "100vw",
-//                 position: "fixed",
-//                 top: 0,
-//                 left: 0,
-//                 backgroundImage: `url("/portnight.jpg")`,
-//                 backgroundSize: "cover",
-//                 backgroundRepeat: "no-repeat",
-//                 backgroundPosition: "center",
-//                 display: "flex",
-//                 flexDirection: "column",
-//                 alignItems: "center",
-//                 justifyContent: "center",
-//                 zIndex: 1,
-//             }}
-//         >
-//             <div
-//                 style={{
-//                     display: "flex",
-//                     flexDirection: "column",
-//                     alignItems: "center",
-//                     borderRadius: "8px",
-//                     width: "500px",
-//                 }}
-//             >
-//                 <h2 style={{ color: "white", textAlign: "center" }}>
-//                     Bienvenue sur Truck-Tracking
-//                 </h2>
-//                 <p style={{ color: "white", textAlign: "center" }}>
-//                     Ravie de vous revoir.
-//                 </p>
-//             </div>
-
-//             <div
-//                 style={{
-//                     backgroundColor: "#ffefc29a",
-//                     padding: "30px 0px 10px 0px",
-//                     borderRadius: "8px",
-//                     width: "500px",
-//                     marginTop: "30px",
-//                 }}
-//             >
-//                 <form
-//                     onSubmit={handleSubmit}
-//                     style={{
-//                         display: "flex",
-//                         flexDirection: "column",
-//                         alignItems: "center",
-//                     }}
-//                 >
-//                     <input
-//                         type="email"
-//                         name="email"
-//                         placeholder="Email"
-//                         required
-//                         value={formData.email}
-//                         onChange={handleChange}
-//                         style={inputStyle}
-//                     />
-//                     <input
-//                         type="password"
-//                         name="mot_de_passe"
-//                         placeholder="Mot de passe"
-//                         required
-//                         value={formData.mot_de_passe}
-//                         onChange={handleChange}
-//                         style={inputStyle}
-//                     />
-
-//                     <button type="submit" style={loginButtonStyle}>
-//                         <h2>Se connecter</h2>
-//                     </button>
-
-//                     <button
-//                         type="button"
-//                         onClick={handleSignUp}
-//                         style={{ cursor: "pointer", background: "none", border: "none" }}
-//                     >
-//                         <h4
-//                             style={{
-//                                 marginTop: "30px",
-//                                 fontSize: "1.1rem",
-//                                 alignItems: "center",
-//                                 textAlign: "center",
-
-//                             }}
-//                         >
-//                             Vous n'avez pas de compte ?
-//                         </h4>
-//                     </button>
-//                 </form>
-//             </div>
-//         </div>
-//     );
-// };
-
-// const inputStyle = {
-//     width: "300px",
-//     height: "40px",
-//     borderRadius: "5px",
-//     border: "1px solid blue",
-//     padding: "10px",
-//     margin: "10px 0",
-// };
-
-// const loginButtonStyle = {
-//     cursor: "pointer",
-//     width: "60%",
-//     backgroundColor: "#006affff",
-//     color: "white",
-//     borderRadius: "30px",
-//     paddingBottom: "10px",
-//     paddingTop: "10px",
-//     marginTop: "10px",
-//     border: "none",
-//     textAlign: "center",
-//     fontSize: "0.8rem",
-//     transition: "background-color 0.3s ease",
-// };
-
-// export default SignIn;
-
 import React, { useState } from 'react';
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import toast from 'react-hot-toast';
 
 const SignIn = () => {
     const [formData, setFormData] = useState({
@@ -236,7 +47,7 @@ const SignIn = () => {
         if (!validateForm()) return;
         setIsLoading(true);
         try {
-            await axios.post("http://localhost:8000/users/login", {
+            await axios.post("http://127.0.0.1:8000//users/login/", {
                 email: formData.email,
                 password: formData.password
             }, {
@@ -246,9 +57,11 @@ const SignIn = () => {
             }
             );
             await new Promise(resolve => setTimeout(resolve, 1000));
+            toast.success('Connexion réussie !');
             navigate("/Booking");
         } catch {
             setErrors({ submit: 'Erreur de connexion. Veuillez réessayer.' });
+            toast.error('Erreur de connexion. Veuillez réessayer.');
         } finally {
             setIsLoading(false);
         }

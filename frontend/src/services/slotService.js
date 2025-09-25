@@ -36,8 +36,6 @@ const mapSlot = (s) => ({
     contactPhone: s.contact_phone,
     contactEmail: s.contact_email,
     createdAt: s.created_at,
-    routeStops: s.route_stop,
-    availableFacilities: s.available_facilities,
 });
 
 export const getSlots = () =>

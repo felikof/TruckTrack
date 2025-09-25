@@ -150,13 +150,6 @@ const CompanyRegistration = ({ onSubmit, onCancel }) => {
   //   }
   // };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validateStep(currentStep)) {
-      handleRegisterCompany();
-    }
-  };
-
   const handleRegisterCompany = async () => {
     try {
       const result = await registerCompany(formData);
@@ -164,6 +157,13 @@ const CompanyRegistration = ({ onSubmit, onCancel }) => {
       if (onSubmit) onSubmit(result);
     } catch (error) {
       alert("Registration error: " + JSON.stringify(error));
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validateStep(currentStep)) {
+      handleRegisterCompany();
     }
   };
 

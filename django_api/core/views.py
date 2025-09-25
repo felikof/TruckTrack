@@ -12,7 +12,7 @@ from .serializers import *
 class UserSignView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    # permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.AllowAny]
 
 
 # Liste / création créneaux (seulement admin)

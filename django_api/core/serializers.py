@@ -40,9 +40,10 @@ class SlotSerializer(serializers.ModelSerializer):
             "status",
             "operator_name",
             "contact_person",
-            "created_at",
-            "route_stops",
+            "contact_phone",
+            "contact_email",
             "available_facilities",
+            "created_at",
         ]
         read_only_fields = ["id", "created_at"]
 

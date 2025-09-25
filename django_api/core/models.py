@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from multiselectfield import MultiSelectField
 
 # Create your models here.
 
@@ -54,6 +55,16 @@ class Slot(models.Model):
         ("EUR", "Euro"),
         ("CFA", "CFA Franc")
     ]
+    FACILITIES_CHOICES = [
+        ("Restrooms", "Restrooms"),
+        ("Food Services", "Food Services"),
+        ("Waiting Area", "Waiting Area"),
+        ("WiFi", "WiFi"),
+        ("Parking", "Parking"),
+        ("Fuel Station", "Fuel Station"),
+        ("Maintenance Services", "Maintenance Services"),
+        ("Customs Inspection", "Customs Inspection"),
+    ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     slot_id = models.CharField(max_length=20, unique=True)  # ex: SLOT-002
@@ -70,7 +81,6 @@ class Slot(models.Model):
 
     base_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     currency = models.CharField(max_length=10, choices=CURRENCY_CHOICES, default="CFA")
-
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="active")
     operator_name = models.CharField(max_length=100)
     contact_person = models.CharField(max_length=100, default="Port Autonome de Lomé")
@@ -79,8 +89,7 @@ class Slot(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
 
-    route_stops = models.JSONField(default=list, blank=True)
-    available_facilities = models.JSONField(default=list, blank=True)
+    available_facilities = MultiSelectField(choices=FACILITIES_CHOICES, blank=True)
     
     class Meta:
         ordering = ["-slot_date", "start_time"]
@@ -94,6 +103,28 @@ class Company(models.Model):
         ("Public", "Public"),
         ("Government", "Government"),
     ]
+    SERVICES_CHOICES = [
+        ("Freight Transport", "Freight Transport"),
+        ("Logistics", "Logistics"),
+        ("Warehousing", "Warehousing"),
+        ("Courier Services", "Courier Services"),
+        ("Customs Brokerage", "Customs Brokerage"),
+        ("Other", "Other"),
+    ]
+    ROUTES_CHOICES = [
+        ("Lome-Ouagadougou", "Lome-Ouagadougou"),
+        ("Lome-Niamey", "Lome-Niamey"),
+        ("Lome-Bamako", "Lome-Bamako"),
+        ("Lome-Cinkasse", "Lome-Cinkasse"),
+        ("Other", "Other"),
+    ]
+    CERTIFICATIONS_CHOICES = [
+        ("ISO 9001", "ISO 9001"),
+        ("ISO 14001", "ISO 14001"),
+        ("OHSAS 18001", "OHSAS 18001"),
+        ("Other", "Other"),
+    ]
+    
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     company_name = models.CharField(max_length=200)
@@ -122,9 +153,9 @@ class Company(models.Model):
     insurance_policy_number = models.CharField(max_length=100, blank=True)
     insurance_expiry = models.DateField(null=True, blank=True)
 
-    services_offered = models.JSONField(default=list, blank=True)  # ex: ["Freight Transport", "Logistics"]
-    operating_routes = models.JSONField(default=list, blank=True)  # ex: ["Route A", "Route B"]
-    certifications = models.JSONField(default=list, blank=True)  # ex: ["ISO 9001", "ISO 14001"]
+    services_offered = MultiSelectField(choices=SERVICES_CHOICES, blank=True)
+    operating_routes = MultiSelectField(choices=ROUTES_CHOICES, blank=True)
+    certifications = models.CharField(max_length=50, choices=CERTIFICATIONS_CHOICES, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -137,6 +168,14 @@ class Driver(models.Model):
         ("Class B", "Class B"),
         ("Class C", "Class C"),
         ("Class D", "Class D"),
+    ]
+    LANGUAGE_CHOICES = [
+        ("English", "English"),
+        ("French", "French"),
+        ("Spanish", "Spanish"),
+        ("German", "German"),
+        ("Chinese", "Chinese"),
+        ("Arabic", "Arabic"),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -158,7 +197,7 @@ class Driver(models.Model):
     emergency_phone = models.CharField(max_length=50, blank=True)
 
     experience = models.PositiveIntegerField(null=True, blank=True)  # années d'expérience
-    languages = models.JSONField(default=list, blank=True)  # ex: ["English", "French"]
+    languages = MultiSelectField(choices=LANGUAGE_CHOICES, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -186,6 +225,16 @@ class Truck(models.Model):
     OWNER_TYPE_CHOICES = [
         ("Company", "Company"),
         ("Individual", "Individual"),
+    ]
+    SPECIAL_EQUIPMENT_CHOICES = [
+    ("Liftgate", "Liftgate"),
+    ("Side Loader", "Side Loader"),
+    ("Crane", "Crane"),
+    ]
+    OPERATING_PERMIT_CHOICES = [
+        ("Hazmat", "Hazmat"),
+        ("Oversize Load", "Oversize Load"),
+        ("International", "International"),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -223,8 +272,8 @@ class Truck(models.Model):
     gps_installed = models.BooleanField(default=False)
     tracking_device_id = models.CharField(max_length=50, blank=True)
 
-    special_equipment = models.JSONField(default=list, blank=True)  # ex: ["Liftgate", "Side Loader"]
-    operating_permits = models.JSONField(default=list, blank=True)  # ex: ["Hazmat", "Oversize Load"]
+    special_equipment = MultiSelectField(choices=SPECIAL_EQUIPMENT_CHOICES, blank=True)
+    operating_permits = MultiSelectField(choices=OPERATING_PERMIT_CHOICES, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -296,6 +345,7 @@ class Notification(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="Sent")
     priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES, default="Medium")
     created_at = models.DateTimeField(auto_now_add=True)
+    
     def __str__(self):
         return f"Notification {self.id} to {self.recipient} via {self.notification_type}"
 

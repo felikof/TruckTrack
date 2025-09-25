@@ -2,66 +2,67 @@ import { useState } from 'react'
 
 const AdminSlotCreation = ({ onSubmit, onCancel }) => {
     const [currentStep, setCurrentStep] = useState(1)
-    const [formData, setFormData] = useState({
-        // Basic Slot Information
-        slotDate: '',
-        startTime: '',
-        endTime: '',
-        duration: '',
+    // const [formData, setFormData] = useState({
+    //     // Basic Slot Information
+    //     slotDate: '',
+    //     startTime: '',
+    //     endTime: '',
+    //     duration: '',
 
-        // Route Information
-        originGate: 'Gate A1',
-        destinationTerminal: 'Terminal 3',
-        routeStops: [
-            { location: 'Gate A1', estimatedTime: '', transferTime: '15' },
-            { location: 'Weighbridge', estimatedTime: '', transferTime: '20' },
-            { location: 'Terminal 3', estimatedTime: '', transferTime: '0' }
-        ],
+    //     // Route Information
+    //     originGate: 'Gate A1',
+    //     destinationTerminal: 'Terminal 3',
+    //     routeStops: [
+    //         { location: 'Gate A1', estimatedTime: '', transferTime: '15' },
+    //         { location: 'Weighbridge', estimatedTime: '', transferTime: '20' },
+    //         { location: 'Terminal 3', estimatedTime: '', transferTime: '0' }
+    //     ],
 
-        // Capacity and Availability
-        totalSlots: 20,
-        availableSlots: 20,
-        reservedSlots: 0,
+    //     // Capacity and Availability
+    //     totalSlots: 20,
+    //     availableSlots: 20,
+    //     reservedSlots: 0,
 
-        // Pricing
-        basePrice: 45000,
-        currency: 'CFA',
-        priceFactors: {
-            priority: 0,
-            additionalServices: 0,
-            peakHours: 0
-        },
+    //     // Pricing
+    //     basePrice: 45000,
+    //     currency: 'CFA',
+    //     priceFactors: {
+    //         priority: 0,
+    //         additionalServices: 0,
+    //         peakHours: 0
+    //     },
 
-        // Facilities and Services
-        availableFacilities: [],
-        requiredDocuments: [],
+    //     // Facilities and Services
+    //     availableFacilities: [],
+    //     requiredDocuments: [],
 
-        // Restrictions and Requirements
-        truckTypes: [],
-        cargoTypes: [],
-        maxWeight: '',
-        maxDimensions: {
-            length: '',
-            width: '',
-            height: ''
-        },
+    //     // Restrictions and Requirements
+    //     truckTypes: [],
+    //     cargoTypes: [],
+    //     maxWeight: '',
+    //     maxDimensions: {
+    //         length: '',
+    //         width: '',
+    //         height: ''
+    //     },
 
-        // Operational Details
-        operatorName: '',
-        contactPerson: '',
-        contactPhone: '',
+    //     // Operational Details
+    //     operatorName: '',
+    //     contactPerson: '',
+    //     contactPhone: '',
 
-        // Status and Visibility
-        status: 'active',
-        visibility: 'public',
-        autoConfirm: true,
+    //     // Status and Visibility
+    //     status: 'active',
+    //     visibility: 'public',
+    //     autoConfirm: true,
 
-        // Recurring Settings
-        isRecurring: false,
-        recurringPattern: 'daily',
-        recurringEndDate: '',
-        recurringDays: []
-    })
+    //     // Recurring Settings
+    //     isRecurring: false,
+    //     recurringPattern: 'daily',
+    //     recurringEndDate: '',
+    //     recurringDays: []
+    // })
+    const [formData, setFormData] = useState({})
 
     const [errors, setErrors] = useState({})
 
@@ -133,9 +134,10 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
 
     const calculateDuration = () => {
         if (formData.startTime && formData.endTime) {
-            const start = new Date(`2000-01-01T${formData.startTime}`)
-            const end = new Date(`2000-01-01T${formData.endTime}`)
+            const start = formData.startTime
+            const end = formData.endTime
             const diffMs = end - start
+            console.log(diffMs)
             const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
             const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
 
@@ -288,7 +290,7 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
                                 <input
                                     type="date"
                                     name="slotDate"
-                                    value={formData.slotDate}
+                                    // value={formData.slotDate}
                                     onChange={handleChange}
                                     style={{ ...styles.input, ...(errors.slotDate ? styles.inputError : {}) }}
                                     min={new Date().toISOString().split('T')[0]}
@@ -301,7 +303,7 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
                                 <input
                                     type="time"
                                     name="startTime"
-                                    value={formData.startTime}
+                                    // value={formData.startTime}
                                     onChange={(e) => {
                                         handleChange(e)
                                         setTimeout(calculateDuration, 100)
@@ -316,7 +318,7 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
                                 <input
                                     type="time"
                                     name="endTime"
-                                    value={formData.endTime}
+                                    // value={formData.endTime}
                                     onChange={(e) => {
                                         handleChange(e)
                                         setTimeout(calculateDuration, 100)
@@ -331,7 +333,7 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
                                 <input
                                     type="text"
                                     name="duration"
-                                    value={formData.duration}
+                                    // value={formData.duration}
                                     readOnly
                                     placeholder="Auto-calculated"
                                     style={{ ...styles.input, backgroundColor: '#f9fafb', color: '#6b7280', cursor: 'not-allowed' }}
@@ -343,7 +345,7 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
                                 <input
                                     type="number"
                                     name="totalSlots"
-                                    value={formData.totalSlots}
+                                    // value={formData.totalSlots}
                                     onChange={handleChange}
                                     style={{ ...styles.input, ...(errors.totalSlots ? styles.inputError : {}) }}
                                     min="1"
@@ -357,7 +359,7 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
                                 <input
                                     type="number"
                                     name="reservedSlots"
-                                    value={formData.reservedSlots}
+                                    // value={formData.reservedSlots}
                                     onChange={handleChange}
                                     style={styles.input}
                                     min="0"
@@ -370,7 +372,7 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
                                 <input
                                     type="number"
                                     name="basePrice"
-                                    value={formData.basePrice}
+                                    // value={formData.basePrice}
                                     onChange={handleChange}
                                     style={{ ...styles.input, ...(errors.basePrice ? styles.inputError : {}) }}
                                     min="0"
@@ -383,7 +385,7 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
                                 <label style={styles.label}>Currency</label>
                                 <select
                                     name="currency"
-                                    value={formData.currency}
+                                    // value={formData.currency}
                                     onChange={handleChange}
                                     style={styles.select}
                                 >
@@ -405,7 +407,7 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
                                 <label style={styles.label}>Origin Gate</label>
                                 <select
                                     name="originGate"
-                                    value={formData.originGate}
+                                    // value={formData.originGate}
                                     onChange={handleChange}
                                     style={styles.select}
                                 >
@@ -422,7 +424,7 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
                                 <label style={styles.label}>Destination Terminal</label>
                                 <select
                                     name="destinationTerminal"
-                                    value={formData.destinationTerminal}
+                                    // value={formData.destinationTerminal}
                                     onChange={handleChange}
                                     style={styles.select}
                                 >
@@ -504,7 +506,7 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
                                         <input
                                             type="checkbox"
                                             name="availableFacilities"
-                                            value={facility}
+                                            // value={facility}
                                             checked={formData.availableFacilities.includes(facility)}
                                             onChange={handleChange}
                                             style={styles.checkbox}
@@ -527,7 +529,7 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
                                 <input
                                     type="text"
                                     name="operatorName"
-                                    value={formData.operatorName}
+                                    // value={formData.operatorName}
                                     onChange={handleChange}
                                     style={{ ...styles.input, ...(errors.operatorName ? styles.inputError : {}) }}
                                     placeholder="Responsible operator"
@@ -540,7 +542,7 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
                                 <input
                                     type="text"
                                     name="contactPerson"
-                                    value={formData.contactPerson}
+                                    // value={formData.contactPerson}
                                     onChange={handleChange}
                                     style={{ ...styles.input, ...(errors.contactPerson ? styles.inputError : {}) }}
                                     placeholder="Contact person name"
@@ -553,7 +555,7 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
                                 <input
                                     type="tel"
                                     name="contactPhone"
-                                    value={formData.contactPhone}
+                                    // value={formData.contactPhone}
                                     onChange={handleChange}
                                     style={styles.input}
                                     placeholder="+228 XX XX XX XX"
@@ -565,7 +567,7 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
                                 <input
                                     type="number"
                                     name="maxWeight"
-                                    value={formData.maxWeight}
+                                    // value={formData.maxWeight}
                                     onChange={handleChange}
                                     style={styles.input}
                                     min="1"
@@ -578,7 +580,7 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
                                 <label style={styles.label}>Status</label>
                                 <select
                                     name="status"
-                                    value={formData.status}
+                                    // value={formData.status}
                                     onChange={handleChange}
                                     style={styles.select}
                                 >
@@ -593,7 +595,7 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
                                 <label style={styles.label}>Visibility</label>
                                 <select
                                     name="visibility"
-                                    value={formData.visibility}
+                                    // value={formData.visibility}
                                     onChange={handleChange}
                                     style={styles.select}
                                 >
@@ -691,13 +693,13 @@ const AdminSlotCreation = ({ onSubmit, onCancel }) => {
                                     <p><strong>Capacity:</strong> {formData.totalSlots} slots</p>
                                 </div>
 
-                                <div style={styles.summarySection}>
+                                {/* <div style={styles.summarySection}>
                                     <h4 style={styles.summaryTitle}>Route</h4>
                                     <p><strong>From:</strong> {formData.originGate}</p>
                                     <p><strong>To:</strong> {formData.destinationTerminal}</p>
                                     <p><strong>Stops:</strong> {formData.routeStops.length} stops</p>
                                     <p><strong>Facilities:</strong> {formData.availableFacilities.length} available</p>
-                                </div>
+                                </div> */}
 
                                 <div style={styles.summarySection}>
                                     <h4 style={styles.summaryTitle}>Operations</h4>
