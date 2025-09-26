@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
+import { authService } from '../services/authService';
 
 const SignIn = () => {
     const [formData, setFormData] = useState({
@@ -42,26 +43,63 @@ const SignIn = () => {
         return Object.keys(newErrors).length === 0;
     };
 
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    //     if (!validateForm()) return;
+    //     setIsLoading(true);
+    //     try {
+    //         await axios.post("http://127.0.0.1:8000//users/login/", {
+    //             email: formData.email,
+    //             password: formData.password
+    //         }, {
+    //             headers: {
+    //                 "Content-Type": "application/json"
+    //             }
+    //         }
+    //         );
+    //         await new Promise(resolve => setTimeout(resolve, 1000));
+    //         toast.success('Connexion réussie !');
+    //         navigate("/Booking");
+    //     } catch {
+    //         setErrors({ submit: 'Erreur de connexion. Veuillez réessayer.' });
+    //         toast.error('Erreur de connexion. Veuillez réessayer.');
+    //     } finally {
+    //         setIsLoading(false);
+    //     }
+    // };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         if (!validateForm()) return;
+
         setIsLoading(true);
+
         try {
-            await axios.post("http://127.0.0.1:8000//users/login/", {
-                email: formData.email,
+            const response = await axios.post("http://127.0.0.1:8000/users/login/", {
+                email: formData.email, // ou 'username' selon votre API
                 password: formData.password
-            }, {
-                headers: {
-                    "Content-Type": "application/json"
-                }
+            });
+
+            // Sauvegarder le token
+            authService.setToken(response.data.access);
+
+            // Optionnel: Sauvegarder le refresh token
+            if (response.data.refresh) {
+                localStorage.setItem('refreshToken', response.data.refresh);
             }
-            );
+
+            toast.success("Connexion réussie !");
+
             await new Promise(resolve => setTimeout(resolve, 1000));
-            toast.success('Connexion réussie !');
-            navigate("/Booking");
-        } catch {
-            setErrors({ submit: 'Erreur de connexion. Veuillez réessayer.' });
-            toast.error('Erreur de connexion. Veuillez réessayer.');
+            navigate("/Booking"); // Redirection vers le tableau de bord
+
+        } catch (error) {
+            const errorMessage = error.response?.data?.detail ||
+                'Email ou mot de passe incorrect';
+
+            setErrors({ submit: errorMessage });
+            toast.error(errorMessage);
         } finally {
             setIsLoading(false);
         }

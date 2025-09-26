@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
+import { authService } from '../services/authService';
 
 const SignUp = () => {
     const [formData, setFormData] = useState({
@@ -50,18 +51,54 @@ const SignUp = () => {
         }
     };
 
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    //     if (formData.password !== formData.confirmPassword) {
+    //         toast.error("Les mots de passe ne correspondent pas");
+    //         return;
+    //     }
+
+    //     if (!validateForm()) return;
+    //     setIsLoading(true);
+    //     navigate("/SignIn");
+    //     try {
+    //         await axios.post("http://127.0.0.1:8000/users/sign/", {
+    //             name: formData.name,
+    //             first_name: formData.first_name,
+    //             email: formData.email,
+    //             password: formData.password
+    //         }, {
+    //             headers: {
+    //                 "Content-Type": "application/json"
+    //             }
+    //         }
+    //         );
+    //         toast.success("Inscription réussie !");
+    //         await new Promise(resolve => setTimeout(resolve, 1000));
+    //         navigate("/SignIn");
+    //     } catch {
+    //         setErrors({ submit: 'Erreur lors de l\'inscription. Veuillez réessayer.' });
+    //         toast.error("Erreur lors de l'inscription. Veuillez réessayer.")
+    //     } finally {
+    //         setIsLoading(false);
+    //     }
+    // };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Validation des mots de passe
         if (formData.password !== formData.confirmPassword) {
             toast.error("Les mots de passe ne correspondent pas");
             return;
         }
 
         if (!validateForm()) return;
+
         setIsLoading(true);
-        navigate("/SignIn");
+
         try {
-            await axios.post("http://127.0.0.1:8000/users/sign/", {
+            const response = await axios.post("http://127.0.0.1:8000/users/sign/", {
                 name: formData.name,
                 first_name: formData.first_name,
                 email: formData.email,
@@ -70,14 +107,27 @@ const SignUp = () => {
                 headers: {
                     "Content-Type": "application/json"
                 }
+            });
+
+            // Si votre API retourne le token directement après l'inscription
+            if (response.data.access) {
+                authService.setToken(response.data.access);
+                toast.success("Inscription réussie ! Vous êtes maintenant connecté.");
+
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                navigate("/dashboard"); // Redirection vers la page d'accueil
+            } else {
+                toast.success("Inscription réussie ! Veuillez vous connecter.");
+                navigate("/SignIn");
             }
-            );
-            toast.success("Inscription réussie !");
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            navigate("/SignIn");
-        } catch {
-            setErrors({ submit: 'Erreur lors de l\'inscription. Veuillez réessayer.' });
-            toast.error("Erreur lors de l'inscription. Veuillez réessayer.")
+
+        } catch (error) {
+            const errorMessage = error.response?.data?.message ||
+                error.response?.data?.detail ||
+                'Erreur lors de l\'inscription. Veuillez réessayer.';
+
+            setErrors({ submit: errorMessage });
+            toast.error(errorMessage);
         } finally {
             setIsLoading(false);
         }

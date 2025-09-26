@@ -1,9 +1,8 @@
 import axios from "axios";
-// import { meta } from "vite-plugin-meta-env";
+import { authService } from './authService';
 
 
 const API_URL = "http://127.0.0.1:8000/slots/";
-// const API_URL = meta.env.API_BASE_URL + "slots/";
 
 //export const getSlots = () => axios.get(API_URL).then(res => res.data);
 
