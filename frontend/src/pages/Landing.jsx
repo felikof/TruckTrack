@@ -76,7 +76,7 @@ function Landing() {
                             </div>
                         </div>
                         <div className="flex items-center space-x-4">
-                            <button type="button" onClick={handleSignIn} className="text-slate-600 hover:text-slate-800 px-3 py-2 rounded-md text-sm font-medium transition-colors" style={{ backgroundColor: "blue", color: "white", borderRadius: "5px" }}>
+                            <button type="button" onClick={handleSignIn} className="text-slate-600 hover:text-slate-800 px-3 py-2 rounded-md text-sm font-medium transition-colors" style={{ backgroundColor: "#2563eb", color: "white", borderRadius: "5px" }}>
                                 Connexion
                             </button>
                             <button type="button" onClick={handleSignUp} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors" style={{ backgroundColor: "orange", borderRadius: "5px" }}>
