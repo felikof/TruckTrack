@@ -9,6 +9,10 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --color-primary: #1e40af;   /* Bleu */
+  --color-accent: #f59e0b;    /* Orange */
+  --color-background: #f9fafb;
+  --color-text: #111827;
 }
 
 body {

@@ -48,7 +48,7 @@ const AdminSlotManagement = ({ onSlotCreated, onSlotUpdated, onSlotDeleted }) =>
     // }
     const handleCreateSlot = async (slotData) => {
         const newSlot = await createSlot(slotData);
-        setSlots(prev => [...prev, newSlot]);
+        setSlots(prev => [prev, newSlot]);
         setCurrentView("dashboard");
 
         if (onSlotCreated) onSlotCreated(newSlot);
