@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
-import { authService } from '../services/authService';
+import userService from '../services/userService';
 
 const SignIn = () => {
     const [formData, setFormData] = useState({
@@ -76,18 +76,19 @@ const SignIn = () => {
         setIsLoading(true);
 
         try {
-            const response = await axios.post("http://127.0.0.1:8000/users/login/", {
-                email: formData.email, // ou 'username' selon votre API
-                password: formData.password
-            });
+            // const response = await axios.post("http://127.0.0.1:8000/users/login/", {
+            //     email: formData.email, // ou 'username' selon votre API
+            //     password: formData.password
+            // });
+            userService.login(formData.email, formData.password);
 
             // Sauvegarder le token
-            authService.setToken(response.data.access);
+            // authService.setToken(response.data.access);
 
             // Optionnel: Sauvegarder le refresh token
-            if (response.data.refresh) {
-                localStorage.setItem('refreshToken', response.data.refresh);
-            }
+            // if (response.data.refresh) {
+            //     localStorage.setItem('refreshToken', response.data.refresh);
+            // }
 
             toast.success("Connexion réussie !");
 
@@ -104,6 +105,30 @@ const SignIn = () => {
             setIsLoading(false);
         }
     };
+
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    //     if (!validateForm()) return;
+    //     setIsLoading(true);
+
+    //     try {
+    //         const response = await apiService.login({
+    //             email: formData.email,
+    //             password: formData.password
+    //         });
+
+    //         // Le token est automatiquement géré par authService via l'intercepteur
+    //         authService.setToken(response.data.access);
+
+    //         toast.success("Connexion réussie !");
+    //         navigate("/dashboard");
+
+    //     } catch (error) {
+    //         toast.error(error.response?.data?.detail || "Erreur de connexion");
+    //     } finally {
+    //         setIsLoading(false);
+    //     }
+    // };
 
     return (
         <div style={styles.container}>

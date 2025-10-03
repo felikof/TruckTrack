@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import Landing from "./pages/Landing";
 import Booking from "./pages/Booking";
 import Book from "./pages/Book";
+import Header from './components/Header';
 import AdminSlotCreation from './components/AdminSlotCreation';
 import SlotReservation from './components/SlotReservation';
 import TruckRegistration from './components/TruckRegistration';
@@ -36,6 +37,7 @@ function App() {
                 <Route path="/AdminL" element={<AdminLogin/>}/>
                 <Route path="/AdminR" element={<AdminRegister/>}/>
                 <Route path="/Slot" element={<AdminSlotManagement/>}/>
+                <Route path="/header" element={<Header/>}/>
             </Routes>
         </Router>
     );

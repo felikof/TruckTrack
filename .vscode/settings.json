@@ -1,5 +1,8 @@
 {
     "python.analysis.extraPaths": [
         "./backend/models"
+    ],
+    "cursorpyright.analysis.extraPaths": [
+        "./backend/models"
     ]
 }

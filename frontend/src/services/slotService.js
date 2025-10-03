@@ -1,6 +1,4 @@
 import axios from "axios";
-import { authService } from './authService';
-
 
 const API_URL = "http://127.0.0.1:8000/slots/";
 
@@ -37,6 +35,14 @@ const mapSlot = (s) => ({
     createdAt: s.created_at,
 });
 
-export const getSlots = () =>
-    axios.get(API_URL).then(res => res.data.map(mapSlot));
-
+export const getSlots = async () => {
+    const token = localStorage.getItem("accessToken");
+    const response = await axios.get(API_URL, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    console.log("Slots response:", response.data);
+    return response.data.map(mapSlot);
+}
+    

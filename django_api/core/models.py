@@ -295,23 +295,23 @@ class Booking(models.Model):
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    book_num = models.CharField(max_length=20, unique=True)  # ex: BOOK-001
+    book_num = models.CharField(max_length=30, unique=True)  # ex: BOOK-001
     slot = models.ForeignKey(Slot, on_delete=models.CASCADE, related_name="bookings")
-    truck = models.ForeignKey(Truck, on_delete=models.CASCADE, related_name="bookings")
-    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name="bookings")
-    booked_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bookings")
+    truck = models.ForeignKey(Truck, on_delete=models.CASCADE, related_name="bookings", null=True, blank=True)
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name="bookings", null=True, blank=True)
+    booked_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bookings", null=True, blank=True)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="bookings", null=True, blank=True)
 
     booking_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="Pending")
     payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default="Unpaid")
 
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=0, default=0.00)
     currency = models.CharField(max_length=10, choices=Slot.CURRENCY_CHOICES, default="CFA")
-    payment_method = models.CharField(max_length=50, blank=True)  # ex: Credit Card, PayPal
+    payment_method = models.CharField(max_length=50, blank=True, default="Virement")  # ex: Credit Card, PayPal
 
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Booking {self.id} - {self.slot.slot_id} by {self.booked_by.email} for {self.company.company_name if self.company else 'Particular'}"

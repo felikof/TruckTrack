@@ -14,12 +14,16 @@ class UserSignView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [permissions.AllowAny]
 
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 # Liste / création créneaux (seulement admin)
 class SlotViewSet(viewsets.ModelViewSet):
     queryset = Slot.objects.all()
-    serializer_class = SlotSerializer
-    # permission_classes = [permissions.IsAdminUser]
+    serializer_class = SlotSerializer  
+    permission_classes = [permissions.IsAuthenticated]
 
 # @api_view(["POST"])
 # @permission_classes([permissions.IsAuthenticated])
@@ -60,54 +64,54 @@ class SlotViewSet(viewsets.ModelViewSet):
 class DriverViewSet(viewsets.ModelViewSet):
     queryset = Driver.objects.all()
     serializer_class = DriverSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     
 class TruckViewSet(viewsets.ModelViewSet):
     queryset = Truck.objects.all()
     serializer_class = TruckSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     
 class CompanyViewSet(viewsets.ModelViewSet):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     
 class BookingViewSet(viewsets.ModelViewSet):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    #permission_classes = [permissions.IsAuthenticated]
     
 class NotificationViewSet(viewsets.ModelViewSet):
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     
 class AlertLogViewSet(viewsets.ModelViewSet):
     queryset = AlertLog.objects.all()
     serializer_class = AlertLogSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     
 class LoadViewSet(viewsets.ModelViewSet):
     queryset = Load.objects.all()
     serializer_class = LoadSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     
 class DeclarationViewSet(viewsets.ModelViewSet):
     queryset = Declaration.objects.all()
     serializer_class = DeclarationSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     
 class ContainerTypeViewSet(viewsets.ModelViewSet):
     queryset = ContainerType.objects.all()
     serializer_class = ContainerTypeSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     
 class TruckRouteViewSet(viewsets.ModelViewSet):
     queryset = TruckRoute.objects.all()
     serializer_class = TruckRouteSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     
 class GpsPositionViewSet(viewsets.ModelViewSet):
     queryset = GpsPosition.objects.all()
     serializer_class = GpsPositionSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]

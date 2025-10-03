@@ -840,48 +840,63 @@
 
 
 import { useState } from 'react'
+import axios from "axios";
+import toast from 'react-hot-toast';
+import Booking from '../pages/Booking';
 
 const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
   const [currentStep, setCurrentStep] = useState(1)
+  // const [formData, setFormData] = useState({
+  //   // Truck Information
+  //   truckPlateNumber: '',
+  //   truckType: 'Standard',
+  //   cargoType: 'Container',
+  //   cargoWeight: '',
+  //   cargoDescription: '',
+  //   containerNumber: '',
+  //   sealNumber: '',
+
+  //   // Driver Information
+  //   driverName: '',
+  //   driverLicense: '',
+  //   driverPhone: '',
+
+  //   // Carrier Information
+  //   carrierName: '',
+  //   carrierContact: '',
+
+  //   // Route Information
+  //   origin: selectedSlot?.gate || 'Gate A1',
+  //   destination: selectedSlot?.terminal || 'Terminal 3',
+  //   estimatedArrival: '',
+
+  //   // Additional Services
+  //   additionalServices: [],
+  //   specialRequirements: '',
+
+  //   // Documentation
+  //   billOfLading: '',
+  //   customsDeclaration: '',
+
+  //   // Emergency Contact
+  //   emergencyContactName: '',
+  //   emergencyContactPhone: '',
+
+  //   // Terms and Conditions
+  //   acceptTerms: false,
+  //   acceptPricing: false
+  // })
   const [formData, setFormData] = useState({
-    // Truck Information
-    truckPlateNumber: '',
-    truckType: 'Standard',
-    cargoType: 'Container',
-    cargoWeight: '',
-    cargoDescription: '',
-    containerNumber: '',
-    sealNumber: '',
+    truckId: '81743cde-9e0d-44f9-b248-a949f804f27a',
+    driverId: '50f4851b-3f68-4517-96fa-2c5c0877c2ae',
+    userId: '10',
+    companyId: '829f64f8-d5bd-47be-8227-5390144a45ae',
+    status: 'Pending',
+    paymentStatus: 'Unpaid',
+    totalAmount: '45000',
+    currency: 'CFA',
+    paymentMethod: 'Virement',
 
-    // Driver Information
-    driverName: '',
-    driverLicense: '',
-    driverPhone: '',
-
-    // Carrier Information
-    carrierName: '',
-    carrierContact: '',
-
-    // Route Information
-    origin: selectedSlot?.gate || 'Gate A1',
-    destination: selectedSlot?.terminal || 'Terminal 3',
-    estimatedArrival: '',
-
-    // Additional Services
-    additionalServices: [],
-    specialRequirements: '',
-
-    // Documentation
-    billOfLading: '',
-    customsDeclaration: '',
-
-    // Emergency Contact
-    emergencyContactName: '',
-    emergencyContactPhone: '',
-
-    // Terms and Conditions
-    acceptTerms: false,
-    acceptPricing: false
   })
 
   const [errors, setErrors] = useState({})
@@ -895,12 +910,12 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
 
   // Default slot data for standalone use
   const defaultSlot = {
-    id: 1,
+    id: '3751de8b-4414-466d-9dd0-e129ac2107b6',
     timeSlot: '08:00',
     gate: 'Gate A1',
     terminal: 'Terminal 3',
     duration: '2h 30m',
-    price: 45000,
+    price: 45000.00,
     currency: 'CFA'
   }
 
@@ -934,35 +949,35 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
   const validateStep = (step) => {
     const newErrors = {}
 
-    switch (step) {
-      case 1: {
-        if (!formData.truckPlateNumber.trim()) newErrors.truckPlateNumber = 'Truck plate number is required'
-        if (!formData.cargoWeight) newErrors.cargoWeight = 'Cargo weight is required'
+    // switch (step) {
+    //   case 1: {
+    //     if (!formData.truckPlateNumber.trim()) newErrors.truckPlateNumber = 'Truck plate number is required'
+    //     if (!formData.cargoWeight) newErrors.cargoWeight = 'Cargo weight is required'
 
-        const plateRegex = /^[A-Z]{2}[-–— ]\d{4}[-–— ][A-Z]{2}$/
-        if (formData.truckPlateNumber && !plateRegex.test(formData.truckPlateNumber)) {
-          newErrors.truckPlateNumber = 'Plate number format should be XX-0000-XX'
-        }
-        break
-      }
-      case 2: {
-        if (!formData.driverName.trim()) newErrors.driverName = 'Driver name is required'
-        if (!formData.driverLicense.trim()) newErrors.driverLicense = 'Driver license is required'
-        if (!formData.driverPhone.trim()) newErrors.driverPhone = 'Driver phone is required'
-        if (!formData.carrierName.trim()) newErrors.carrierName = 'Carrier name is required'
-        if (!formData.estimatedArrival) newErrors.estimatedArrival = 'Estimated arrival time is required'
+    //     const plateRegex = /^[A-Z]{2}[-–— ]\d{4}[-–— ][A-Z]{2}$/
+    //     if (formData.truckPlateNumber && !plateRegex.test(formData.truckPlateNumber)) {
+    //       newErrors.truckPlateNumber = 'Plate number format should be XX-0000-XX'
+    //     }
+    //     break
+    //   }
+    //   case 2: {
+    //     if (!formData.driverName.trim()) newErrors.driverName = 'Driver name is required'
+    //     if (!formData.driverLicense.trim()) newErrors.driverLicense = 'Driver license is required'
+    //     if (!formData.driverPhone.trim()) newErrors.driverPhone = 'Driver phone is required'
+    //     if (!formData.carrierName.trim()) newErrors.carrierName = 'Carrier name is required'
+    //     if (!formData.estimatedArrival) newErrors.estimatedArrival = 'Estimated arrival time is required'
 
-        const phoneRegex = /^[+]?[\d\s\-()]{8,}$/
-        if (formData.driverPhone && !phoneRegex.test(formData.driverPhone)) {
-          newErrors.driverPhone = 'Please enter a valid phone number'
-        }
-        break
-      }
-      case 3:
-        if (!formData.acceptTerms) newErrors.acceptTerms = 'You must accept the terms and conditions'
-        if (!formData.acceptPricing) newErrors.acceptPricing = 'You must accept the pricing terms'
-        break
-    }
+    //     const phoneRegex = /^[+]?[\d\s\-()]{8,}$/
+    //     if (formData.driverPhone && !phoneRegex.test(formData.driverPhone)) {
+    //       newErrors.driverPhone = 'Please enter a valid phone number'
+    //     }
+    //     break
+    //   }
+    //   case 3:
+    //     if (!formData.acceptTerms) newErrors.acceptTerms = 'You must accept the terms and conditions'
+    //     if (!formData.acceptPricing) newErrors.acceptPricing = 'You must accept the pricing terms'
+    //     break
+    // }
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -978,29 +993,107 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
     setCurrentStep(prev => Math.max(prev - 1, 1))
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    if (validateStep(currentStep)) {
-      const reservationData = {
-        ...formData,
-        slotId: slot?.id,
-        slotTime: slot?.timeSlot,
-        slotDate: new Date().toISOString().split('T')[0],
-        totalPrice: slot?.price,
-        currency: slot?.currency || 'CFA',
-        reservationId: `RES-${Date.now()}`,
-        status: 'pending',
-        createdAt: new Date().toISOString()
-      }
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
 
-      if (onSubmit) {
-        onSubmit(reservationData)
-      } else {
-        console.log('Slot reservation data:', reservationData)
-        alert('Slot reserved successfully!')
-      }
+  //   // const reservationData = {
+  //   //   ...formData, // doit contenir truckId, driverId, companyId, etc.
+  //   //   book_num: `BOOK-${Date.now()}`,     // correspond à book_num
+  //   //   slot: slot?.id,                     // FK -> Slot
+  //   //   truck: formData.truckId,            // FK -> Truck
+  //   //   driver: formData.driverId,          // FK -> Driver
+  //   //   booked_by: formData.userId,         // FK -> User (si dispo depuis auth)
+  //   //   company: formData.companyId,        // FK -> Company
+  //   //   status: "Pending",                  // valeurs : Pending, Confirmed, etc.
+  //   //   payment_status: "Unpaid",           // valeurs : Unpaid, Paid...
+  //   //   total_amount: slot?.price || 0,     // correspond au prix du slot
+  //   //   currency: slot?.currency || "CFA",  // devise
+  //   //   payment_method: formData.paymentMethod || "Virement", // ex: Virement, PayPal
+  //   // };
+
+  //   const reservationData = {
+  //     book_num: "BOOK-001",
+  //     slot: slot?.id,
+  //     truck: formData.truckId,
+  //     driver: formData.driverId,
+  //     booked_by: Number(formData.userId),
+  //     company: formData.companyId,
+  //     // booking_date: new Date().toISOString(),
+  //     // status: "Pending",
+  //     // payment_status: "Unpaid",
+  //     total_amount: slot?.price || formData.totalAmount,
+  //     currency: formData.currency || "CFA",
+  //     payment_method: formData.paymentMethod || "Virement"
+  //   };
+
+
+  //   const token = localStorage.getItem("accessToken");
+  //   console.log("Token1 :", token);
+  //   if (!validateStep(currentStep)) return;
+
+  //   try {
+  //     console.log("Payload:", JSON.stringify(reservationData, null, 2));
+  //     const response = await axios.post("http://127.0.0.1:8000/bookings/", reservationData,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
+  //     // console.log("Slot reservation data:", response.data);
+  //     toast.succes("Slot reserved successfully!");
+  //     if (onSubmit) onSubmit(response.data); // callback si défini
+  //   } catch (error) {
+  //     console.error("Erreur lors de la réservation:", error);
+  //     toast.error("Erreur lors de la réservation, réessayez.");
+  //   }
+  // };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateStep(currentStep)) return;
+
+    const reservationData = {
+      book_num: `BOOK-${Date.now()}`, // génère un numéro unique
+      slot: slot?.id,                 // UUID du slot
+      truck: formData.truckId || null,
+      driver: formData.driverId || null,
+      booked_by: formData.userId ? Number(formData.userId) : null,
+      company: formData.companyId || null,
+      status: "Pending",              // par défaut
+      payment_status: "Unpaid",       // par défaut
+      total_amount: Number(slot?.price || formData.totalAmount || 0),
+      currency: formData.currency || "CFA",
+      payment_method: formData.paymentMethod || "Virement"
+    };
+
+    const token = localStorage.getItem("accessToken");
+
+    try {
+      console.log("Payload envoyé:", reservationData);
+
+      const response = await axios.post(
+        "http://127.0.0.1:8000/bookings/",
+        reservationData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // ⚠️ à adapter selon ton auth
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      toast.success("Slot reserved successfully!");
+      if (onSubmit) onSubmit(response.data);
+
+    } catch (error) {
+      console.error("Erreur lors de la réservation:", error.response?.data || error);
+      toast.error("Erreur lors de la réservation, réessayez.");
     }
-  }
+  };
+
 
   const handleCancel = () => {
     if (onCancel) {
@@ -1042,108 +1135,442 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
     return `${currency} ${price?.toLocaleString() || '0'}`
   }
 
+  // const renderStepContent = () => {
+  //   switch (currentStep) {
+  //     case 1:
+  //       return (
+  //         <div style={styles.stepContent}>
+  //           <h3 style={styles.stepTitle}>Truck & Cargo Information</h3>
+  //           <div style={styles.formGrid}>
+  //             <div style={styles.formGroup}>
+  //               <label style={styles.label}>Truck Plate Number *</label>
+  //               <input
+  //                 type="text"
+  //                 name="truckPlateNumber"
+  //                 value={formData.truckPlateNumber}
+  //                 onChange={handleChange}
+  //                 style={{ ...styles.input, ...(errors.truckPlateNumber ? styles.inputError : {}), textTransform: 'uppercase' }}
+  //                 placeholder="TG-1234-AB"
+  //               />
+  //               {errors.truckPlateNumber && <span style={styles.errorMessage}>{errors.truckPlateNumber}</span>}
+  //             </div>
+
+  //             <div style={styles.formGroup}>
+  //               <label style={styles.label}>Truck Type</label>
+  //               <select
+  //                 name="truckType"
+  //                 value={formData.truckType}
+  //                 onChange={handleChange}
+  //                 style={styles.select}
+  //               >
+  //                 <option value="Standard">Standard Truck</option>
+  //                 <option value="Heavy Duty">Heavy Duty</option>
+  //                 <option value="Container">Container Truck</option>
+  //                 <option value="Flatbed">Flatbed</option>
+  //                 <option value="Tanker">Tanker</option>
+  //                 <option value="Refrigerated">Refrigerated</option>
+  //               </select>
+  //             </div>
+
+  //             <div style={styles.formGroup}>
+  //               <label style={styles.label}>Cargo Type</label>
+  //               <select
+  //                 name="cargoType"
+  //                 value={formData.cargoType}
+  //                 onChange={handleChange}
+  //                 style={styles.select}
+  //               >
+  //                 <option value="Container">Container</option>
+  //                 <option value="Bulk">Bulk Cargo</option>
+  //                 <option value="General">General Cargo</option>
+  //                 <option value="Liquid">Liquid</option>
+  //                 <option value="Hazardous">Hazardous Materials</option>
+  //                 <option value="Refrigerated">Refrigerated Goods</option>
+  //               </select>
+  //             </div>
+
+  //             <div style={styles.formGroup}>
+  //               <label style={styles.label}>Cargo Weight (tons) *</label>
+  //               <input
+  //                 type="number"
+  //                 name="cargoWeight"
+  //                 value={formData.cargoWeight}
+  //                 onChange={handleChange}
+  //                 style={{ ...styles.input, ...(errors.cargoWeight ? styles.inputError : {}) }}
+  //                 min="0.1"
+  //                 step="0.1"
+  //                 placeholder="e.g., 25.5"
+  //               />
+  //               {errors.cargoWeight && <span style={styles.errorMessage}>{errors.cargoWeight}</span>}
+  //             </div>
+
+  //             {/* <div style={{ ...styles.formGroup, gridColumn: '1 / -1' }}>
+  //               <label style={styles.label}>Cargo Description</label>
+  //               <textarea
+  //                 name="cargoDescription"
+  //                 value={formData.cargoDescription}
+  //                 onChange={handleChange}
+  //                 style={styles.textarea}
+  //                 rows="3"
+  //                 placeholder="Describe the cargo being transported"
+  //               />
+  //             </div> */}
+
+  //             <div style={styles.formGroup}>
+  //               <label style={styles.label}>Container Number</label>
+  //               <input
+  //                 type="text"
+  //                 name="containerNumber"
+  //                 value={formData.containerNumber}
+  //                 onChange={handleChange}
+  //                 style={styles.input}
+  //                 placeholder="Container ID (if applicable)"
+  //               />
+  //             </div>
+
+  //             <div style={styles.formGroup}>
+  //               <label style={styles.label}>Seal Number</label>
+  //               <input
+  //                 type="text"
+  //                 name="sealNumber"
+  //                 value={formData.sealNumber}
+  //                 onChange={handleChange}
+  //                 style={styles.input}
+  //                 placeholder="Container seal number"
+  //               />
+  //             </div>
+  //           </div>
+  //         </div>
+  //       )
+
+  //     case 2:
+  //       return (
+  //         <div style={styles.stepContent}>
+  //           <h3 style={styles.stepTitle}>Driver & Carrier Information</h3>
+  //           <div style={styles.formGrid}>
+  //             <div style={styles.formGroup}>
+  //               <label style={styles.label}>Driver Name *</label>
+  //               <input
+  //                 type="text"
+  //                 name="driverName"
+  //                 value={formData.driverName}
+  //                 onChange={handleChange}
+  //                 style={{ ...styles.input, ...(errors.driverName ? styles.inputError : {}) }}
+  //                 placeholder="Full name of driver"
+  //               />
+  //               {errors.driverName && <span style={styles.errorMessage}>{errors.driverName}</span>}
+  //             </div>
+
+  //             <div style={styles.formGroup}>
+  //               <label style={styles.label}>Driver License Number *</label>
+  //               <input
+  //                 type="text"
+  //                 name="driverLicense"
+  //                 value={formData.driverLicense}
+  //                 onChange={handleChange}
+  //                 style={{ ...styles.input, ...(errors.driverLicense ? styles.inputError : {}) }}
+  //                 placeholder="License number"
+  //               />
+  //               {errors.driverLicense && <span style={styles.errorMessage}>{errors.driverLicense}</span>}
+  //             </div>
+
+  //             <div style={styles.formGroup}>
+  //               <label style={styles.label}>Driver Phone *</label>
+  //               <input
+  //                 type="tel"
+  //                 name="driverPhone"
+  //                 value={formData.driverPhone}
+  //                 onChange={handleChange}
+  //                 style={{ ...styles.input, ...(errors.driverPhone ? styles.inputError : {}) }}
+  //                 placeholder="+228 XX XX XX XX"
+  //               />
+  //               {errors.driverPhone && <span style={styles.errorMessage}>{errors.driverPhone}</span>}
+  //             </div>
+
+  //             <div style={styles.formGroup}>
+  //               <label style={styles.label}>Carrier/Company Name *</label>
+  //               <input
+  //                 type="text"
+  //                 name="carrierName"
+  //                 value={formData.carrierName}
+  //                 onChange={handleChange}
+  //                 style={{ ...styles.input, ...(errors.carrierName ? styles.inputError : {}) }}
+  //                 placeholder="Company or carrier name"
+  //               />
+  //               {errors.carrierName && <span style={styles.errorMessage}>{errors.carrierName}</span>}
+  //             </div>
+
+  //             <div style={styles.formGroup}>
+  //               <label style={styles.label}>Carrier Contact</label>
+  //               <input
+  //                 type="tel"
+  //                 name="carrierContact"
+  //                 value={formData.carrierContact}
+  //                 onChange={handleChange}
+  //                 style={styles.input}
+  //                 placeholder="+228 XX XX XX XX"
+  //               />
+  //             </div>
+
+  //             <div style={styles.formGroup}>
+  //               <label style={styles.label}>Estimated Arrival Time *</label>
+  //               <input
+  //                 type="time"
+  //                 name="estimatedArrival"
+  //                 value={formData.estimatedArrival}
+  //                 onChange={handleChange}
+  //                 style={{ ...styles.input, ...(errors.estimatedArrival ? styles.inputError : {}) }}
+  //               />
+  //               {errors.estimatedArrival && <span style={styles.errorMessage}>{errors.estimatedArrival}</span>}
+  //             </div>
+  //           </div>
+
+  //           {/* <div style={styles.routeSection}>
+  //             <h4 style={styles.sectionSubtitle}>Route Information</h4>
+  //             <div style={styles.formGrid}>
+  //               <div style={styles.formGroup}>
+  //                 <label style={styles.label}>Origin Gate</label>
+  //                 <select
+  //                   name="origin"
+  //                   value={formData.origin}
+  //                   onChange={handleChange}
+  //                   style={styles.select}
+  //                 >
+  //                   <option value="Gate A1">Gate A1</option>
+  //                   <option value="Gate A2">Gate A2</option>
+  //                   <option value="Gate B1">Gate B1</option>
+  //                   <option value="Gate B2">Gate B2</option>
+  //                   <option value="Gate C1">Gate C1</option>
+  //                   <option value="Gate C2">Gate C2</option>
+  //                 </select>
+  //               </div>
+
+  //               <div style={styles.formGroup}>
+  //                 <label style={styles.label}>Destination Terminal</label>
+  //                 <select
+  //                   name="destination"
+  //                   value={formData.destination}
+  //                   onChange={handleChange}
+  //                   style={styles.select}
+  //                 >
+  //                   <option value="Terminal 1">Terminal 1</option>
+  //                   <option value="Terminal 2">Terminal 2</option>
+  //                   <option value="Terminal 3">Terminal 3</option>
+  //                   <option value="Container Yard">Container Yard</option>
+  //                   <option value="Bulk Terminal">Bulk Terminal</option>
+  //                 </select>
+  //               </div>
+  //             </div>
+  //           </div> */}
+  //         </div>
+  //       )
+
+  //     case 3:
+  //       return (
+  //         <div style={styles.stepContent}>
+  //           <h3 style={styles.stepTitle}>Additional Services & Documentation</h3>
+
+  //           <div style={styles.servicesSection}>
+  //             <label style={styles.label}>Additional Services</label>
+  //             <div style={styles.checkboxGrid}>
+  //               {[
+  //                 'Priority Processing',
+  //                 'Escort Service',
+  //                 'Customs Clearance',
+  //                 'Weighbridge Service',
+  //                 'Security Inspection',
+  //                 'Documentation Assistance',
+  //                 'Loading/Unloading Assistance',
+  //                 'Temporary Storage'
+  //               ].map(service => (
+  //                 <label key={service} style={styles.checkboxLabel}>
+  //                   <input
+  //                     type="checkbox"
+  //                     name="additionalServices"
+  //                     value={service}
+  //                     checked={formData.additionalServices.includes(service)}
+  //                     onChange={handleChange}
+  //                     style={styles.checkbox}
+  //                   />
+  //                   <span style={styles.checkboxText}>{service}</span>
+  //                 </label>
+  //               ))}
+  //             </div>
+  //           </div>
+
+  //           <div style={styles.documentationSection}>
+  //             <h4 style={styles.sectionSubtitle}>Documentation</h4>
+  //             <div style={styles.formGrid}>
+  //               <div style={styles.formGroup}>
+  //                 <label style={styles.label}>Bill of Lading Number</label>
+  //                 <input
+  //                   type="text"
+  //                   name="billOfLading"
+  //                   value={formData.billOfLading}
+  //                   onChange={handleChange}
+  //                   style={styles.input}
+  //                   placeholder="B/L number"
+  //                 />
+  //               </div>
+
+  //               <div style={styles.formGroup}>
+  //                 <label style={styles.label}>Customs Declaration Number</label>
+  //                 <input
+  //                   type="text"
+  //                   name="customsDeclaration"
+  //                   value={formData.customsDeclaration}
+  //                   onChange={handleChange}
+  //                   style={styles.input}
+  //                   placeholder="Customs declaration number"
+  //                 />
+  //               </div>
+  //             </div>
+  //           </div>
+
+  //           <div style={styles.requirementsSection}>
+  //             <div style={{ ...styles.formGroup, gridColumn: '1 / -1' }}>
+  //               <label style={styles.label}>Special Requirements or Notes</label>
+  //               <textarea
+  //                 name="specialRequirements"
+  //                 value={formData.specialRequirements}
+  //                 onChange={handleChange}
+  //                 style={styles.textarea}
+  //                 rows="4"
+  //                 placeholder="Any special handling requirements, restrictions, or additional information"
+  //               />
+  //             </div>
+  //           </div>
+
+  //           <div style={styles.termsSection}>
+  //             <h4 style={styles.sectionSubtitle}>Terms and Conditions</h4>
+  //             <div style={styles.termsContent}>
+  //               <label style={styles.checkboxLabel}>
+  //                 <input
+  //                   type="checkbox"
+  //                   name="acceptTerms"
+  //                   checked={formData.acceptTerms}
+  //                   onChange={handleChange}
+  //                   style={{ ...styles.checkbox, ...(errors.acceptTerms ? styles.inputError : {}) }}
+  //                 />
+  //                 <span style={styles.checkboxText}>I accept the terms and conditions for port operations *</span>
+  //               </label>
+  //               {errors.acceptTerms && <span style={styles.errorMessage}>{errors.acceptTerms}</span>}
+
+  //               <label style={styles.checkboxLabel}>
+  //                 <input
+  //                   type="checkbox"
+  //                   name="acceptPricing"
+  //                   checked={formData.acceptPricing}
+  //                   onChange={handleChange}
+  //                   style={{ ...styles.checkbox, ...(errors.acceptPricing ? styles.inputError : {}) }}
+  //                 />
+  //                 <span style={styles.checkboxText}>I accept the pricing terms and understand all fees *</span>
+  //               </label>
+  //               {errors.acceptPricing && <span style={styles.errorMessage}>{errors.acceptPricing}</span>}
+  //             </div>
+  //           </div>
+  //         </div>
+  //       )
+
+  //     case 4:
+  //       return (
+  //         <div style={styles.stepContent}>
+  //           <div style={styles.completionContent}>
+  //             <div style={styles.completionIcon}>✅</div>
+  //             <h3 style={styles.completionTitle}>Review & Complete Reservation</h3>
+  //             <p style={styles.completionText}>Please review your reservation details before submitting</p>
+
+  //             <div style={styles.summaryGrid}>
+  //               <div style={styles.summarySection}>
+  //                 <h4 style={styles.summaryTitle}>Slot Details</h4>
+  //                 <p><strong>Time:</strong> {slot.timeSlot}</p>
+  //                 <p><strong>Route:</strong> {formData.origin} → {formData.destination}</p>
+  //                 <p><strong>Duration:</strong> {slot.duration}</p>
+  //                 <p><strong>Arrival:</strong> {formData.estimatedArrival}</p>
+  //               </div>
+
+  //               <div style={styles.summarySection}>
+  //                 <h4 style={styles.summaryTitle}>Truck & Cargo</h4>
+  //                 <p><strong>Truck:</strong> {formData.truckPlateNumber}</p>
+  //                 <p><strong>Type:</strong> {formData.truckType}</p>
+  //                 <p><strong>Cargo:</strong> {formData.cargoType}</p>
+  //                 <p><strong>Weight:</strong> {formData.cargoWeight} tons</p>
+  //               </div>
+
+  //               <div style={styles.summarySection}>
+  //                 <h4 style={styles.summaryTitle}>Driver & Carrier</h4>
+  //                 <p><strong>Driver:</strong> {formData.driverName}</p>
+  //                 <p><strong>License:</strong> {formData.driverLicense}</p>
+  //                 <p><strong>Carrier:</strong> {formData.carrierName}</p>
+  //                 <p><strong>Phone:</strong> {formData.driverPhone}</p>
+  //               </div>
+
+  //               <div style={styles.summarySection}>
+  //                 <h4 style={styles.summaryTitle}>Services & Pricing</h4>
+  //                 <p><strong>Additional Services:</strong> {formData.additionalServices.length} selected</p>
+  //                 <p><strong>Base Price:</strong> {formatPrice(slot.price, slot.currency)}</p>
+  //                 <p style={{ color: '#3b82f6', fontWeight: '600', fontSize: '18px' }}>
+  //                   <strong>Total:</strong> {formatPrice(slot.price, slot.currency)}
+  //                 </p>
+  //               </div>
+  //             </div>
+  //           </div>
+  //         </div>
+  //       )
+
+  //     default:
+  //       return null
+  //   }
+  // }
+
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
         return (
           <div style={styles.stepContent}>
-            <h3 style={styles.stepTitle}>Truck & Cargo Information</h3>
+            <h3 style={styles.stepTitle}>Reservation Information</h3>
             <div style={styles.formGrid}>
               <div style={styles.formGroup}>
-                <label style={styles.label}>Truck Plate Number *</label>
+                <label style={styles.label}>Truck ID *</label>
                 <input
                   type="text"
-                  name="truckPlateNumber"
-                  value={formData.truckPlateNumber}
-                  onChange={handleChange}
-                  style={{ ...styles.input, ...(errors.truckPlateNumber ? styles.inputError : {}), textTransform: 'uppercase' }}
-                  placeholder="TG-1234-AB"
-                />
-                {errors.truckPlateNumber && <span style={styles.errorMessage}>{errors.truckPlateNumber}</span>}
-              </div>
-
-              <div style={styles.formGroup}>
-                <label style={styles.label}>Truck Type</label>
-                <select
-                  name="truckType"
-                  value={formData.truckType}
-                  onChange={handleChange}
-                  style={styles.select}
-                >
-                  <option value="Standard">Standard Truck</option>
-                  <option value="Heavy Duty">Heavy Duty</option>
-                  <option value="Container">Container Truck</option>
-                  <option value="Flatbed">Flatbed</option>
-                  <option value="Tanker">Tanker</option>
-                  <option value="Refrigerated">Refrigerated</option>
-                </select>
-              </div>
-
-              <div style={styles.formGroup}>
-                <label style={styles.label}>Cargo Type</label>
-                <select
-                  name="cargoType"
-                  value={formData.cargoType}
-                  onChange={handleChange}
-                  style={styles.select}
-                >
-                  <option value="Container">Container</option>
-                  <option value="Bulk">Bulk Cargo</option>
-                  <option value="General">General Cargo</option>
-                  <option value="Liquid">Liquid</option>
-                  <option value="Hazardous">Hazardous Materials</option>
-                  <option value="Refrigerated">Refrigerated Goods</option>
-                </select>
-              </div>
-
-              <div style={styles.formGroup}>
-                <label style={styles.label}>Cargo Weight (tons) *</label>
-                <input
-                  type="number"
-                  name="cargoWeight"
-                  value={formData.cargoWeight}
-                  onChange={handleChange}
-                  style={{ ...styles.input, ...(errors.cargoWeight ? styles.inputError : {}) }}
-                  min="0.1"
-                  step="0.1"
-                  placeholder="e.g., 25.5"
-                />
-                {errors.cargoWeight && <span style={styles.errorMessage}>{errors.cargoWeight}</span>}
-              </div>
-
-              <div style={{ ...styles.formGroup, gridColumn: '1 / -1' }}>
-                <label style={styles.label}>Cargo Description</label>
-                <textarea
-                  name="cargoDescription"
-                  value={formData.cargoDescription}
-                  onChange={handleChange}
-                  style={styles.textarea}
-                  rows="3"
-                  placeholder="Describe the cargo being transported"
-                />
-              </div>
-
-              <div style={styles.formGroup}>
-                <label style={styles.label}>Container Number</label>
-                <input
-                  type="text"
-                  name="containerNumber"
-                  value={formData.containerNumber}
+                  name="truckId"
+                  value={formData.truckId}
                   onChange={handleChange}
                   style={styles.input}
-                  placeholder="Container ID (if applicable)"
                 />
               </div>
 
               <div style={styles.formGroup}>
-                <label style={styles.label}>Seal Number</label>
+                <label style={styles.label}>Driver ID *</label>
                 <input
                   type="text"
-                  name="sealNumber"
-                  value={formData.sealNumber}
+                  name="driverId"
+                  value={formData.driverId}
                   onChange={handleChange}
                   style={styles.input}
-                  placeholder="Container seal number"
+                />
+              </div>
+
+              <div style={styles.formGroup}>
+                <label style={styles.label}>User ID *</label>
+                <input
+                  type="text"
+                  name="userId"
+                  value={formData.userId}
+                  onChange={handleChange}
+                  style={styles.input}
+                />
+              </div>
+
+              <div style={styles.formGroup}>
+                <label style={styles.label}>Company ID *</label>
+                <input
+                  type="text"
+                  name="companyId"
+                  value={formData.companyId}
+                  onChange={handleChange}
+                  style={styles.input}
                 />
               </div>
             </div>
@@ -1152,150 +1579,35 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
 
       case 2:
         return (
-          <div style={styles.stepContent}>
-            <h3 style={styles.stepTitle}>Driver & Carrier Information</h3>
-            <div style={styles.formGrid}>
-              <div style={styles.formGroup}>
-                <label style={styles.label}>Driver Name *</label>
-                <input
-                  type="text"
-                  name="driverName"
-                  value={formData.driverName}
+          <div style={styless.stepContent}>
+            <h3 style={styless.stepTitle}>Status & Payment</h3>
+            <div style={styless.formGrid}>
+              <div style={styless.formGroup}>
+                <label style={styless.label}>Status</label>
+                <select
+                  name="status"
+                  value={formData.status}
                   onChange={handleChange}
-                  style={{ ...styles.input, ...(errors.driverName ? styles.inputError : {}) }}
-                  placeholder="Full name of driver"
-                />
-                {errors.driverName && <span style={styles.errorMessage}>{errors.driverName}</span>}
+                  style={styless.select}
+                >
+                  <option value="Pending">Pending</option>
+                  <option value="Confirmed">Confirmed</option>
+                  <option value="Cancelled">Cancelled</option>
+                </select>
               </div>
 
-              <div style={styles.formGroup}>
-                <label style={styles.label}>Driver License Number *</label>
-                <input
-                  type="text"
-                  name="driverLicense"
-                  value={formData.driverLicense}
+              <div style={styless.formGroup}>
+                <label style={styless.label}>Payment Status</label>
+                <select
+                  name="paymentStatus"
+                  value={formData.paymentStatus}
                   onChange={handleChange}
-                  style={{ ...styles.input, ...(errors.driverLicense ? styles.inputError : {}) }}
-                  placeholder="License number"
-                />
-                {errors.driverLicense && <span style={styles.errorMessage}>{errors.driverLicense}</span>}
-              </div>
-
-              <div style={styles.formGroup}>
-                <label style={styles.label}>Driver Phone *</label>
-                <input
-                  type="tel"
-                  name="driverPhone"
-                  value={formData.driverPhone}
-                  onChange={handleChange}
-                  style={{ ...styles.input, ...(errors.driverPhone ? styles.inputError : {}) }}
-                  placeholder="+228 XX XX XX XX"
-                />
-                {errors.driverPhone && <span style={styles.errorMessage}>{errors.driverPhone}</span>}
-              </div>
-
-              <div style={styles.formGroup}>
-                <label style={styles.label}>Carrier/Company Name *</label>
-                <input
-                  type="text"
-                  name="carrierName"
-                  value={formData.carrierName}
-                  onChange={handleChange}
-                  style={{ ...styles.input, ...(errors.carrierName ? styles.inputError : {}) }}
-                  placeholder="Company or carrier name"
-                />
-                {errors.carrierName && <span style={styles.errorMessage}>{errors.carrierName}</span>}
-              </div>
-
-              <div style={styles.formGroup}>
-                <label style={styles.label}>Carrier Contact</label>
-                <input
-                  type="tel"
-                  name="carrierContact"
-                  value={formData.carrierContact}
-                  onChange={handleChange}
-                  style={styles.input}
-                  placeholder="+228 XX XX XX XX"
-                />
-              </div>
-
-              <div style={styles.formGroup}>
-                <label style={styles.label}>Estimated Arrival Time *</label>
-                <input
-                  type="time"
-                  name="estimatedArrival"
-                  value={formData.estimatedArrival}
-                  onChange={handleChange}
-                  style={{ ...styles.input, ...(errors.estimatedArrival ? styles.inputError : {}) }}
-                />
-                {errors.estimatedArrival && <span style={styles.errorMessage}>{errors.estimatedArrival}</span>}
-              </div>
-            </div>
-
-            <div style={styles.routeSection}>
-              <h4 style={styles.sectionSubtitle}>Route Information</h4>
-              <div style={styles.formGrid}>
-                <div style={styles.formGroup}>
-                  <label style={styles.label}>Origin Gate</label>
-                  <select
-                    name="origin"
-                    value={formData.origin}
-                    onChange={handleChange}
-                    style={styles.select}
-                  >
-                    <option value="Gate A1">Gate A1</option>
-                    <option value="Gate A2">Gate A2</option>
-                    <option value="Gate B1">Gate B1</option>
-                    <option value="Gate B2">Gate B2</option>
-                    <option value="Gate C1">Gate C1</option>
-                    <option value="Gate C2">Gate C2</option>
-                  </select>
-                </div>
-
-                <div style={styles.formGroup}>
-                  <label style={styles.label}>Destination Terminal</label>
-                  <select
-                    name="destination"
-                    value={formData.destination}
-                    onChange={handleChange}
-                    style={styles.select}
-                  >
-                    <option value="Terminal 1">Terminal 1</option>
-                    <option value="Terminal 2">Terminal 2</option>
-                    <option value="Terminal 3">Terminal 3</option>
-                    <option value="Container Yard">Container Yard</option>
-                    <option value="Bulk Terminal">Bulk Terminal</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div style={styles.emergencySection}>
-              <h4 style={styles.sectionSubtitle}>Emergency Contact</h4>
-              <div style={styles.formGrid}>
-                <div style={styles.formGroup}>
-                  <label style={styles.label}>Emergency Contact Name</label>
-                  <input
-                    type="text"
-                    name="emergencyContactName"
-                    value={formData.emergencyContactName}
-                    onChange={handleChange}
-                    style={styles.input}
-                    placeholder="Emergency contact person"
-                  />
-                </div>
-
-                <div style={styles.formGroup}>
-                  <label style={styles.label}>Emergency Contact Phone</label>
-                  <input
-                    type="tel"
-                    name="emergencyContactPhone"
-                    value={formData.emergencyContactPhone}
-                    onChange={handleChange}
-                    style={styles.input}
-                    placeholder="+228 XX XX XX XX"
-                  />
-                </div>
+                  style={styless.select}
+                >
+                  <option value="Unpaid">Unpaid</option>
+                  <option value="Paid">Paid</option>
+                  <option value="Pending">Pending</option>
+                </select>
               </div>
             </div>
           </div>
@@ -1303,106 +1615,32 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
 
       case 3:
         return (
-          <div style={styles.stepContent}>
-            <h3 style={styles.stepTitle}>Additional Services & Documentation</h3>
-
-            <div style={styles.servicesSection}>
-              <label style={styles.label}>Additional Services</label>
-              <div style={styles.checkboxGrid}>
-                {[
-                  'Priority Processing',
-                  'Escort Service',
-                  'Customs Clearance',
-                  'Weighbridge Service',
-                  'Security Inspection',
-                  'Documentation Assistance',
-                  'Loading/Unloading Assistance',
-                  'Temporary Storage'
-                ].map(service => (
-                  <label key={service} style={styles.checkboxLabel}>
-                    <input
-                      type="checkbox"
-                      name="additionalServices"
-                      value={service}
-                      checked={formData.additionalServices.includes(service)}
-                      onChange={handleChange}
-                      style={styles.checkbox}
-                    />
-                    <span style={styles.checkboxText}>{service}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            <div style={styles.documentationSection}>
-              <h4 style={styles.sectionSubtitle}>Documentation</h4>
-              <div style={styles.formGrid}>
-                <div style={styles.formGroup}>
-                  <label style={styles.label}>Bill of Lading Number</label>
-                  <input
-                    type="text"
-                    name="billOfLading"
-                    value={formData.billOfLading}
-                    onChange={handleChange}
-                    style={styles.input}
-                    placeholder="B/L number"
-                  />
-                </div>
-
-                <div style={styles.formGroup}>
-                  <label style={styles.label}>Customs Declaration Number</label>
-                  <input
-                    type="text"
-                    name="customsDeclaration"
-                    value={formData.customsDeclaration}
-                    onChange={handleChange}
-                    style={styles.input}
-                    placeholder="Customs declaration number"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div style={styles.requirementsSection}>
-              <div style={{ ...styles.formGroup, gridColumn: '1 / -1' }}>
-                <label style={styles.label}>Special Requirements or Notes</label>
-                <textarea
-                  name="specialRequirements"
-                  value={formData.specialRequirements}
+          <div style={styless.stepContent}>
+            <h3 style={styless.stepTitle}>Payment Details</h3>
+            <div style={styless.formGrid}>
+              <div style={styless.formGroup}>
+                <label style={styless.label}>Total Amount</label>
+                <input
+                  type="number"
+                  name="totalAmount"
+                  value={formData.totalAmount}
                   onChange={handleChange}
-                  style={styles.textarea}
-                  rows="4"
-                  placeholder="Any special handling requirements, restrictions, or additional information"
+                  style={styless.input}
                 />
               </div>
-            </div>
 
-            <div style={styles.termsSection}>
-              <h4 style={styles.sectionSubtitle}>Terms and Conditions</h4>
-              <div style={styles.termsContent}>
-                <label style={styles.checkboxLabel}>
-                  <input
-                    type="checkbox"
-                    name="acceptTerms"
-                    checked={formData.acceptTerms}
-                    onChange={handleChange}
-                    style={{ ...styles.checkbox, ...(errors.acceptTerms ? styles.inputError : {}) }}
-                  />
-                  <span style={styles.checkboxText}>I accept the terms and conditions for port operations *</span>
-                </label>
-                {errors.acceptTerms && <span style={styles.errorMessage}>{errors.acceptTerms}</span>}
-
-                <label style={styles.checkboxLabel}>
-                  <input
-                    type="checkbox"
-                    name="acceptPricing"
-                    checked={formData.acceptPricing}
-                    onChange={handleChange}
-                    style={{ ...styles.checkbox, ...(errors.acceptPricing ? styles.inputError : {}) }}
-                  />
-                  <span style={styles.checkboxText}>I accept the pricing terms and understand all fees *</span>
-                </label>
-                {errors.acceptPricing && <span style={styles.errorMessage}>{errors.acceptPricing}</span>}
+              <div style={styless.formGroup}>
+                <label style={styless.label}>Currency</label>
+                <select
+                  name="currency"
+                  value={formData.currency}
+                  onChange={handleChange}
+                  style={styless.select}
+                >
+                  <option value="CFA">CFA</option>
+                  <option value="USD">USD</option>
+                  <option value="EUR">EUR</option>
+                </select>
               </div>
             </div>
           </div>
@@ -1410,44 +1648,31 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
 
       case 4:
         return (
-          <div style={styles.stepContent}>
-            <div style={styles.completionContent}>
-              <div style={styles.completionIcon}>✅</div>
-              <h3 style={styles.completionTitle}>Review & Complete Reservation</h3>
-              <p style={styles.completionText}>Please review your reservation details before submitting</p>
+          <div style={styless.stepContent}>
+            <div style={styless.completionContent}>
+              <div style={styless.completionIcon}>✅</div>
+              <h3 style={styless.completionTitle}>Review & Complete Reservation</h3>
+              <p style={styless.completionText}>Please review before submitting</p>
 
-              <div style={styles.summaryGrid}>
-                <div style={styles.summarySection}>
-                  <h4 style={styles.summaryTitle}>Slot Details</h4>
-                  <p><strong>Time:</strong> {slot.timeSlot}</p>
-                  <p><strong>Route:</strong> {formData.origin} → {formData.destination}</p>
-                  <p><strong>Duration:</strong> {slot.duration}</p>
-                  <p><strong>Arrival:</strong> {formData.estimatedArrival}</p>
+              <div style={styless.summaryGrid}>
+                <div style={styless.summarySection}>
+                  <h4 style={styless.summaryTitle}>IDs</h4>
+                  <p><strong>Truck:</strong> {formData.truckId}</p>
+                  <p><strong>Driver:</strong> {formData.driverId}</p>
+                  <p><strong>User:</strong> {formData.userId}</p>
+                  <p><strong>Company:</strong> {formData.companyId}</p>
                 </div>
 
-                <div style={styles.summarySection}>
-                  <h4 style={styles.summaryTitle}>Truck & Cargo</h4>
-                  <p><strong>Truck:</strong> {formData.truckPlateNumber}</p>
-                  <p><strong>Type:</strong> {formData.truckType}</p>
-                  <p><strong>Cargo:</strong> {formData.cargoType}</p>
-                  <p><strong>Weight:</strong> {formData.cargoWeight} tons</p>
+                <div style={styless.summarySection}>
+                  <h4 style={styless.summaryTitle}>Status</h4>
+                  <p><strong>Status:</strong> {formData.status}</p>
+                  <p><strong>Payment:</strong> {formData.paymentStatus}</p>
                 </div>
 
-                <div style={styles.summarySection}>
-                  <h4 style={styles.summaryTitle}>Driver & Carrier</h4>
-                  <p><strong>Driver:</strong> {formData.driverName}</p>
-                  <p><strong>License:</strong> {formData.driverLicense}</p>
-                  <p><strong>Carrier:</strong> {formData.carrierName}</p>
-                  <p><strong>Phone:</strong> {formData.driverPhone}</p>
-                </div>
-
-                <div style={styles.summarySection}>
-                  <h4 style={styles.summaryTitle}>Services & Pricing</h4>
-                  <p><strong>Additional Services:</strong> {formData.additionalServices.length} selected</p>
-                  <p><strong>Base Price:</strong> {formatPrice(slot.price, slot.currency)}</p>
-                  <p style={{ color: '#3b82f6', fontWeight: '600', fontSize: '18px' }}>
-                    <strong>Total:</strong> {formatPrice(slot.price, slot.currency)}
-                  </p>
+                <div style={styless.summarySection}>
+                  <h4 style={styless.summaryTitle}>Payment</h4>
+                  <p><strong>Amount:</strong> {formData.totalAmount}</p>
+                  <p><strong>Currency:</strong> {formData.currency}</p>
                 </div>
               </div>
             </div>
@@ -1896,5 +2121,28 @@ const styles = {
     color: '#ffffff'
   }
 }
+
+const styless = {
+  form: { maxWidth: "600px", margin: "0 auto", padding: "20px" },
+  stepContent: { marginBottom: "20px" },
+  stepTitle: { marginBottom: "10px", fontSize: "18px" },
+  formGrid: { display: "grid", gap: "15px" },
+  formGroup: { display: "flex", flexDirection: "column" },
+  label: { marginBottom: "5px", fontWeight: "bold" },
+  input: { padding: "8px", border: "1px solid #ccc", borderRadius: "4px" },
+  select: { padding: "8px", border: "1px solid #ccc", borderRadius: "4px" },
+  buttonGroup: { display: "flex", justifyContent: "space-between", marginTop: "20px" },
+  buttonPrimary: { padding: "10px 20px", background: "#007bff", color: "#fff", border: "none", borderRadius: "4px" },
+  buttonSecondary: { padding: "10px 20px", background: "#6c757d", color: "#fff", border: "none", borderRadius: "4px" },
+  buttonSubmit: { padding: "10px 20px", background: "green", color: "#fff", border: "none", borderRadius: "4px" },
+  completionContent: { textAlign: "center" },
+  completionIcon: { fontSize: "40px", marginBottom: "10px" },
+  completionTitle: { fontSize: "20px", marginBottom: "5px" },
+  completionText: { marginBottom: "20px" },
+  summaryGrid: { display: "grid", gap: "15px", textAlign: "left" },
+  summarySection: { padding: "10px", border: "1px solid #ddd", borderRadius: "4px" },
+  summaryTitle: { fontWeight: "bold", marginBottom: "8px" },
+}
+
 
 export default SlotReservation

@@ -81,4 +81,3 @@ export const getCompanies = async () =>
 // Récupérer un transporteur par ID
 export const getCompanyById = async (id) => 
   await axios.get(`${API_URL}${id}/`).then(res => mapCompany(res.data));
-

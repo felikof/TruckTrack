@@ -4,6 +4,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
+router.register(r'users', UserViewSet, basename='user')
 router.register(r'drivers', DriverViewSet, basename='driver')
 router.register(r'slots', SlotViewSet, basename='slot')
 router.register(r'trucks', TruckViewSet, basename='truck')
@@ -23,6 +24,9 @@ urlpatterns = [
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("users/login/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("users/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    # path("bookings/", TokenObtainPairView.as_view(), name="bookings"),
+    # path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    # path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 
     # path("users/slots/available/", available_slots, name="available_slots"),
     # path("users/slots/<int:pk>/book/", book_slot, name="book"),

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { authService } from '../services/authService';
+import userService from '../services/userService';
 
 const SignUp = () => {
     const [formData, setFormData] = useState({
@@ -111,7 +111,7 @@ const SignUp = () => {
 
             // Si votre API retourne le token directement après l'inscription
             if (response.data.access) {
-                authService.setToken(response.data.access);
+                userService.setToken(response.data.access);
                 toast.success("Inscription réussie ! Vous êtes maintenant connecté.");
 
                 await new Promise(resolve => setTimeout(resolve, 1000));
