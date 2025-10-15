@@ -1086,11 +1086,15 @@ const SlotReservation = ({ selectedSlot, onSubmit, onCancel }) => {
       );
 
       toast.success("Slot reserved successfully!");
-      if (onSubmit) onSubmit(response.data);
+      if (onSubmit) onSubmit(response.reservationData);
 
     } catch (error) {
-      console.error("Erreur lors de la réservation:", error.response?.data || error);
-      toast.error("Erreur lors de la réservation, réessayez.");
+      if (error.response) {
+        console.error("Erreur 400:", error.response.data);
+        toast.error(`Erreur: ${JSON.stringify(error.response.data)}`);
+      } else {
+        console.error("Erreur inconnue:", error);
+      }
     }
   };
 

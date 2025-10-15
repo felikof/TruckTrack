@@ -40,6 +40,7 @@ export const getSlots = async () => {
     const response = await axios.get(API_URL, {
         headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
         },
     });
     console.log("Slots response:", response.data);

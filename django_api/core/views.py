@@ -18,6 +18,13 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        email = self.request.query_params.get('email')
+        if email:
+            queryset = queryset.filter(email=email)
+        return queryset
 
 # Liste / création créneaux (seulement admin)
 class SlotViewSet(viewsets.ModelViewSet):
@@ -79,7 +86,15 @@ class CompanyViewSet(viewsets.ModelViewSet):
 class BookingViewSet(viewsets.ModelViewSet):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
-    #permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_queryset(self):
+        user = self.request.user
+        user_id = self.request.query_params.get("user_id")
+
+        if user_id:
+            return Booking.objects.filter(booked_by__id=user_id)
+        return Booking.objects.filter(booked_by=user)
     
 class NotificationViewSet(viewsets.ModelViewSet):
     queryset = Notification.objects.all()

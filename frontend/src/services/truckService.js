@@ -1,46 +1,88 @@
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const API_URL = "http://127.0.0.1:8000/trucks/";
 
-export const createTruck = (truckData) =>
-    axios.post(API_URL, truckData).then(res => res.data);
+// Instance Axios (utile si tu veux ajouter le token automatiquement)
+const axiosInstance = axios.create({
+    baseURL: API_URL,
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
 
-export const updateTruck = (id, truckData) =>
-    axios.put(`${API_URL}${id}/`, truckData).then(res => res.data);
+// Fonction pour injecter le token si besoin
+const getAuthHeader = () => {
+    const token = localStorage.getItem("accessToken");
+    return token ? { Authorization: `Bearer ${token}` } : {};
+};
 
-export const deleteTruck = (id) =>
-    axios.delete(`${API_URL}${id}/`).then(res => res.data);
-
+// Mapping des données
 const mapTruck = (t) => ({
     id: t.id,
-    plate_number: t.plate_number,
-    chassis_number: t.chassis_number,
-    engine_number: t.engine_number,
+    plateNumber: t.plate_number,
+    chassisNumber: t.chassis_number,
+    engineNumber: t.engine_number,
     make: t.make,
     model: t.model,
     year: t.year,
     color: t.color,
-    fuel_type: t.fuel_type,
-    truck_type: t.truck_type,
-    cargo_type: t.cargo_type,
-    max_weight: t.max_weight,
+    fuelType: t.fuel_type,
+    truckType: t.truck_type,
+    cargoType: t.cargo_type,
+    maxWeight: t.max_weight,
     dimensions: t.dimensions,
-    registration_date: t.registration_date,
-    registration_expiry: t.registration_expiry,
-    insurance_provider: t.insurance_provider,
-    insurance_policy_number: t.insurance_policy_number,
-    insurance_expiry: t.insurance_expiry,
-    owner_type: t.owner_type,
-    owner_name: t.owner_name,
-    owner_contact: t.owner_contact,
-    driver_assigned: t.driver_assigned,
-
-    gps_installed: t.gps_installed,
-    tracking_device_id: t.tracking_device_id,
-    special_equipment: t.special_equipment,
-    operating_permits: t.operating_permits,
-    created_at: t.created_at,
+    registrationDate: t.registration_date,
+    registrationExpiry: t.registration_expiry,
+    insuranceProvider: t.insurance_provider,
+    insurancePolicyNumber: t.insurance_policy_number,
+    insuranceExpiry: t.insurance_expiry,
+    ownerType: t.owner_type,
+    ownerName: t.company,
+    ownerContact: t.owner_contact,
+    driverAssigned: t.driver_assigned,
+    gpsInstalled: t.gps_installed,
+    trackingDeviceId: t.tracking_device_id,
+    createdAt: t.created_at,
 });
 
-export const getTrucks = () =>
-    axios.get(API_URL).then(res => res.data.map(mapTruck));
+// CRUD
+export const createTruck = async (truckData) => {
+  const token = localStorage.getItem("accessToken");
+  const res = await axios.post(
+    "http://127.0.0.1:8000/trucks/",
+    truckData,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  toast.success("Truck created successfully!");
+  return res.data.map(mapTruck);
+};
+
+export const updateTruck = async (id, truckData) => {
+    const response = await axiosInstance.put(`${id}/`, truckData, {
+        headers: getAuthHeader(),
+    });
+    toast.success("Truck updated successfully!");
+    return response.data;
+};
+
+export const deleteTruck = async (id) => {
+    const response = await axiosInstance.delete(`${id}/`, {
+        headers: getAuthHeader(),
+    });
+    toast.success("Truck deleted successfully!");
+    return response.data;
+};
+
+// Récupération de la liste
+export const getTrucks = async () => {
+    const response = await axiosInstance.get("", {
+        headers: getAuthHeader(),
+    });
+    return response.data.map(mapTruck);
+};

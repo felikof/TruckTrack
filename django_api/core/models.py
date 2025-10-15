@@ -216,6 +216,7 @@ class Truck(models.Model):
         ("Refrigerated", "Refrigerated"),
         ("Tanker", "Tanker"),
         ("Flatbed", "Flatbed"),
+        ("Heavy Duty", "Heavy Duty"),
     ]
     CARGO_TYPE_CHOICES = [
         ("Container", "Container"),
@@ -226,21 +227,11 @@ class Truck(models.Model):
         ("Company", "Company"),
         ("Individual", "Individual"),
     ]
-    SPECIAL_EQUIPMENT_CHOICES = [
-    ("Liftgate", "Liftgate"),
-    ("Side Loader", "Side Loader"),
-    ("Crane", "Crane"),
-    ]
-    OPERATING_PERMIT_CHOICES = [
-        ("Hazmat", "Hazmat"),
-        ("Oversize Load", "Oversize Load"),
-        ("International", "International"),
-    ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="trucks")
     # drivers = models.ManyToManyField(Driver, related_name="trucks", blank=True)
-    driver_assigned = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name="trucks", blank=True)
+    driver_assigned = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name="trucks", blank=True, null=True)
     plate_number = models.CharField(max_length=20, unique=True)
     chassis_number = models.CharField(max_length=50, blank=True)
     engine_number = models.CharField(max_length=50, blank=True)
@@ -253,17 +244,11 @@ class Truck(models.Model):
     cargo_type = models.CharField(max_length=20, choices=CARGO_TYPE_CHOICES, default="Container")
     max_weight = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
-    dimensions = models.JSONField(default=list, blank=True)  # ex: {"length": "", "width": "", "height": ""}
-
     registration_date = models.DateField(null=True, blank=True)
     registration_expiry = models.DateField(null=True, blank=True)
 
     insurance_provider = models.CharField(max_length=100, blank=True)
-    insurance_policy_number = models.CharField(max_length=50, blank=True)
     insurance_expiry = models.DateField(null=True, blank=True)
-
-    inspection_date = models.DateField(null=True, blank=True)
-    inspection_expiry = models.DateField(null=True, blank=True)
 
     owner_type = models.CharField(max_length=20, choices=OWNER_TYPE_CHOICES, default="Company")
     owner_name = models.CharField(max_length=100, blank=True)
@@ -271,9 +256,6 @@ class Truck(models.Model):
 
     gps_installed = models.BooleanField(default=False)
     tracking_device_id = models.CharField(max_length=50, blank=True)
-
-    special_equipment = MultiSelectField(choices=SPECIAL_EQUIPMENT_CHOICES, blank=True)
-    operating_permits = MultiSelectField(choices=OPERATING_PERMIT_CHOICES, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

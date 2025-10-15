@@ -11,13 +11,15 @@ import SettingsSidebar from '/src/components/SettingsSidebar'
 import NotificationsSidebar from '/src/components/NotificationsSidebar'
 import { getSlots } from "../services/slotService";
 import userService from "../services/userService";
+import { createTruck } from "../services/truckService";
+import { getBookingsByUser } from '../services/bookingService'
 
 function Booking({ onLogout }) {
     const [activeTab, setActiveTab] = useState('browse-slots')
     const [currentForm, setCurrentForm] = useState(null)
     const [selectedSlot, setSelectedSlot] = useState(null)
     const [slots, setSlots] = useState([])
-    // const [user, setUsers] = useState([null])
+    const [user, setUsers] = useState([null])
     const [loading, setLoading] = useState(true)
     const [showUserSidebar, setShowUserSidebar] = useState(false)
     const [error, setError] = useState(null)
@@ -50,32 +52,39 @@ function Booking({ onLogout }) {
     }, [])
 
     // User data - in real app this would come from authentication
-    // useEffect(() => {
-    //     const token = localStorage.getItem("accessToken");
-    //     console.log("Token :", token);
-    //     if (!token) {
-    //         toast.error("User not authenticated")
-            
-    //     }
+    useEffect(() => {
+        const token = localStorage.getItem("accessToken");
+        const email = localStorage.getItem("email");
+        console.log("Token :", token);
+        if (!token) {
+            toast.error("User not authenticated")
+        } else {
+            toast.success("User authentificated")
+        }
 
-    //     userService.getUser(token)
-    //         .then(data => setUsers(data))
-    //         .catch(err => console.error("Erreur API:", err))
-    // }, [])
+        userService.getUser(token, email)
+            .then(userData => setUsers(userData))
+            .catch(err => console.error("Erreur 400:", err.response.data))
+    }, [])
+    
+    const userData = user && user.length > 0 ? user[0] : null;
+    console.log("User:", JSON.stringify(userData, null, 2));
 
-    console.log("User : ", data.toString());
+    // const [user1] = useState({
+    //     name: 'Dodji Koffi',
+    //     email: 'dodji12@gmail.com',
+    //     phone: '',
+    //     company: '',
+    //     role: '',
+    //     avatar: '👤',
+    //     isLoggedIn: true,
+    //     totalBookings: 1,
+    //     activeBookings: 0
+    // })
 
-    const [user] = useState({
-        name: 'Dodji Koffi',
-        email: 'dodji12@gmail.com',
-        phone: '',
-        company: '',
-        role: '',
-        avatar: '👤',
-        isLoggedIn: true,
-        totalBookings: 1,
-        activeBookings: 0
-    })
+    // console.log("Slots :", slots)
+    // const availableSlots = Array.isArray(slots) ? slots : [];
+    // console.log(availableSlots.get(1))
 
     const [availableSlots] = useState([
         {
@@ -132,11 +141,30 @@ function Booking({ onLogout }) {
         }
     ])
 
+    // const userId = localStorage.getItem("id"); // stocké au login
+    // const [myBookings, setMyBookings] = useState([]);
+
+    // useEffect(() => {
+    //     async function fetchBookings() {
+    //         if (userId) {
+    //             try {
+    //                 const bookings = await getBookingsByUser(userId);
+    //                 setMyBookings(bookings);
+    //             } catch (err) {
+    //                 console.error("Erreur lors du chargement des réservations:", err);
+    //             }
+    //         }
+    //     }
+    //     fetchBookings();
+    // }, [userId]);
+
+    // console.log("Bookings:", JSON.stringify(myBookings, null, 2));
+
     const [myBookings] = useState([
         {
             id: 'BK001',
-            bookingRef: 'TG-2025-001',
-            status: 'confirmed',
+            bookingRef: '',
+            status: 'pending',
             date: '2025-01-15',
             timeSlot: '08:00',
             duration: '2h 30m',
@@ -399,6 +427,14 @@ function Booking({ onLogout }) {
         // Show success message or redirect
     }
 
+    const handleTruckSubmit = async (formType, data) => {
+        console.log(`${formType} submitted:`, data)
+        // Here you would typically send the data to your backend
+
+        setCurrentForm(null)
+        setSelectedSlot(null)
+    }
+
     const handleFormCancel = () => {
         setCurrentForm(null)
         setSelectedSlot(null)
@@ -424,7 +460,7 @@ function Booking({ onLogout }) {
             case 'truck-registration':
                 return (
                     <TruckRegistration
-                        onSubmit={(data) => handleFormSubmit('truck-registration', data)}
+                        onSubmit={(data) => handleTruckSubmit('truck-registration', data)}
                         onCancel={handleFormCancel}
                     />
                 )
@@ -946,7 +982,7 @@ function Booking({ onLogout }) {
                             className="user-avatar"
                             onClick={() => setShowUserSidebar(true)}
                         >
-                            {user.avatar}
+                            {'👤'}
                         </button>
                     </div>
                 </div>
@@ -972,7 +1008,7 @@ function Booking({ onLogout }) {
                                 ✕
                             </button>
                             <div className="user-avatar-large">
-                                {user.avatar}
+                                {'👤'}
                             </div>
                             <div className="user-details">
                                 <h4>{user.name}</h4>

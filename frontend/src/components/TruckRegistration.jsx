@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import axios from "axios";
+import toast from 'react-hot-toast';
+import { createTruck } from '../services/truckService';
 
 const TruckRegistration = ({ onSubmit, onCancel }) => {
   const [currentStep, setCurrentStep] = useState(1)
@@ -121,17 +124,80 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
     setCurrentStep(prev => Math.max(prev - 1, 1))
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    if (validateStep(currentStep)) {
-      if (onSubmit) {
-        onSubmit(formData)
-      } else {
-        console.log('Truck registration data:', formData)
-        alert('Truck registered successfully!')
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault()
+  //   if (validateStep(currentStep)) {
+
+  //     try {
+  //       const response = await axios.post(
+  //         "http://127.0.0.1:8000/trucks/", formData,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+  //             "Content-Type": "application/json"
+  //           }
+  //         }
+  //       );
+  //       if (onSubmit) {
+  //         onSubmit(response.formData)
+  //       } else {
+  //         console.log('Truck registration data:', formData)
+  //         toast.success('Truck registered successfully!')
+  //       }
+  //     } catch (error) {
+  //       console.error("Error submitting truck data:", error.response.formData)
+  //       toast.error('Failed to register truck. Please try again.')
+  //       return
+  //     }
+  //   }
+  // }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateStep(currentStep)) return;
+
+    const payload = {
+      plate_number: formData.plateNumber,
+      chassis_number: formData.chassisNumber,
+      engine_number: formData.engineNumber,
+      make: formData.make,
+      model: formData.model,
+      year: formData.year,
+      color: formData.color,
+      fuel_type: formData.fuelType,
+      truck_type: formData.truckType,
+      cargo_type: formData.cargoType,
+      max_weight: formData.maxWeight,
+      dimensions: formData.dimensions,
+      registration_date: formData.registrationDate,
+      registration_expiry: formData.registrationExpiry,
+      insurance_provider: formData.insuranceProvider,
+      insurance_policy_number: formData.insurancePolicyNumber,
+      insurance_expiry: formData.insuranceExpiry,
+      owner_type: formData.ownerType,
+      owner_name: formData.ownerName,
+      owner_contact: formData.ownerContact,
+      gps_installed: formData.gpsInstalled,
+      tracking_device_id: formData.trackingDeviceId,
+      company: formData.ownerName, // ⚠️ ici, c’est l’ID de la company
+    };
+
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        toast.error("User not authenticated");
+        return;
       }
+      console.log("Truck registration data:", formData);
+      // Appel du service
+      const newTruck = await createTruck(payload);
+      console.log("Truck registration data:", newTruck);
+    } catch (error) {
+        // console.error("Erreur 400:", error.response.data);
+      toast.error(`Erreur: ${JSON.stringify(error.newTruck.data)}`);
     }
-  }
+  };
 
   const handleCancel = () => {
     if (onCancel) {
@@ -150,11 +216,6 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
           truckType: 'Standard',
           cargoType: 'Container',
           maxWeight: '',
-          dimensions: {
-            length: '',
-            width: '',
-            height: ''
-          },
           registrationDate: '',
           registrationExpiry: '',
           insuranceProvider: '',
@@ -168,9 +229,6 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
           driverAssigned: '',
           gpsInstalled: false,
           trackingDeviceId: '',
-          specialEquipment: [],
-          certifications: [],
-          operatingPermits: []
         })
         setErrors({})
         setCurrentStep(1)
@@ -234,11 +292,9 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
                 >
                   <option value="Standard">Standard Truck</option>
                   <option value="Heavy Duty">Heavy Duty</option>
-                  <option value="Container">Container Truck</option>
                   <option value="Flatbed">Flatbed</option>
                   <option value="Tanker">Tanker</option>
                   <option value="Refrigerated">Refrigerated</option>
-                  <option value="Dump Truck">Dump Truck</option>
                 </select>
               </div>
 
@@ -252,11 +308,7 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
                 >
                   <option value="Container">Container</option>
                   <option value="Bulk">Bulk Cargo</option>
-                  <option value="General">General Cargo</option>
                   <option value="Liquid">Liquid</option>
-                  <option value="Hazardous">Hazardous Materials</option>
-                  <option value="Refrigerated">Refrigerated Goods</option>
-                  <option value="Heavy Machinery">Heavy Machinery</option>
                 </select>
               </div>
             </div>
@@ -361,48 +413,6 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
                   placeholder="e.g., 25.5"
                 />
                 {errors.maxWeight && <span style={styles.errorMessage}>{errors.maxWeight}</span>}
-              </div>
-            </div>
-
-            <div style={styles.dimensionsSection}>
-              <label style={styles.label}>Dimensions (meters)</label>
-              <div style={styles.dimensionsGrid}>
-                <div style={styles.formGroup}>
-                  <label style={styles.smallLabel}>Length</label>
-                  <input
-                    type="number"
-                    name="dimensions.length"
-                    value={formData.dimensions.length}
-                    onChange={handleChange}
-                    style={styles.input}
-                    step="0.1"
-                    placeholder="12.5"
-                  />
-                </div>
-                <div style={styles.formGroup}>
-                  <label style={styles.smallLabel}>Width</label>
-                  <input
-                    type="number"
-                    name="dimensions.width"
-                    value={formData.dimensions.width}
-                    onChange={handleChange}
-                    style={styles.input}
-                    step="0.1"
-                    placeholder="2.5"
-                  />
-                </div>
-                <div style={styles.formGroup}>
-                  <label style={styles.smallLabel}>Height</label>
-                  <input
-                    type="number"
-                    name="dimensions.height"
-                    value={formData.dimensions.height}
-                    onChange={handleChange}
-                    style={styles.input}
-                    step="0.1"
-                    placeholder="4.0"
-                  />
-                </div>
               </div>
             </div>
 
@@ -542,58 +552,6 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
                 </div>
               )}
             </div>
-
-            <div style={styles.equipmentSection}>
-              <label style={styles.label}>Special Equipment</label>
-              <div style={styles.checkboxGrid}>
-                {[
-                  'Crane',
-                  'Hydraulic Lift',
-                  'Refrigeration Unit',
-                  'Tank System',
-                  'Hazmat Equipment',
-                  'Loading Ramps'
-                ].map(equipment => (
-                  <label key={equipment} style={styles.checkboxLabel}>
-                    <input
-                      type="checkbox"
-                      name="specialEquipment"
-                      value={equipment}
-                      checked={formData.specialEquipment.includes(equipment)}
-                      onChange={handleChange}
-                      style={styles.checkbox}
-                    />
-                    <span style={styles.checkboxText}>{equipment}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            <div style={styles.permitsSection}>
-              <label style={styles.label}>Operating Permits</label>
-              <div style={styles.checkboxGrid}>
-                {[
-                  'Port Access Permit',
-                  'Hazardous Materials Permit',
-                  'Oversize Load Permit',
-                  'International Transport Permit',
-                  'Container Transport License',
-                  'Bulk Cargo License'
-                ].map(permit => (
-                  <label key={permit} style={styles.checkboxLabel}>
-                    <input
-                      type="checkbox"
-                      name="operatingPermits"
-                      value={permit}
-                      checked={formData.operatingPermits.includes(permit)}
-                      onChange={handleChange}
-                      style={styles.checkbox}
-                    />
-                    <span style={styles.checkboxText}>{permit}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
           </div>
         )
 
@@ -717,6 +675,7 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
             ) : (
               <button
                 type="submit"
+                onClick={handleSubmit}
                 style={styles.submitButton}
               >
                 Complete Registration
