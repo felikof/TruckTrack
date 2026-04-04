@@ -79,7 +79,7 @@ function Landing() {
                             <button type="button" onClick={handleSignIn} className="text-slate-600 hover:text-slate-800 px-3 py-2 rounded-md text-sm font-medium transition-colors" style={{ backgroundColor: "#2563eb", color: "white", borderRadius: "5px" }}>
                                 Connexion
                             </button>
-                            <button type="button" onClick={handleSignUp} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors" style={{ backgroundColor: "orange", borderRadius: "5px" }}>
+                            <button type="button" onClick={handleSignUp} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors" style={{ backgroundColor: "#f97316", borderRadius: "5px" }}>
                                 Commencer
                             </button>
                         </div>
@@ -94,7 +94,7 @@ function Landing() {
                         <h1 className="text-4xl md:text-6xl font-semibold mb-6 animate-fade-in">
                             Transformez Vos Opérations Portuaires
                         </h1>
-                        <p className="text-xl md:text-2xl mb-8 text-gray-300 max-w-3xl mx-auto" style={{ color: "#ff9d2dff" }}>
+                        <p className="text-xl md:text-2xl mb-8 text-gray-300 max-w-3xl mx-auto" style={{ color: "#ff9a27ff" }}>
                             Réduisez les coûts, éliminez les retards et boostez l'efficacité avec
                             la plateforme leader de gestion du trafic camions utilisée par les ports
                             du monde entier.

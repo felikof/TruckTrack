@@ -4,7 +4,7 @@ import axios from 'axios';
 const API_URL = 'http://127.0.0.1:8000/'; // Votre URL Django
 
 // Stockage du token
-export const authService = {
+const authService = {
     // Sauvegarder le token
     setToken: (token) => {
         localStorage.setItem('authToken', token);
@@ -47,3 +47,4 @@ export const authService = {
         );
     }
 };
+export default authService;
