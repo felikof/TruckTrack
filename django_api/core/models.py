@@ -48,22 +48,12 @@ class Slot(models.Model):
         ("inactive", "Inactive"),
         ("cancelled", "Cancelled"),
         ("completed", "Completed"),
-    ]
-
-    CURRENCY_CHOICES = [
-        ("USD", "US Dollar"),
-        ("EUR", "Euro"),
-        ("CFA", "CFA Franc")
-    ]
-    FACILITIES_CHOICES = [
-        ("Restrooms", "Restrooms"),
-        ("Food Services", "Food Services"),
-        ("Waiting Area", "Waiting Area"),
-        ("WiFi", "WiFi"),
-        ("Parking", "Parking"),
-        ("Fuel Station", "Fuel Station"),
-        ("Maintenance Services", "Maintenance Services"),
-        ("Customs Inspection", "Customs Inspection"),
+    ],
+    
+    OPERATION_CHOICES = [
+        ("loading", "Loading"),
+        ("unloading", "Unloading"),
+        ("transit", "Transit"),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -74,28 +64,24 @@ class Slot(models.Model):
     duration = models.CharField(max_length=20)  # ex: "3h 15m"
     origin_gate = models.CharField(max_length=100)
     destination_terminal = models.CharField(max_length=100)
+    truck = models.ForeignKey("Truck", on_delete=models.CASCADE, related_name="slots", null=True, blank=True)
+    driver = models.ForeignKey("Driver", on_delete=models.PROTECT, related_name="slots", null=True, blank=True)
 
     total_slots = models.PositiveIntegerField()
     available_slots = models.PositiveIntegerField(default=0)
     reserved_slots = models.PositiveIntegerField(blank=True)
 
     base_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    currency = models.CharField(max_length=10, choices=CURRENCY_CHOICES, default="CFA")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="active")
-    operator_name = models.CharField(max_length=100)
-    contact_person = models.CharField(max_length=100, default="Port Autonome de Lomé")
-    contact_phone = models.CharField(max_length=20, blank=True, default="+228 90909090")
-    contact_email = models.EmailField(default="portAutonomeLome@mail.tg")
+    operation = models.CharField(max_length=20, choices=OPERATION_CHOICES, default="transit")
 
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
-
-    available_facilities = MultiSelectField(choices=FACILITIES_CHOICES, blank=True)
     
     class Meta:
         ordering = ["-slot_date", "start_time"]
 
     def __str__(self):
-        return f"{self.slot_id} - {self.origin_gate} → {self.destination_terminal} ({self.status}) on {self.slot_date} at {self.start_time} to {self.end_time}"
+        return f"{self.slot_id} - {self.origin_gate} → {self.destination_terminal} ({self.status}) on {self.slot_date} at {self.start_time} to {self.end_time} for {self.truck.plate_number if self.truck else 'No Truck Assigned'}"
 
 class Company(models.Model):
     COMPANY_TYPE_CHOICES = [
@@ -103,79 +89,28 @@ class Company(models.Model):
         ("Public", "Public"),
         ("Government", "Government"),
     ]
-    SERVICES_CHOICES = [
-        ("Freight Transport", "Freight Transport"),
-        ("Logistics", "Logistics"),
-        ("Warehousing", "Warehousing"),
-        ("Courier Services", "Courier Services"),
-        ("Customs Brokerage", "Customs Brokerage"),
-        ("Other", "Other"),
-    ]
-    ROUTES_CHOICES = [
-        ("Lome-Ouagadougou", "Lome-Ouagadougou"),
-        ("Lome-Niamey", "Lome-Niamey"),
-        ("Lome-Bamako", "Lome-Bamako"),
-        ("Lome-Cinkasse", "Lome-Cinkasse"),
-        ("Other", "Other"),
-    ]
-    CERTIFICATIONS_CHOICES = [
-        ("ISO 9001", "ISO 9001"),
-        ("ISO 14001", "ISO 14001"),
-        ("OHSAS 18001", "OHSAS 18001"),
-        ("Other", "Other"),
-    ]
-    
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     company_name = models.CharField(max_length=200)
     registration_number = models.CharField(max_length=100, blank=True, unique=True)
-    tax_id = models.CharField(max_length=100, blank=True)
     company_type = models.CharField(max_length=50, choices=COMPANY_TYPE_CHOICES, default="Private")
     established_year = models.PositiveIntegerField(null=True, blank=True)
 
     phone_number = models.CharField(max_length=50, blank=True)
     email = models.EmailField(blank=True, unique=True)
-    website = models.URLField(blank=True)
 
     address = models.CharField(max_length=200, blank=True)
     city = models.CharField(max_length=100, blank=True)
     postal_code = models.CharField(max_length=20, blank=True)
-
-    contact_person_name = models.CharField(max_length=100, blank=True)
-    contact_person_title = models.CharField(max_length=100, blank=True)
-    contact_person_phone = models.CharField(max_length=50, blank=True)
-    contact_person_email = models.EmailField(blank=True)
-
-    fleet_size = models.PositiveIntegerField(null=True, blank=True)
-    operating_license = models.CharField(max_length=100, blank=True)
-    license_expiry = models.DateField(null=True, blank=True)
-    insurance_provider = models.CharField(max_length=100, blank=True)
-    insurance_policy_number = models.CharField(max_length=100, blank=True)
-    insurance_expiry = models.DateField(null=True, blank=True)
-
-    services_offered = MultiSelectField(choices=SERVICES_CHOICES, blank=True)
-    operating_routes = MultiSelectField(choices=ROUTES_CHOICES, blank=True)
-    certifications = models.CharField(max_length=50, choices=CERTIFICATIONS_CHOICES, blank=True)
-
-    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.company_name
 
 class Driver(models.Model):
     LICENSE_TYPE_CHOICES = [
-        ("Class A", "Class A"),
         ("Class B", "Class B"),
         ("Class C", "Class C"),
         ("Class D", "Class D"),
-    ]
-    LANGUAGE_CHOICES = [
-        ("English", "English"),
-        ("French", "French"),
-        ("Spanish", "Spanish"),
-        ("German", "German"),
-        ("Chinese", "Chinese"),
-        ("Arabic", "Arabic"),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -183,21 +118,11 @@ class Driver(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     date_of_birth = models.DateField(null=True, blank=True)
-    national_id = models.CharField(max_length=50, blank=True, unique=True)
     phone_number = models.CharField(max_length=50, blank=True)
-    email = models.EmailField(blank=True, unique=True)
-    address = models.CharField(max_length=200, blank=True)
-    city = models.CharField(max_length=100, blank=True)
 
     license_number = models.CharField(max_length=50, blank=True)
     license_type = models.CharField(max_length=20, choices=LICENSE_TYPE_CHOICES, default="Class C")
     license_expiry = models.DateField(null=True, blank=True)
-
-    emergency_contact = models.CharField(max_length=100, blank=True)
-    emergency_phone = models.CharField(max_length=50, blank=True)
-
-    experience = models.PositiveIntegerField(null=True, blank=True)  # années d'expérience
-    languages = MultiSelectField(choices=LANGUAGE_CHOICES, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -205,12 +130,6 @@ class Driver(models.Model):
         return f"{self.first_name} {self.last_name}"
     
 class Truck(models.Model):
-    FUEL_CHOICES = [
-        ("Diesel", "Diesel"),
-        ("Petrol", "Petrol"),
-        ("Electric", "Electric"),
-        ("Hybrid", "Hybrid"),
-    ]
     TRUCK_TYPE_CHOICES = [
         ("Standard", "Standard"),
         ("Refrigerated", "Refrigerated"),
@@ -218,41 +137,24 @@ class Truck(models.Model):
         ("Flatbed", "Flatbed"),
         ("Heavy Duty", "Heavy Duty"),
     ]
-    CARGO_TYPE_CHOICES = [
-        ("Container", "Container"),
-        ("Bulk", "Bulk"),
-        ("Liquid", "Liquid"),
-    ]
-    OWNER_TYPE_CHOICES = [
-        ("Company", "Company"),
-        ("Individual", "Individual"),
+    
+    STATUS_CHOICES = [
+        ("APPROACHING", "Approaching"),
+        ("WAITING_ZONE", "In the waiting zone"),
+        ("IN_PORT", "Within the port boundaries"),
+        ("OUT_PORT", "Out of the port"),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="trucks")
-    # drivers = models.ManyToManyField(Driver, related_name="trucks", blank=True)
-    driver_assigned = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name="trucks", blank=True, null=True)
     plate_number = models.CharField(max_length=20, unique=True)
     chassis_number = models.CharField(max_length=50, blank=True)
-    engine_number = models.CharField(max_length=50, blank=True)
     make = models.CharField(max_length=50)
-    model = models.CharField(max_length=50)
-    year = models.PositiveIntegerField(null=True, blank=True)
-    color = models.CharField(max_length=30, blank=True)
-    fuel_type = models.CharField(max_length=20, choices=FUEL_CHOICES, default="Diesel")
     truck_type = models.CharField(max_length=20, choices=TRUCK_TYPE_CHOICES, default="Standard")
-    cargo_type = models.CharField(max_length=20, choices=CARGO_TYPE_CHOICES, default="Container")
-    max_weight = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-
-    registration_date = models.DateField(null=True, blank=True)
-    registration_expiry = models.DateField(null=True, blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="APPROACHING")
 
     insurance_provider = models.CharField(max_length=100, blank=True)
     insurance_expiry = models.DateField(null=True, blank=True)
-
-    owner_type = models.CharField(max_length=20, choices=OWNER_TYPE_CHOICES, default="Company")
-    owner_name = models.CharField(max_length=100, blank=True)
-    owner_contact = models.CharField(max_length=50, blank=True)
 
     gps_installed = models.BooleanField(default=False)
     tracking_device_id = models.CharField(max_length=50, blank=True)
@@ -260,7 +162,7 @@ class Truck(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.plate_number} - {self.make} {self.model}"
+        return f"{self.plate_number} - {self.make}"
 
 class Booking(models.Model):
     STATUS_CHOICES = [
@@ -289,7 +191,7 @@ class Booking(models.Model):
     payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default="Unpaid")
 
     total_amount = models.DecimalField(max_digits=10, decimal_places=0, default=0.00)
-    currency = models.CharField(max_length=10, choices=Slot.CURRENCY_CHOICES, default="CFA")
+    currency = models.CharField(max_length=10, default="CFA")
     payment_method = models.CharField(max_length=50, blank=True, default="Virement")  # ex: Credit Card, PayPal
 
     created_at = models.DateTimeField(auto_now_add=True)
