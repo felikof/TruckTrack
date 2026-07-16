@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
 import userService from '../services/userService';
-import authService from '../services/authService';
 
 const SignIn = () => {
     const [formData, setFormData] = useState({
@@ -34,102 +32,64 @@ const SignIn = () => {
         }
     };
 
+    const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
     const validateForm = () => {
         const newErrors = {};
-        if (!formData.email) newErrors.email = 'L\'email est requis';
-        else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Format d\'email invalide';
-        if (!formData.password) newErrors.password = 'Le mot de passe est requis';
-        else if (formData.password.length < 6) newErrors.password = 'Le mot de passe doit contenir au moins 6 caractères';
+
+        const email = formData.email.trim();
+
+        if (!email) {
+            newErrors.email = "L'email est requis";
+        } else if (!EMAIL_REGEX.test(email)) {
+            newErrors.email = "Format d'email invalide";
+        } else if (/\.{2,}/.test(email)) {
+            // rejette les points consécutifs, ex: jean..dupont@mail.com
+            newErrors.email = "Format d'email invalide";
+        }
+
+        if (!formData.password) {
+            newErrors.password = 'Le mot de passe est requis';
+        } else if (formData.password.length < 8) {
+            newErrors.password = 'Le mot de passe doit contenir au moins 8 caractères';
+        }
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     if (!validateForm()) return;
-    //     setIsLoading(true);
-    //     try {
-    //         await axios.post("http://127.0.0.1:8000//users/login/", {
-    //             email: formData.email,
-    //             password: formData.password
-    //         }, {
-    //             headers: {
-    //                 "Content-Type": "application/json"
-    //             }
-    //         }
-    //         );
-    //         await new Promise(resolve => setTimeout(resolve, 1000));
-    //         toast.success('Connexion réussie !');
-    //         navigate("/Booking");
-    //     } catch {
-    //         setErrors({ submit: 'Erreur de connexion. Veuillez réessayer.' });
-    //         toast.error('Erreur de connexion. Veuillez réessayer.');
-    //     } finally {
-    //         setIsLoading(false);
-    //     }
-    // };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (!validateForm()) return;
 
         setIsLoading(true);
 
         try {
-            // const response = await axios.post("http://127.0.0.1:8000/users/login/", {
-            //     email: formData.email, // ou 'username' selon votre API
-            //     password: formData.password
-            // });
-            userService.login(formData.email, formData.password);
-
-            // Sauvegarder le token
-            // authService.setToken(response.data.access);
-
-            // Optionnel: Sauvegarder le refresh token
-            // if (response.data.refresh) {
-            //     localStorage.setItem('refreshToken', response.data.refresh);
-            // }
-
+            await userService.login(formData.email, formData.password);
             toast.success("Connexion réussie !");
-
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            navigate("/Booking"); // Redirection vers le tableau de bord
+            navigate("/Booking");
 
         } catch (error) {
-            const errorMessage = error.response?.data?.detail ||
-                'Email ou mot de passe incorrect';
+            let errorMessage = "Une erreur est survenue. Veuillez réessayer.";
 
-            setErrors({ submit: errorMessage });
+            if (!error.response) {
+                // Pas de réponse du serveur (serveur down, pas de réseau, CORS...)
+                errorMessage = "Impossible de contacter le serveur. Vérifiez votre connexion.";
+            } else if (error.response.status === 401) {
+                errorMessage = "Email ou mot de passe incorrect.";
+            } else if (error.response.status === 400) {
+                errorMessage = error.response.data?.detail || "Requête invalide.";
+            } else if (error.response.status >= 500) {
+                errorMessage = "Erreur serveur. Merci de réessayer plus tard.";
+            } else if (error.response.data?.detail) {
+                errorMessage = error.response.data.detail;
+            }
+            // setErrors({ submit: errorMessage });
             toast.error(errorMessage);
         } finally {
             setIsLoading(false);
         }
     };
-
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     if (!validateForm()) return;
-    //     setIsLoading(true);
-
-    //     try {
-    //         const response = await apiService.login({
-    //             email: formData.email,
-    //             password: formData.password
-    //         });
-
-    //         // Le token est automatiquement géré par authService via l'intercepteur
-    //         authService.setToken(response.data.access);
-
-    //         toast.success("Connexion réussie !");
-    //         navigate("/dashboard");
-
-    //     } catch (error) {
-    //         toast.error(error.response?.data?.detail || "Erreur de connexion");
-    //     } finally {
-    //         setIsLoading(false);
-    //     }
-    // };
 
     return (
         <div style={styles.container}>

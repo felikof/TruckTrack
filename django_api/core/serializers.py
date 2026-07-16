@@ -19,6 +19,42 @@ class UserSerializer(serializers.ModelSerializer):
         )
         return user
 
+# User = get_user_model()
+class AdminRegistrationSerializer(serializers.ModelSerializer):
+    badge_number = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True, min_length=8)
+
+    class Meta:
+        model = User
+        fields = ['badge_number', 'name', 'first_name', 'email', 'password']
+
+    def validate_badge_number(self, value):
+        if Admin.objects.filter(badge_number=value).exists():
+            raise serializers.ValidationError("Ce numéro de badge est déjà utilisé.")
+        return value
+
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Un utilisateur avec cet email existe déjà.")
+        return value
+
+    def create(self, validated_data):
+        badge_number = validated_data.pop('badge_number')
+
+        # Utilise ton UserManager.create_user pour bénéficier du hashing du mot de passe
+        user = User.objects.create_user(
+            email=validated_data['email'],
+            name=validated_data['name'],
+            first_name=validated_data['first_name'],
+            password=validated_data['password']
+        )
+        user.is_staff = True
+        user.save()
+
+        Admin.objects.create(user=user, badge_number=badge_number)
+
+        return user
+
 class SlotSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -274,122 +310,75 @@ class SlotWithBookingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Slot
         fields = ['id', 'slot_id', 'slot_date', 'start_time', 'end_time', 'bookings']
-        
-class NotificationSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = Notification
-        fields = [
-            "id",
-            "company",
-            "user",
-            "driver",
-            "notification_type",
-            "recipient",
-            "subject",
-            "message",
-            "sent_at",
-            "status",
-            "priority",
-            "created_at",
-        ]
-        read_only_fields = ["id", "sent_at", "created_at"]
-        
-class NotificationDetailSerializer(serializers.ModelSerializer):
-    company_name = serializers.CharField(source='company.company_name', read_only=True)
-    user_email = serializers.CharField(source='user.email', read_only=True)
-    driver_name = serializers.SerializerMethodField()
-    
-    class Meta:
-        model = Notification
-        fields = [
-            "id",
-            "company_name",
-            "user_email",
-            "driver_name",
-            "notification_type",
-            "recipient",
-            "subject",
-            "message",
-            "sent_at",
-            "status",
-            "priority",
-        ]
-        
-    def get_driver_name(self, obj):
-        if obj.driver:
-            return f"{obj.driver.first_name} {obj.driver.last_name}"
-        return None
     
 class AlertLogSerializer(serializers.ModelSerializer):
     
     class Meta:
-        model = AlertLog
+        model = Alert
         fields = [
             "id",
-            "alert_level",
+            "truck",
+            "alert_type",
             "message",
-            "created_at",
-            "resolved",
-            "resolved_at",
-            "resolved_by",
+            "timestamp",
+            "created_at"
         ]
         read_only_fields = ["id", "created_at"]
         
-class LoadSerializer(serializers.ModelSerializer):
+# class LoadSerializer(serializers.ModelSerializer):
     
-    class Meta:
-        model = Load
-        fields = [
-            "id",
-            "container",
-            "description",
-            "weight",
-            "volume",
-            "load_type",
-            "special_handling",
-            "pickup_location",
-            "delivery_location",
-            "pickup_date",
-            "delivery_date",
-            "created_at",
-        ]
-        read_only_fields = ["id", "created_at"]
+#     class Meta:
+#         model = Load
+#         fields = [
+#             "id",
+#             "container",
+#             "description",
+#             "weight",
+#             "volume",
+#             "load_type",
+#             "special_handling",
+#             "pickup_location",
+#             "delivery_location",
+#             "pickup_date",
+#             "delivery_date",
+#             "created_at",
+#         ]
+#         read_only_fields = ["id", "created_at"]
         
-class DeclarationSerializer(serializers.ModelSerializer):
+# class DeclarationSerializer(serializers.ModelSerializer):
     
-    class Meta:
-        model = Declaration
-        fields = [
-            "id",
-            "num",
-            "date",
-            "description",
-            "marchandises",
-            "container_type",
-            "transitaire",
-            "created_at",
-        ]
-        read_only_fields = ["id", "created_at"]
+#     class Meta:
+#         model = Declaration
+#         fields = [
+#             "id",
+#             "num",
+#             "date",
+#             "description",
+#             "marchandises",
+#             "container_type",
+#             "transitaire",
+#             "created_at",
+#         ]
+#         read_only_fields = ["id", "created_at"]
         
-class ContainerTypeSerializer(serializers.ModelSerializer):
+# class ContainerTypeSerializer(serializers.ModelSerializer):
     
-    class Meta:
-        model = ContainerType
-        fields = [
-            "id",
-            "num",
-            "type",
-            "length",
-            "width",
-            "height",
-            "max_weight",
-            "tare_weight",
-            "payload_capacity",
-            "volume",
-            "created_at",
-        ]
-        read_only_fields = ["id", "created_at"]
+#     class Meta:
+#         model = ContainerType
+#         fields = [
+#             "id",
+#             "num",
+#             "type",
+#             "length",
+#             "width",
+#             "height",
+#             "max_weight",
+#             "tare_weight",
+#             "payload_capacity",
+#             "volume",
+#             "created_at",
+#         ]
+#         read_only_fields = ["id", "created_at"]
         
 class TruckRouteSerializer(serializers.ModelSerializer):
     

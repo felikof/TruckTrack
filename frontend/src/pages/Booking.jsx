@@ -1156,7 +1156,6 @@ function Booking({ onLogout }) {
         </div>
     )
 }
-
 export default Booking
 
 // import { useEffect, useState } from 'react'

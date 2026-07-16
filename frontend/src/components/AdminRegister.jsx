@@ -77,8 +77,8 @@ const AdminRegister = () => {
         setIsLoading(true);
 
         try {
-            const response = await axios.post("http://localhost:8000/admins/sign", {
-                badge_number: formData.badgeNumber, // Ajout du badgeNumber
+            const response = await axios.post("http://localhost:8000/admins/sign/", {
+                badge_number: formData.badgeNumber,
                 name: formData.name,
                 first_name: formData.first_name,
                 email: formData.email,
@@ -92,8 +92,7 @@ const AdminRegister = () => {
             console.log("Inscription réussie :", response.data);
             navigate("/AdminL");
         } catch (error) {
-            if (error.response?.status === 422) {
-                // Gestion des erreurs de validation du serveur
+            if (error.response?.status === 400) {
                 handleServerErrors(error.response.data);
             } else {
                 console.error("Erreur d'inscription :", error);
@@ -106,28 +105,19 @@ const AdminRegister = () => {
 
     const handleServerErrors = (errorData) => {
         const newErrors = {};
+        const fieldMap = {
+            'badge_number': 'badgeNumber',
+            'first_name': 'first_name',
+            'name': 'name',
+            'email': 'email',
+            'password': 'password'
+        };
 
-        // Format standard FastAPI pour les erreurs de validation
-        if (errorData.detail && Array.isArray(errorData.detail)) {
-            errorData.detail.forEach(error => {
-                const fieldName = error.loc[error.loc.length - 1];
-                // Mapping des noms de champs entre le frontend et le backend
-                const fieldMap = {
-                    'badge_number': 'badgeNumber',
-                    'password': 'password'
-                };
-                const clientFieldName = fieldMap[fieldName] || fieldName;
-                newErrors[clientFieldName] = error.msg;
-            });
-        }
-        // Autre format possible
-        else if (typeof errorData.detail === 'string') {
-            newErrors.general = errorData.detail;
-        }
-        // Format de secours
-        else {
-            newErrors.general = 'Erreur de validation des données';
-        }
+        Object.keys(errorData).forEach(field => {
+            const clientFieldName = fieldMap[field] || field;
+            const messages = errorData[field];
+            newErrors[clientFieldName] = Array.isArray(messages) ? messages[0] : messages;
+        });
 
         setErrors(newErrors);
     };
@@ -172,20 +162,20 @@ const AdminRegister = () => {
 
                     <div style={styles.grid}>
                         <div style={styles.inputGroup}>
-                            <label htmlFor="nom" style={styles.label}>Nom *</label>
+                            <label htmlFor="name" style={styles.label}>Nom *</label>
                             <input
-                                id="nom"
-                                name="nom"
+                                id="name"
+                                name="name"
                                 type="text"
-                                value={formData.nom}
+                                value={formData.name}
                                 onChange={handleChange}
                                 style={{
                                     ...styles.input,
-                                    ...(errors.nom && styles.inputError)
+                                    ...(errors.name && styles.inputError)
                                 }}
                                 placeholder="Dupont"
                             />
-                            {errors.nom && <p style={styles.errorText}>{errors.nom}</p>}
+                            {errors.name && <p style={styles.errorText}>{errors.name}</p>}
                         </div>
 
                         <div style={styles.inputGroup}>

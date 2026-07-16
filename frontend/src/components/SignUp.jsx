@@ -20,12 +20,21 @@ const SignUp = () => {
         navigateIn("/SignIn");
     }
 
+    const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const validateForm = () => {
         const newErrors = {};
         if (!formData.first_name) newErrors.first_name = 'Le prénom est requis';
         if (!formData.name) newErrors.name = 'Le nom est requis';
-        if (!formData.email) newErrors.email = 'L\'email est requis';
-        else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Format d\'email invalide';
+        const email = formData.email.trim();
+
+        if (!email) {
+            newErrors.email = "L'email est requis";
+        } else if (!EMAIL_REGEX.test(email)) {
+            newErrors.email = "Format d'email invalide";
+        } else if (/\.{2,}/.test(email)) {
+            // rejette les points consécutifs, ex: jean..dupont@mail.com
+            newErrors.email = "Format d'email invalide";
+        }
         if (!formData.password) newErrors.password = 'Le mot de passe est requis';
         else if (formData.password.length < 8) newErrors.password = 'Le mot de passe doit contenir au moins 8 caractères';
         if (!formData.confirmPassword) newErrors.confirmPassword = 'La confirmation du mot de passe est requise';
@@ -50,39 +59,6 @@ const SignUp = () => {
             }));
         }
     };
-
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     if (formData.password !== formData.confirmPassword) {
-    //         toast.error("Les mots de passe ne correspondent pas");
-    //         return;
-    //     }
-
-    //     if (!validateForm()) return;
-    //     setIsLoading(true);
-    //     navigate("/SignIn");
-    //     try {
-    //         await axios.post("http://127.0.0.1:8000/users/sign/", {
-    //             name: formData.name,
-    //             first_name: formData.first_name,
-    //             email: formData.email,
-    //             password: formData.password
-    //         }, {
-    //             headers: {
-    //                 "Content-Type": "application/json"
-    //             }
-    //         }
-    //         );
-    //         toast.success("Inscription réussie !");
-    //         await new Promise(resolve => setTimeout(resolve, 1000));
-    //         navigate("/SignIn");
-    //     } catch {
-    //         setErrors({ submit: 'Erreur lors de l\'inscription. Veuillez réessayer.' });
-    //         toast.error("Erreur lors de l'inscription. Veuillez réessayer.")
-    //     } finally {
-    //         setIsLoading(false);
-    //     }
-    // };
 
     const handleSubmit = async (e) => {
         e.preventDefault();

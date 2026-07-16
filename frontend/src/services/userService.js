@@ -5,7 +5,7 @@ const API_URL = 'http://127.0.0.1:8000/users/';
 const userService = {
     // Create a new user
     create: async (userData) => {
-        const response = await axios.post(`${API_URL}/sign/`, userData);
+        const response = await axios.post(`${API_URL}sign/`, userData);
         return response.data;
     },
 
@@ -35,7 +35,6 @@ const userService = {
             throw error;
         }
     },
-
 
     // Update user profile
     updateProfile: async (token, profileData) => {

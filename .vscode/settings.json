@@ -4,5 +4,6 @@
     ],
     "cursorpyright.analysis.extraPaths": [
         "./backend/models"
-    ]
+    ],
+    "python-envs.defaultEnvManager": "ms-python.python:system"
 }
