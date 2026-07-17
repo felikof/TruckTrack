@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import *
 
-
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
@@ -71,17 +70,30 @@ class SlotSerializer(serializers.ModelSerializer):
             "total_slots",
             "available_slots",
             "reserved_slots",
-            "base_price",
-            "currency",
             "status",
-            "operator_name",
-            "contact_person",
-            "contact_phone",
-            "contact_email",
-            "available_facilities",
+            "operation",
             "created_at",
         ]
-        read_only_fields = ["id", "created_at"]
+        read_only_fields = ["id", "slot_id", "created_at", "available_slots", "reserved_slots"]
+    def validate(self, data):
+        total = data.get('total_slots', getattr(self.instance, 'total_slots', None))
+        available = data.get('available_slots', getattr(self.instance, 'available_slots', None))
+        if total is not None and available is not None and available > total:
+            raise serializers.ValidationError(
+                "Le nombre de places disponibles ne peut pas dépasser la capacité totale."
+            )
+        return data
+
+    def create(self, validated_data):
+        # Génère SLOT-001, SLOT-002... automatiquement plutôt que de le laisser au frontend
+        last = Slot.objects.order_by('-created_at').first()
+        if last and last.slot_id.startswith('SLOT-'):
+            last_num = int(last.slot_id.split('-')[1])
+        else:
+            last_num = 0
+        validated_data['slot_id'] = f"SLOT-{last_num + 1:03d}"
+        validated_data.setdefault('reserved_slots', 0)
+        return super().create(validated_data)
 
 class CompanySerializer(serializers.ModelSerializer):
     

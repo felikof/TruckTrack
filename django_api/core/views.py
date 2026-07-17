@@ -1,6 +1,7 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import *
 from .serializers import *
-from rest_framework import viewsets, permissions, generics
+from rest_framework import viewsets, permissions, generics, filters
 
 # Inscription utilisateur
 class UserSignView(generics.CreateAPIView):
@@ -26,9 +27,12 @@ class AdminRegistrationView(generics.CreateAPIView):
 
 # Liste / création créneaux (seulement admin)
 class SlotViewSet(viewsets.ModelViewSet):
-    queryset = Slot.objects.all()
-    serializer_class = SlotSerializer  
+    queryset = Slot.objects.all().order_by('-slot_date', 'start_time')
+    serializer_class = SlotSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['status', 'operation', 'slot_date']
+    search_fields = ['slot_id', 'origin_gate', 'destination_terminal']
 
 # @api_view(["POST"])
 # @permission_classes([permissions.IsAuthenticated])

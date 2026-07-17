@@ -1,49 +1,149 @@
-import axios from "axios";
+// import axios from 'axios';
 
-const API_URL = "http://127.0.0.1:8000/slots/";
+// const API_URL = 'http://127.0.0.1:8000/api/slots/';
 
-//export const getSlots = () => axios.get(API_URL).then(res => res.data);
+// const getAuthHeaders = () => ({
+//     headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+// });
 
-export const createSlot = (slotData) =>
-    axios.post(API_URL, slotData).then(res => res.data);
+// export const getSlots = async (filters = {}) => {
+//     const params = new URLSearchParams(filters).toString();
+//     const response = await axios.get(`${API_URL}?${params}`, getAuthHeaders());
+//     return response.data;
+// };
 
-export const updateSlot = (id, slotData) =>
-    axios.put(`${API_URL}${id}/`, slotData).then(res => res.data);
+// export const createSlot = async (slotData) => {
+//     const response = await axios.post(API_URL, slotData, getAuthHeaders());
+//     return response.data;
+// };
 
-export const deleteSlot = (id) =>
-    axios.delete(`${API_URL}${id}/`).then(res => res.data);
+// export const updateSlot = async (id, slotData) => {
+//     const response = await axios.put(`${API_URL}${id}/`, slotData, getAuthHeaders());
+//     return response.data;
+// };
 
-const mapSlot = (s) => ({
-    id: s.id,
-    slotId: s.slot_id,
-    slotDate: s.slot_date,
-    startTime: s.start_time,
-    endTime: s.end_time,
-    duration: s.duration,
-    originGate: s.origin_gate,
-    destinationTerminal: s.destination_terminal,
-    totalSlots: s.total_slots,
-    availableSlots: s.available_slots,
-    reservedSlots: s.reserved_slots,
-    basePrice: s.base_price,
-    currency: s.currency,
-    status: s.status,
-    operatorName: s.operator_name,
-    contactPerson: s.contact_person,
-    contactPhone: s.contact_phone,
-    contactEmail: s.contact_email,
-    createdAt: s.created_at,
+// export const deleteSlot = async (id) => {
+//     await axios.delete(`${API_URL}${id}/`, getAuthHeaders());
+// };
+
+// // slotService.js — ajoute cette fonction de transformation
+// const toCamelCase = (slot) => ({
+//     id: slot.id,
+//     slotId: slot.slot_id,
+//     slotDate: slot.slot_date,
+//     startTime: slot.start_time,
+//     endTime: slot.end_time,
+//     duration: slot.duration,
+//     originGate: slot.origin_gate,
+//     destinationTerminal: slot.destination_terminal,
+//     totalSlots: slot.total_slots,
+//     availableSlots: slot.available_slots,
+//     reservedSlots: slot.reserved_slots,
+//     status: slot.status,
+//     operation: slot.operation,
+// });
+
+// export const getSlots = async (filters = {}) => {
+//     const params = new URLSearchParams(filters).toString();
+//     const response = await axios.get(`${API_URL}?${params}`, getAuthHeaders());
+//     return response.data.map(toCamelCase);
+// };
+
+// export const createSlot = async (slotData) => {
+//     const payload = {
+//         slot_date: slotData.slotDate,
+//         start_time: slotData.startTime,
+//         end_time: slotData.endTime,
+//         duration: slotData.duration,
+//         origin_gate: slotData.originGate,
+//         destination_terminal: slotData.destinationTerminal,
+//         total_slots: slotData.totalSlots,
+//         available_slots: slotData.availableSlots,
+//         status: slotData.status,
+//         operation: slotData.operation,
+//     };
+//     const response = await axios.post(API_URL, payload, getAuthHeaders());
+//     return toCamelCase(response.data);
+// };
+
+// export const updateSlot = async (id, slotData) => {
+//     const payload = {
+//         slot_date: slotData.slotDate,
+//         start_time: slotData.startTime,
+//         end_time: slotData.endTime,
+//         duration: slotData.duration,
+//         origin_gate: slotData.originGate,
+//         destination_terminal: slotData.destinationTerminal,
+//         total_slots: slotData.totalSlots,
+//         available_slots: slotData.availableSlots,
+//         status: slotData.status,
+//         operation: slotData.operation,
+//     };
+//     const response = await axios.put(`${API_URL}${id}/`, payload, getAuthHeaders());
+//     return toCamelCase(response.data);
+// };
+
+// export const deleteSlot = async (id) => {
+//     await axios.delete(`${API_URL}${id}/`, getAuthHeaders());
+// };
+
+import axios from 'axios';
+
+const API_URL = 'http://127.0.0.1:8000/api/slots/';
+
+const getAuthHeaders = () => ({
+    headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
 });
 
-export const getSlots = async () => {
-    const token = localStorage.getItem("accessToken");
-    const response = await axios.get(API_URL, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-        },
-    });
-    console.log("Slots response:", response.data);
-    return response.data.map(mapSlot);
-}
-    
+const toCamelCase = (slot) => ({
+    id: slot.id,
+    slotId: slot.slot_id,
+    slotDate: slot.slot_date,
+    startTime: slot.start_time,
+    endTime: slot.end_time,
+    duration: slot.duration,
+    originGate: slot.origin_gate,
+    destinationTerminal: slot.destination_terminal,
+    totalSlots: slot.total_slots,
+    availableSlots: slot.available_slots,
+    reservedSlots: slot.reserved_slots,
+    status: slot.status,
+    operation: slot.operation,
+});
+
+const toSnakeCase = (slotData) => ({
+    slot_date: slotData.slotDate,
+    start_time: slotData.startTime,
+    end_time: slotData.endTime,
+    duration: slotData.duration,
+    origin_gate: slotData.originGate,
+    destination_terminal: slotData.destinationTerminal,
+    total_slots: slotData.totalSlots,
+    available_slots: slotData.availableSlots,
+    status: slotData.status,
+    operation: slotData.operation,
+});
+
+export const getSlots = async (filters = {}) => {
+    const params = new URLSearchParams(filters).toString();
+    const response = await axios.get(`${API_URL}?${params}`, getAuthHeaders());
+    return response.data.map(toCamelCase);
+};
+
+export const createSlot = async (slotData) => {
+    const response = await axios.post(API_URL, toSnakeCase(slotData), getAuthHeaders());
+    return toCamelCase(response.data);
+};
+
+export const updateSlot = async (id, slotData) => {
+    const response = await axios.put(`${API_URL}${id}/`, toSnakeCase(slotData), getAuthHeaders());
+    return toCamelCase(response.data);
+};
+
+export const deleteSlot = async (id) => {
+    await axios.delete(`${API_URL}${id}/`, getAuthHeaders());
+};
+
+// Export par défaut — pour les fichiers qui importent le service comme un objet groupé
+const slotService = { getSlots, createSlot, updateSlot, deleteSlot };
+export default slotService;

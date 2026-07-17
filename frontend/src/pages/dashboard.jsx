@@ -1,4 +1,4 @@
-// import React, { useState, useMemo } from 'react';
+// import React, { useState, useEffect, useMemo } from 'react';
 // import {
 //   Plus, Pencil, Trash2, Search, Clock, Truck, MapPin, TrendingUp,
 //   Package, X, AlertCircle, CheckCircle2, ChevronDown, Radio,
@@ -938,7 +938,7 @@
 //   );
 // }
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Plus, Pencil, Trash2, Search, Clock, Truck, MapPin, TrendingUp,
   Package, X, AlertCircle, CheckCircle2, Radio,
@@ -948,6 +948,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, LineChart, Line
 } from 'recharts';
+import slotService from '../services/slotService';
 
 // ============================================================
 // THÈMES — chaque couleur sémantique est résolue depuis ce token
@@ -980,7 +981,7 @@ const THEMES = {
     line: '#D9E0E9',
     text: '#0F1E30',
     textDim: '#5B6B80',
-    amber: '#B9700D',
+    amber: '#0d35b9',
     amberSoft: '#8f5709',
     cyan: '#0E7C88',
     green: '#25904F',
@@ -1063,7 +1064,7 @@ export default function PALAdminDashboard() {
   const theme = THEMES[themeName];
 
   const [activeTab, setActiveTab] = useState('creneaux');
-  const [slots, setSlots] = useState(initialSlots);
+  const [slots, setSlots] = useState([]);
   const [reservations] = useState(initialReservations);
   const [trucks] = useState(initialTrucks);
   const [modalOpen, setModalOpen] = useState(false);
@@ -1071,6 +1072,7 @@ export default function PALAdminDashboard() {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [loading, setLoading] = useState(true);
 
   const tabs = [
     { id: 'creneaux', label: 'Créneaux', icon: Clock },
@@ -1081,6 +1083,50 @@ export default function PALAdminDashboard() {
 
   // ---- CRUD Créneaux -----------------------------------------------------
   // API: GET /api/slots/
+  useEffect(() => {
+    loadSlots();
+  }, []);
+
+  const loadSlots = async () => {
+    try {
+      setLoading(true);
+      const data = await slotService.getAll();
+      setSlots(data);
+    } catch (error) {
+      console.error('Erreur de chargement des créneaux :', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveSlot = async (formValues) => {
+    try {
+      if (editingSlot) {
+        const updated = await slotService.update(editingSlot.id, formValues);
+        setSlots(prev => prev.map(s => s.id === editingSlot.id ? updated : s));
+      } else {
+        const created = await slotService.create(formValues);
+        setSlots(prev => [created, ...prev]);
+      }
+      setModalOpen(false);
+      setEditingSlot(null);
+    } catch (error) {
+      console.error('Erreur de sauvegarde :', error.response?.data);
+      // affiche error.response.data dans le formulaire, même logique que handleServerErrors vu plus tôt
+    }
+  };
+
+  const handleDeleteSlot = async () => {
+    try {
+      await slotService.delete(deleteTarget.id);
+      setSlots(prev => prev.filter(s => s.id !== deleteTarget.id));
+      setDeleteTarget(null);
+    } catch (error) {
+      console.error('Erreur de suppression :', error);
+    }
+  };
+
+
   const filteredSlots = useMemo(() => {
     return slots.filter(s => {
       const matchesSearch = s.id.toLowerCase().includes(search.toLowerCase())
@@ -1102,22 +1148,22 @@ export default function PALAdminDashboard() {
   };
 
   // API: POST /api/slots/  ou  PUT /api/slots/{id}/
-  const handleSaveSlot = (formValues) => {
-    if (editingSlot) {
-      setSlots(prev => prev.map(s => s.id === editingSlot.id ? { ...s, ...formValues } : s));
-    } else {
-      const newId = `SLOT-${String(slots.length + 1).padStart(3, '0')}`;
-      setSlots(prev => [{ id: newId, reserved: 0, ...formValues }, ...prev]);
-    }
-    setModalOpen(false);
-    setEditingSlot(null);
-  };
+  // const handleSaveSlot = (formValues) => {
+  //   if (editingSlot) {
+  //     setSlots(prev => prev.map(s => s.id === editingSlot.id ? { ...s, ...formValues } : s));
+  //   } else {
+  //     const newId = `SLOT-${String(slots.length + 1).padStart(3, '0')}`;
+  //     setSlots(prev => [{ id: newId, reserved: 0, ...formValues }, ...prev]);
+  //   }
+  //   setModalOpen(false);
+  //   setEditingSlot(null);
+  // };
 
   // API: DELETE /api/slots/{id}/
-  const handleDeleteSlot = () => {
-    setSlots(prev => prev.filter(s => s.id !== deleteTarget.id));
-    setDeleteTarget(null);
-  };
+  // const handleDeleteSlot = () => {
+  //   setSlots(prev => prev.filter(s => s.id !== deleteTarget.id));
+  //   setDeleteTarget(null);
+  // };
 
   // ---- Statistiques dérivées ---------------------------------------------
   const kpis = useMemo(() => {
@@ -1684,7 +1730,7 @@ function SlotModal({ slot, onClose, onSave }) {
           </div>
           <div className="pal-modal-footer">
             <button type="button" className="pal-btn-ghost" onClick={onClose}>Annuler</button>
-            <button type="submit" className="pal-btn-primary" style={{ marginLeft: 0 }}>
+            <button type="submit" className="pal-btn-primary" onClick={handleSubmit} style={{ marginLeft: 0 }}>
               {slot ? 'Enregistrer' : 'Créer le créneau'}
             </button>
           </div>

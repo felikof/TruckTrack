@@ -76,11 +76,8 @@ class Slot(models.Model):
     slot_date = models.DateField()
     start_time = models.TimeField()
     end_time = models.TimeField()
-    duration = models.CharField(max_length=20)  # ex: "3h 15m"
     origin_gate = models.CharField(max_length=100)
     destination_terminal = models.CharField(max_length=100)
-    truck = models.ForeignKey("Truck", on_delete=models.CASCADE, related_name="slots", null=True, blank=True)
-    driver = models.ForeignKey("Driver", on_delete=models.PROTECT, related_name="slots", null=True, blank=True)
 
     total_slots = models.PositiveIntegerField()
     available_slots = models.PositiveIntegerField(default=0)
@@ -98,24 +95,16 @@ class Slot(models.Model):
         return f"{self.slot_id} - {self.origin_gate} → {self.destination_terminal} ({self.status}) on {self.slot_date} at {self.start_time} to {self.end_time}"
 
 class Company(models.Model):
-    COMPANY_TYPE_CHOICES = [
-        ("Private", "Private"),
-        ("Public", "Public"),
-        ("Government", "Government"),
-    ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     company_name = models.CharField(max_length=200)
     registration_number = models.CharField(max_length=100, blank=True, unique=True)
-    company_type = models.CharField(max_length=50, choices=COMPANY_TYPE_CHOICES, default="Private")
     established_year = models.PositiveIntegerField(null=True, blank=True)
 
     phone_number = models.CharField(max_length=50, blank=True)
     email = models.EmailField(blank=True, unique=True)
 
     address = models.CharField(max_length=200, blank=True)
-    city = models.CharField(max_length=100, blank=True)
-    postal_code = models.CharField(max_length=20, blank=True)
 
     def __str__(self):
         return self.company_name
@@ -162,7 +151,6 @@ class Truck(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="trucks")
     plate_number = models.CharField(max_length=20, unique=True)
-    chassis_number = models.CharField(max_length=50, blank=True)
     make = models.CharField(max_length=50)
     truck_type = models.CharField(max_length=20, choices=TRUCK_TYPE_CHOICES, default="Standard")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="APPROACHING")
@@ -196,11 +184,8 @@ class Booking(models.Model):
     booking_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="Pending")
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
-
     def __str__(self):
-        return f"Booking {self.id} - {self.slot.slot_id} by {self.booked_by.email} for {self.company.company_name if self.company else 'Particular'}"
+        return f"Booking {self.id} - {self.slot.slot_id} by {self.company.company_name if self.company else 'Particular'}"
     
 class TruckRoute(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
