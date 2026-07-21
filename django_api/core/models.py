@@ -183,9 +183,15 @@ class Booking(models.Model):
 
     booking_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="Pending")
+    
+    cancelled_by = models.CharField(
+        max_length=10,
+        choices=[('company', 'Transporteur'), ('admin', 'Administrateur')],
+        null=True, blank=True
+    )
 
     def __str__(self):
-        return f"Booking {self.id} - {self.slot.slot_id} by {self.company.company_name if self.company else 'Particular'}"
+        return f"Booking {self.id} - {self.slot.slot_id} by {self.company.company_name}"
     
 class TruckRoute(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -230,3 +236,56 @@ class Alert(models.Model):
 
     def __str__(self):
         return f"Alert for {self.truck.plate_number} at {self.timestamp}: [{self.alert_type}] {self.message}"
+    
+class Notification(models.Model):
+    TYPE_CHOICES = [
+        ('pending', 'Validation requise'),
+        ('cancelled', 'Annulation transporteur'),
+        ('no_show', 'Créneau non utilisé'),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    admin = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='notifications',
+        null=True, blank=True,
+        help_text="Si null, la notification est visible par tous les admins"
+    )
+    type = models.CharField(max_length=20, choices=TYPE_CHOICES)
+    booking = models.ForeignKey(
+        'Booking',
+        on_delete=models.CASCADE,
+        related_name='notifications'
+    )
+    message = models.CharField(max_length=255)
+    read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.type} — {self.booking.id}"
+    
+class History(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='histories'
+    )
+    booking = models.ForeignKey(
+        Booking,
+        on_delete=models.CASCADE,
+        related_name='histories'
+    )
+    
+    action = models.CharField(max_length=255)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-timestamp']
+
+    def __str__(self):
+        return f"{self.user.email} - {self.action} at {self.timestamp}"

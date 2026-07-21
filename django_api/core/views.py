@@ -98,30 +98,15 @@ class BookingViewSet(viewsets.ModelViewSet):
             return Booking.objects.filter(booked_by__id=user_id)
         return Booking.objects.filter(booked_by=user)
     
-# class NotificationViewSet(viewsets.ModelViewSet):
-#     queryset = Notification.objects.all()
-#     serializer_class = NotificationSerializer
-#     permission_classes = [permissions.IsAuthenticated]
+class NotificationViewSet(viewsets.ModelViewSet):
+    queryset = Notification.objects.all()
+    serializer_class = NotificationSerializer
+    permission_classes = [permissions.IsAuthenticated]
     
 class AlertLogViewSet(viewsets.ModelViewSet):
     queryset = Alert.objects.all()
     serializer_class = AlertLogSerializer
     permission_classes = [permissions.IsAuthenticated]
-    
-# class LoadViewSet(viewsets.ModelViewSet):
-#     queryset = Load.objects.all()
-#     serializer_class = LoadSerializer
-#     permission_classes = [permissions.IsAuthenticated]
-    
-# class DeclarationViewSet(viewsets.ModelViewSet):
-#     queryset = Declaration.objects.all()
-#     serializer_class = DeclarationSerializer
-#     permission_classes = [permissions.IsAuthenticated]
-    
-# class ContainerTypeViewSet(viewsets.ModelViewSet):
-#     queryset = ContainerType.objects.all()
-#     serializer_class = ContainerTypeSerializer
-#     permission_classes = [permissions.IsAuthenticated]
     
 class TruckRouteViewSet(viewsets.ModelViewSet):
     queryset = TruckRoute.objects.all()

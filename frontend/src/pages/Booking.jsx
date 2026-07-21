@@ -1,637 +1,12 @@
-// import React, { useState, useMemo } from 'react';
-// import {
-//   Search, Settings, Bell, User, Layers, Anchor, Clock, MapPin,
-//   ArrowRight, X, ChevronDown, Truck, UserRound, Building2,
-//   CheckCircle2, Package, ShieldCheck
-// } from 'lucide-react';
-
-// // ============================================================
-// // DONNÉES SIMULÉES — reflète le modèle Slot réel
-// // (slot_id, slot_date, start_time, end_time, origin_gate,
-// //  destination_terminal, total_slots, available_slots, status, operation)
-// // API: GET /api/slots/?status=active
-// // ============================================================
-
-// const OPERATION_META = {
-//   loading: { label: 'Chargement', color: '#F2A93B', icon: Package },
-//   unloading: { label: 'Déchargement', color: '#4C6FFF', icon: Package },
-//   transit: { label: 'Transit', color: '#8993A6', icon: ArrowRight },
-// };
-
-// const initialSlots = [
-//   { id: 'SLOT-001', date: '2026-07-17', start: '08:00', end: '10:30', origin: 'Porte A1', destination: 'Terminal 3', total: 12, available: 12, operation: 'loading' },
-//   { id: 'SLOT-002', date: '2026-07-17', start: '10:00', end: '13:15', origin: 'Porte B2', destination: 'Terminal 3', total: 8, available: 8, operation: 'unloading' },
-//   { id: 'SLOT-003', date: '2026-07-17', start: '14:00', end: '16:45', origin: 'Porte C1', destination: 'Terminal 3', total: 6, available: 6, operation: 'transit' },
-//   { id: 'SLOT-004', date: '2026-07-17', start: '16:00', end: '18:30', origin: 'Porte A1', destination: 'Terminal 1', total: 10, available: 4, operation: 'loading' },
-//   { id: 'SLOT-005', date: '2026-07-17', start: '07:00', end: '09:15', origin: 'Porte B2', destination: 'Terminal 2', total: 9, available: 1, operation: 'unloading' },
-// ];
-
-// const HOURS = ['07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'];
-
-// // petites données de démo pour l'histogramme d'occupation de la sidebar
-// const HOUR_LOAD = [30, 55, 40, 70, 85, 45, 60, 90, 35, 50, 65, 20];
-
-// const savedTrucks = [
-//   { plate: 'TG-4471-A', type: 'Semi-remorque' },
-//   { plate: 'TG-2290-B', type: 'Porteur' },
-// ];
-
-// const savedDrivers = [
-//   { name: 'Kodjo Mensah', phone: '+228 90 12 34 56', license: 'PL-88213' },
-//   { name: 'Ama Doe', phone: '+228 91 45 67 89', license: 'PL-77042' },
-// ];
-
-// function durationLabel(start, end) {
-//   const [sh, sm] = start.split(':').map(Number);
-//   const [eh, em] = end.split(':').map(Number);
-//   const mins = (eh * 60 + em) - (sh * 60 + sm);
-//   const h = Math.floor(mins / 60);
-//   const m = mins % 60;
-//   return m ? `${h}h ${m}m` : `${h}h`;
-// }
-
-// // ============================================================
-// // COMPOSANT PRINCIPAL
-// // ============================================================
-
-// export default function Booking() {
-//   const [slots] = useState(initialSlots);
-//   const [activeNav, setActiveNav] = useState('browse');
-//   const [onlyAvailable, setOnlyAvailable] = useState(true);
-//   const [timeFrom, setTimeFrom] = useState('07:00');
-//   const [timeTo, setTimeTo] = useState('18:00');
-//   const [preferredHours, setPreferredHours] = useState([]);
-//   const [reservingSlot, setReservingSlot] = useState(null);
-//   const [confirmedIds, setConfirmedIds] = useState([]);
-
-//   const togglePreferredHour = (h) => {
-//     setPreferredHours(prev => prev.includes(h) ? prev.filter(x => x !== h) : [...prev, h]);
-//   };
-
-//   const filteredSlots = useMemo(() => {
-//     return slots.filter(s => {
-//       if (onlyAvailable && s.available === 0) return false;
-//       if (s.start < timeFrom || s.start > timeTo) return false;
-//       if (preferredHours.length > 0 && !preferredHours.includes(s.start)) return false;
-//       return true;
-//     });
-//   }, [slots, onlyAvailable, timeFrom, timeTo, preferredHours]);
-
-//   const navLinks = [
-//     { id: 'browse', label: 'Parcourir les créneaux' },
-//     { id: 'booking', label: 'Mes réservations' },
-//     { id: 'scheduled', label: 'Programmées' },
-//     { id: 'history', label: 'Historique' },
-//   ];
-
-//   return (
-//     <div className="tb-root">
-//       <style>{`
-//         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
-//         .tb-root {
-//           --bg: #F3F5F9;
-//           --panel: #FFFFFF;
-//           --border: #ECEEF2;
-//           --text: #14171F;
-//           --text-dim: #8993A6;
-//           --blue: #4C6FFF;
-//           --blue-soft: #EEF1FF;
-//           --green: #16A34A;
-//           --green-soft: #E7F8ED;
-//           --orange: #FB8C1E;
-//           --amber: #F2A93B;
-//           font-family: 'Inter', sans-serif;
-//           background: var(--bg);
-//           color: var(--text);
-//           min-height: 100vh;
-//           border-radius: 12px;
-//           overflow: hidden;
-//           border: 1px solid var(--border);
-//         }
-//         .tb-root * { box-sizing: border-box; }
-
-//         /* NAVBAR */
-//         .tb-navbar {
-//           background: #fff; border-bottom: 1px solid var(--border);
-//           padding: 14px 28px; display: flex; align-items: center; justify-content: space-between;
-//         }
-//         .tb-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; }
-//         .tb-brand-mark {
-//           width: 30px; height: 30px; border-radius: 8px;
-//           background: linear-gradient(135deg, var(--blue), #7B8CFF);
-//           display: flex; align-items: center; justify-content: center; color: #fff;
-//         }
-//         .tb-navlinks { display: flex; gap: 26px; }
-//         .tb-navlink {
-//           background: none; border: none; cursor: pointer; font-size: 13.5px; font-weight: 500;
-//           color: var(--text-dim); padding-bottom: 18px; margin-bottom: -18px; border-bottom: 2px solid transparent;
-//         }
-//         .tb-navlink.active { color: var(--blue); border-bottom-color: var(--blue); }
-//         .tb-navicons { display: flex; align-items: center; gap: 10px; }
-//         .tb-icon-circle {
-//           width: 34px; height: 34px; border-radius: 50%; background: #F5F6FA; border: 1px solid var(--border);
-//           display: flex; align-items: center; justify-content: center; color: var(--text-dim); cursor: pointer;
-//         }
-//         .tb-avatar {
-//           width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #7C5CFC, #A78BFA);
-//           display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 12.5px;
-//         }
-
-//         .tb-body { display: grid; grid-template-columns: 260px 1fr; gap: 20px; padding: 22px 28px; align-items: start; }
-
-//         /* SIDEBAR FILTERS */
-//         .tb-sidebar { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
-//         .tb-sidebar-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-//         .tb-sidebar-title { font-weight: 700; font-size: 15px; }
-//         .tb-reset { background: none; border: none; color: var(--blue); font-size: 12.5px; cursor: pointer; font-weight: 500; }
-
-//         .tb-pill-toggle {
-//           border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 600;
-//           cursor: pointer; color: #fff; margin-bottom: 8px; width: 100%; text-align: left;
-//           display: flex; align-items: center; justify-content: center; gap: 6px;
-//         }
-//         .tb-pill-count { text-align: center; font-size: 11.5px; color: var(--text-dim); margin-bottom: 16px; }
-
-//         .tb-filter-label { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-dim); margin: 16px 0 8px; }
-//         .tb-time-range { display: flex; align-items: center; gap: 6px; }
-//         .tb-time-input {
-//           flex: 1; display: flex; align-items: center; gap: 6px; border: 1px solid var(--border);
-//           border-radius: 8px; padding: 7px 9px; font-size: 12.5px; color: var(--text);
-//         }
-//         .tb-time-input input { border: none; outline: none; width: 100%; font-size: 12.5px; font-family: inherit; }
-
-//         .tb-hour-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 4px; }
-//         .tb-hour-btn {
-//           border: 1px solid var(--border); background: #fff; border-radius: 8px; padding: 7px 0;
-//           font-size: 12px; cursor: pointer; color: var(--text-dim); font-weight: 500;
-//         }
-//         .tb-hour-btn.active { background: var(--blue); border-color: var(--blue); color: #fff; }
-
-//         .tb-histogram { display: flex; align-items: flex-end; gap: 4px; height: 46px; margin-top: 16px; }
-//         .tb-bar { flex: 1; background: #E7EAF3; border-radius: 3px 3px 0 0; }
-
-//         .tb-apply-btn {
-//           width: 100%; background: #14171F; color: #fff; border: none; border-radius: 10px;
-//           padding: 12px 0; font-weight: 600; font-size: 13.5px; margin-top: 18px; cursor: pointer;
-//         }
-
-//         /* SLOT CARDS */
-//         .tb-list { display: flex; flex-direction: column; gap: 14px; }
-//         .tb-card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; }
-//         .tb-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-//         .tb-operator { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 13.5px; }
-//         .tb-operator-mark {
-//           width: 26px; height: 26px; border-radius: 7px; background: var(--orange);
-//           display: flex; align-items: center; justify-content: center; color: #fff;
-//         }
-//         .tb-duration { font-size: 12px; color: var(--text-dim); }
-
-//         .tb-card-main { display: grid; grid-template-columns: 100px 1fr 180px; gap: 18px; align-items: center; }
-//         .tb-time-big { font-size: 22px; font-weight: 800; line-height: 1.1; }
-//         .tb-gate-label { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
-
-//         .tb-timeline { display: flex; align-items: center; }
-//         .tb-tl-stop { text-align: center; flex-shrink: 0; }
-//         .tb-tl-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); margin: 0 auto 6px; }
-//         .tb-tl-time { font-size: 12.5px; font-weight: 700; }
-//         .tb-tl-place { font-size: 11px; color: var(--text-dim); margin-top: 1px; }
-//         .tb-tl-line { flex: 1; height: 1px; background: repeating-linear-gradient(to right, var(--border) 0 4px, transparent 4px 8px); margin: 0 8px 18px; position: relative; }
-//         .tb-tl-op {
-//           position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
-//           font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 10px; white-space: nowrap;
-//         }
-
-//         .tb-right-col { text-align: right; }
-//         .tb-terminal { font-size: 12.5px; color: var(--text-dim); margin-bottom: 4px; }
-//         .tb-avail { font-size: 13.5px; font-weight: 700; color: var(--blue); margin-bottom: 10px; }
-//         .tb-avail.full { color: #DC2626; }
-//         .tb-reserve-btn {
-//           background: var(--blue); color: #fff; border: none; border-radius: 9px;
-//           padding: 9px 20px; font-weight: 600; font-size: 13px; cursor: pointer;
-//         }
-//         .tb-reserve-btn:disabled { background: #C6CCDA; cursor: not-allowed; }
-
-//         .tb-card-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
-//         .tb-badge-row { display: flex; gap: 6px; }
-//         .tb-badge-icon {
-//           width: 28px; height: 28px; border-radius: 8px; background: #F5F6FA; border: 1px solid var(--border);
-//           display: flex; align-items: center; justify-content: center; color: var(--text-dim);
-//         }
-//         .tb-slots-left { font-size: 12px; color: var(--text-dim); }
-
-//         /* MODAL */
-//         .tb-modal-overlay { position: fixed; inset: 0; background: rgba(15,20,30,0.45); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 20px; }
-//         .tb-modal { background: #fff; border-radius: 16px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; }
-//         .tb-modal-header { padding: 20px 22px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; }
-//         .tb-modal-title { font-size: 16.5px; font-weight: 700; }
-//         .tb-modal-sub { font-size: 12.5px; color: var(--text-dim); margin-top: 3px; }
-//         .tb-close-btn { background: #F5F6FA; border: none; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-dim); }
-
-//         .tb-recap {
-//           margin: 18px 22px 0; background: var(--blue-soft); border-radius: 12px; padding: 14px 16px;
-//           display: flex; justify-content: space-between; font-size: 12.5px;
-//         }
-//         .tb-recap b { font-size: 13.5px; }
-
-//         .tb-section { padding: 18px 22px 0; }
-//         .tb-section-title { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 700; margin-bottom: 12px; }
-//         .tb-section-title svg { color: var(--blue); }
-
-//         .tb-quickselect { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
-//         .tb-chip {
-//           border: 1px solid var(--border); background: #fff; border-radius: 20px; padding: 6px 12px;
-//           font-size: 12px; cursor: pointer; color: var(--text-dim);
-//         }
-//         .tb-chip.active { background: var(--text); color: #fff; border-color: var(--text); }
-
-//         .tb-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-//         .tb-field label { display: block; font-size: 11px; color: var(--text-dim); margin-bottom: 5px; font-weight: 600; }
-//         .tb-field input, .tb-field select {
-//           width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 9px 10px;
-//           font-size: 13px; outline: none; font-family: inherit; color: var(--text);
-//         }
-//         .tb-field input:focus, .tb-field select:focus { border-color: var(--blue); }
-
-//         .tb-modal-footer { padding: 20px 22px 22px; }
-//         .tb-confirm-btn {
-//           width: 100%; background: var(--blue); color: #fff; border: none; border-radius: 10px;
-//           padding: 13px 0; font-weight: 700; font-size: 14px; cursor: pointer;
-//         }
-
-//         .tb-success { padding: 40px 22px; text-align: center; }
-//         .tb-success-icon { color: var(--green); margin-bottom: 12px; }
-//         .tb-success-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-//         .tb-success-sub { font-size: 13px; color: var(--text-dim); }
-//       `}</style>
-
-//       {/* NAVBAR */}
-//       <div className="tb-navbar">
-//         <div className="tb-brand">
-//           <div className="tb-brand-mark"><Anchor size={16} /></div>
-//           Truck Tracking
-//         </div>
-//         <div className="tb-navlinks">
-//           {navLinks.map(l => (
-//             <button key={l.id} className={`tb-navlink ${activeNav === l.id ? 'active' : ''}`} onClick={() => setActiveNav(l.id)}>
-//               {l.label}
-//             </button>
-//           ))}
-//         </div>
-//         <div className="tb-navicons">
-//           <div className="tb-icon-circle"><User size={15} /></div>
-//           <div className="tb-icon-circle"><Layers size={15} /></div>
-//           <div className="tb-icon-circle"><Settings size={15} /></div>
-//           <div className="tb-icon-circle"><Bell size={15} /></div>
-//           <div className="tb-avatar">KM</div>
-//         </div>
-//       </div>
-
-//       <div className="tb-body">
-//         {/* SIDEBAR */}
-//         <div className="tb-sidebar">
-//           <div className="tb-sidebar-head">
-//             <span className="tb-sidebar-title">Filtres</span>
-//             <button className="tb-reset" onClick={() => { setOnlyAvailable(true); setTimeFrom('07:00'); setTimeTo('18:00'); setPreferredHours([]); }}>
-//               Réinitialiser
-//             </button>
-//           </div>
-
-//           <button
-//             className="tb-pill-toggle"
-//             style={{ background: onlyAvailable ? 'var(--green)' : '#C6CCDA' }}
-//             onClick={() => setOnlyAvailable(v => !v)}
-//           >
-//             Disponible
-//           </button>
-//           <button className="tb-pill-toggle" style={{ background: 'var(--blue)' }}>
-//             Recommandé
-//           </button>
-//           <div className="tb-pill-count">{filteredSlots.length} créneaux restants</div>
-
-//           <div className="tb-filter-label">Horaire</div>
-//           <div className="tb-time-range">
-//             <div className="tb-time-input">
-//               <Clock size={12} color="#8993A6" />
-//               <input type="time" value={timeFrom} onChange={(e) => setTimeFrom(e.target.value)} />
-//             </div>
-//             <ArrowRight size={13} color="#8993A6" />
-//             <div className="tb-time-input">
-//               <Clock size={12} color="#8993A6" />
-//               <input type="time" value={timeTo} onChange={(e) => setTimeTo(e.target.value)} />
-//             </div>
-//           </div>
-
-//           <div className="tb-filter-label">Sélectionner l'horaire préféré</div>
-//           <div className="tb-hour-grid">
-//             {HOURS.map(h => (
-//               <button
-//                 key={h}
-//                 className={`tb-hour-btn ${preferredHours.includes(h) ? 'active' : ''}`}
-//                 onClick={() => togglePreferredHour(h)}
-//               >
-//                 {h}
-//               </button>
-//             ))}
-//           </div>
-
-//           <div className="tb-histogram">
-//             {HOUR_LOAD.map((v, i) => (
-//               <div key={i} className="tb-bar" style={{ height: `${v}%` }} />
-//             ))}
-//           </div>
-
-//           <button className="tb-apply-btn">Appliquer les filtres</button>
-//         </div>
-
-//         {/* LISTE DES CRÉNEAUX */}
-//         <div className="tb-list">
-//           {filteredSlots.map(slot => {
-//             const opMeta = OPERATION_META[slot.operation];
-//             const OpIcon = opMeta.icon;
-//             const isFull = slot.available === 0;
-//             const isReserved = confirmedIds.includes(slot.id);
-//             return (
-//               <div className="tb-card" key={slot.id}>
-//                 <div className="tb-card-top">
-//                   <div className="tb-operator">
-//                     <div className="tb-operator-mark"><Anchor size={13} /></div>
-//                     Autorité Portuaire
-//                   </div>
-//                   <div className="tb-duration">Durée {durationLabel(slot.start, slot.end)}</div>
-//                 </div>
-
-//                 <div className="tb-card-main">
-//                   <div>
-//                     <div className="tb-time-big">{slot.start}</div>
-//                     <div className="tb-gate-label">{slot.origin}</div>
-//                   </div>
-
-//                   <div className="tb-timeline">
-//                     <div className="tb-tl-stop">
-//                       <div className="tb-tl-dot" />
-//                       <div className="tb-tl-time">{slot.start}</div>
-//                       <div className="tb-tl-place">{slot.origin}</div>
-//                     </div>
-//                     <div className="tb-tl-line">
-//                       <span className="tb-tl-op" style={{ background: `${opMeta.color}22`, color: opMeta.color }}>
-//                         {opMeta.label}
-//                       </span>
-//                     </div>
-//                     <div className="tb-tl-stop">
-//                       <div className="tb-tl-dot" style={{ background: opMeta.color }} />
-//                       <div className="tb-tl-time">{slot.end}</div>
-//                       <div className="tb-tl-place">{slot.destination}</div>
-//                     </div>
-//                   </div>
-
-//                   <div className="tb-right-col">
-//                     <div className="tb-terminal">{slot.destination}</div>
-//                     <div className={`tb-avail ${isFull ? 'full' : ''}`}>
-//                       {isReserved ? 'Réservé' : isFull ? 'Complet' : `${slot.available} places dispo.`}
-//                     </div>
-//                     <button
-//                       className="tb-reserve-btn"
-//                       disabled={isFull || isReserved}
-//                       onClick={() => setReservingSlot(slot)}
-//                     >
-//                       {isReserved ? 'Confirmé' : 'Réserver'}
-//                     </button>
-//                   </div>
-//                 </div>
-
-//                 <div className="tb-card-bottom">
-//                   <div className="tb-badge-row">
-//                     <div className="tb-badge-icon" title={opMeta.label}><OpIcon size={13} /></div>
-//                     <div className="tb-badge-icon" title="Suivi GPS disponible"><MapPin size={13} /></div>
-//                     <div className="tb-badge-icon" title="Créneau vérifié"><ShieldCheck size={13} /></div>
-//                     <div className="tb-badge-icon" title="Détails"><Search size={13} /></div>
-//                   </div>
-//                   <div className="tb-slots-left">{slot.available}/{slot.total} places restantes</div>
-//                 </div>
-//               </div>
-//             );
-//           })}
-//           {filteredSlots.length === 0 && (
-//             <div className="tb-card" style={{ textAlign: 'center', color: '#8993A6', padding: '40px 20px' }}>
-//               Aucun créneau ne correspond à ces filtres.
-//             </div>
-//           )}
-//         </div>
-//       </div>
-
-//       {reservingSlot && (
-//         <ReservationModal
-//           slot={reservingSlot}
-//           onClose={() => setReservingSlot(null)}
-//           onConfirmed={(id) => setConfirmedIds(prev => [...prev, id])}
-//         />
-//       )}
-//     </div>
-//   );
-// }
-
-// // ============================================================
-// // MODALE DE RÉSERVATION — transporteur / chauffeur / camion
-// // API: POST /api/reservations/  { slot_id, truck, driver, carrier }
-// // ============================================================
-
-// function ReservationModal({ slot, onClose, onConfirmed }) {
-//   const [step, setStep] = useState('form'); // 'form' | 'success'
-//   const [carrier, setCarrier] = useState('');
-//   const [selectedDriver, setSelectedDriver] = useState(null);
-//   const [driverForm, setDriverForm] = useState({ name: '', phone: '', license: '' });
-//   const [selectedTruck, setSelectedTruck] = useState(null);
-//   const [truckForm, setTruckForm] = useState({ plate: '', type: 'Semi-remorque' });
-
-//   const pickDriver = (d) => {
-//     setSelectedDriver(d);
-//     setDriverForm({ name: d.name, phone: d.phone, license: d.license });
-//   };
-
-//   const pickTruck = (t) => {
-//     setSelectedTruck(t);
-//     setTruckForm({ plate: t.plate, type: t.type });
-//   };
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     // API: POST /api/reservations/ avec { slot_id: slot.id, carrier, driver: driverForm, truck: truckForm }
-//     setStep('success');
-//     setTimeout(() => {
-//       onConfirmed(slot.id);
-//       onClose();
-//     }, 1400);
-//   };
-
-//   if (step === 'success') {
-//     return (
-//       <div className="tb-modal-overlay">
-//         <div className="tb-modal">
-//           <div className="tb-success">
-//             <CheckCircle2 size={44} className="tb-success-icon" />
-//             <div className="tb-success-title">Réservation confirmée</div>
-//             <div className="tb-success-sub">Le créneau {slot.id} a été réservé pour {truckForm.plate || 'votre camion'}.</div>
-//           </div>
-//         </div>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="tb-modal-overlay" onClick={onClose}>
-//       <div className="tb-modal" onClick={(e) => e.stopPropagation()}>
-//         <div className="tb-modal-header">
-//           <div>
-//             <div className="tb-modal-title">Réserver ce créneau</div>
-//             <div className="tb-modal-sub">{slot.id} · {slot.origin} → {slot.destination}</div>
-//           </div>
-//           <button className="tb-close-btn" onClick={onClose}><X size={15} /></button>
-//         </div>
-
-//         <div className="tb-recap">
-//           <div>
-//             <div style={{ color: '#8993A6' }}>Horaire</div>
-//             <b>{slot.start} – {slot.end}</b>
-//           </div>
-//           <div>
-//             <div style={{ color: '#8993A6' }}>Opération</div>
-//             <b>{OPERATION_META[slot.operation].label}</b>
-//           </div>
-//           <div>
-//             <div style={{ color: '#8993A6' }}>Places restantes</div>
-//             <b>{slot.available}</b>
-//           </div>
-//         </div>
-
-//         <form onSubmit={handleSubmit}>
-//           <div className="tb-section">
-//             <div className="tb-section-title"><Building2 size={15} /> Transporteur</div>
-//             <div className="tb-field" style={{ marginBottom: 4 }}>
-//               <label>Nom de l'entreprise de transport</label>
-//               <input
-//                 placeholder="Ex : Sogetra, Transit Plus…"
-//                 value={carrier}
-//                 onChange={(e) => setCarrier(e.target.value)}
-//                 required
-//               />
-//             </div>
-//           </div>
-
-//           <div className="tb-section">
-//             <div className="tb-section-title"><UserRound size={15} /> Chauffeur</div>
-//             <div className="tb-quickselect">
-//               {savedDrivers.map(d => (
-//                 <button
-//                   type="button"
-//                   key={d.name}
-//                   className={`tb-chip ${selectedDriver?.name === d.name ? 'active' : ''}`}
-//                   onClick={() => pickDriver(d)}
-//                 >
-//                   {d.name}
-//                 </button>
-//               ))}
-//               <button
-//                 type="button"
-//                 className={`tb-chip ${selectedDriver === null ? 'active' : ''}`}
-//                 onClick={() => { setSelectedDriver(null); setDriverForm({ name: '', phone: '', license: '' }); }}
-//               >
-//                 + Nouveau chauffeur
-//               </button>
-//             </div>
-//             <div className="tb-field-row">
-//               <div className="tb-field">
-//                 <label>Nom complet</label>
-//                 <input
-//                   placeholder="Kodjo Mensah"
-//                   value={driverForm.name}
-//                   onChange={(e) => setDriverForm(f => ({ ...f, name: e.target.value }))}
-//                   required
-//                 />
-//               </div>
-//               <div className="tb-field">
-//                 <label>Téléphone</label>
-//                 <input
-//                   placeholder="+228 90 12 34 56"
-//                   value={driverForm.phone}
-//                   onChange={(e) => setDriverForm(f => ({ ...f, phone: e.target.value }))}
-//                   required
-//                 />
-//               </div>
-//             </div>
-//             <div className="tb-field">
-//               <label>Numéro de permis</label>
-//               <input
-//                 placeholder="PL-88213"
-//                 value={driverForm.license}
-//                 onChange={(e) => setDriverForm(f => ({ ...f, license: e.target.value }))}
-//                 required
-//               />
-//             </div>
-//           </div>
-
-//           <div className="tb-section">
-//             <div className="tb-section-title"><Truck size={15} /> Camion</div>
-//             <div className="tb-quickselect">
-//               {savedTrucks.map(t => (
-//                 <button
-//                   type="button"
-//                   key={t.plate}
-//                   className={`tb-chip ${selectedTruck?.plate === t.plate ? 'active' : ''}`}
-//                   onClick={() => pickTruck(t)}
-//                 >
-//                   {t.plate}
-//                 </button>
-//               ))}
-//               <button
-//                 type="button"
-//                 className={`tb-chip ${selectedTruck === null ? 'active' : ''}`}
-//                 onClick={() => { setSelectedTruck(null); setTruckForm({ plate: '', type: 'Semi-remorque' }); }}
-//               >
-//                 + Nouveau camion
-//               </button>
-//             </div>
-//             <div className="tb-field-row" style={{ marginBottom: 0 }}>
-//               <div className="tb-field">
-//                 <label>Immatriculation</label>
-//                 <input
-//                   placeholder="TG-4471-A"
-//                   value={truckForm.plate}
-//                   onChange={(e) => setTruckForm(f => ({ ...f, plate: e.target.value }))}
-//                   required
-//                 />
-//               </div>
-//               <div className="tb-field">
-//                 <label>Type de véhicule</label>
-//                 <select
-//                   value={truckForm.type}
-//                   onChange={(e) => setTruckForm(f => ({ ...f, type: e.target.value }))}
-//                 >
-//                   <option>Semi-remorque</option>
-//                   <option>Porteur</option>
-//                   <option>Citerne</option>
-//                   <option>Frigorifique</option>
-//                 </select>
-//               </div>
-//             </div>
-//           </div>
-
-//           <div className="tb-modal-footer">
-//             <button type="submit" className="tb-confirm-btn">Confirmer la réservation</button>
-//           </div>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// }
-
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Search, Settings, Bell, User, Layers, Anchor, Clock, MapPin,
   ArrowRight, X, Truck, UserRound, Building2,
   CheckCircle2, Package, ShieldCheck, AlertCircle, CalendarDays,
   QrCode, XCircle, RotateCcw
 } from 'lucide-react';
+import UserProfile from '../components/UserProfile';
+import slotService, { getSlots, createSlot, updateSlot, deleteSlot } from '../services/slotService';
 
 // ============================================================
 // DONNÉES SIMULÉES — reflète le modèle Slot / Reservation réel
@@ -645,7 +20,7 @@ const OPERATION_META = {
   transit: { label: 'Transit', color: '#8993A6', icon: ArrowRight },
 };
 
-const RESERVATION_STATUS_META = {
+const RESERVATION_STATUS_META = { 
   pending: { label: 'En attente', color: '#D97706' },
   confirmed: { label: 'Confirmée', color: '#16A34A' },
   completed: { label: 'Terminée', color: '#4C6FFF' },
@@ -655,13 +30,13 @@ const RESERVATION_STATUS_META = {
 // référence de "maintenant" pour les calculs de compte à rebours de la démo
 const NOW = new Date('2026-07-17T08:15:00');
 
-const initialSlots = [
-  { id: 'SLOT-001', date: '2026-07-17', start: '08:00', end: '10:30', origin: 'Porte A1', destination: 'Terminal 3', total: 12, available: 12, operation: 'loading' },
-  { id: 'SLOT-002', date: '2026-07-17', start: '10:00', end: '13:15', origin: 'Porte B2', destination: 'Terminal 3', total: 8, available: 8, operation: 'unloading' },
-  { id: 'SLOT-003', date: '2026-07-17', start: '14:00', end: '16:45', origin: 'Porte C1', destination: 'Terminal 3', total: 6, available: 6, operation: 'transit' },
-  { id: 'SLOT-004', date: '2026-07-17', start: '16:00', end: '18:30', origin: 'Porte A1', destination: 'Terminal 1', total: 10, available: 4, operation: 'loading' },
-  { id: 'SLOT-005', date: '2026-07-17', start: '07:00', end: '09:15', origin: 'Porte B2', destination: 'Terminal 2', total: 9, available: 1, operation: 'unloading' },
-];
+// const initialSlots = [
+//   { id: 'SLOT-001', date: '2026-07-17', start: '08:00', end: '10:30', origin: 'Porte A1', destination: 'Terminal 3', total: 12, available: 12, operation: 'loading' },
+//   { id: 'SLOT-002', date: '2026-07-17', start: '10:00', end: '13:15', origin: 'Porte B2', destination: 'Terminal 3', total: 8, available: 8, operation: 'unloading' },
+//   { id: 'SLOT-003', date: '2026-07-17', start: '14:00', end: '16:45', origin: 'Porte C1', destination: 'Terminal 3', total: 6, available: 6, operation: 'transit' },
+//   { id: 'SLOT-004', date: '2026-07-17', start: '16:00', end: '18:30', origin: 'Porte A1', destination: 'Terminal 1', total: 10, available: 4, operation: 'loading' },
+//   { id: 'SLOT-005', date: '2026-07-17', start: '07:00', end: '09:15', origin: 'Porte B2', destination: 'Terminal 2', total: 9, available: 1, operation: 'unloading' },
+// ];
 
 // API: GET /api/reservations/?driver=me
 const initialReservations = [
@@ -720,7 +95,8 @@ function countdownLabel(dateStr, start) {
 // ============================================================
 
 export default function Booking() {
-  const [slots] = useState(initialSlots);
+  const [slots, setSlots] = useState([]);
+  // const [slots] = useState(initialSlots);
   const [reservations, setReservations] = useState(initialReservations);
   const [activeNav, setActiveNav] = useState('browse');
   const [onlyAvailable, setOnlyAvailable] = useState(true);
@@ -730,10 +106,19 @@ export default function Booking() {
   const [reservingSlot, setReservingSlot] = useState(null);
   const [confirmedIds, setConfirmedIds] = useState([]);
   const [cancelTarget, setCancelTarget] = useState(null);
+  const [UserProfile, setShowUserProfile] = useState(false);
+  const [loadingSlots, setLoadingSlots] = useState(true);
 
   const togglePreferredHour = (h) => {
     setPreferredHours(prev => prev.includes(h) ? prev.filter(x => x !== h) : [...prev, h]);
   };
+
+  useEffect(() => {
+      getSlots()
+          .then(setSlots)
+          .catch(err => console.error('Erreur de chargement des créneaux :', err))
+          .finally(() => setLoadingSlots(false));
+    }, [])
 
   const filteredSlots = useMemo(() => {
     return slots.filter(s => {
@@ -761,14 +146,15 @@ export default function Booking() {
     <div className="tb-root">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
-
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
         .tb-root {
           --bg: #F3F5F9;
           --panel: #FFFFFF;
           --border: #ECEEF2;
           --text: #14171F;
           --text-dim: #8993A6;
-          --blue: #4C6FFF;
+          --blue-t: #4C6FFF;
+          --blue: #0015b2;
           --blue-soft: #EEF1FF;
           --green: #16A34A;
           --green-soft: #E7F8ED;
@@ -790,13 +176,13 @@ export default function Booking() {
           background: #fff; border-bottom: 1px solid var(--border);
           padding: 14px 28px; display: flex; align-items: center; justify-content: space-between;
         }
-        .tb-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; }
+        .tb-brand { font-family: 'Oswald', sans-serif; display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 25px; color: var(--blue); }
         .tb-brand-mark {
           width: 30px; height: 30px; border-radius: 8px;
           background: linear-gradient(135deg, var(--blue), #7B8CFF);
           display: flex; align-items: center; justify-content: center; color: #fff;
         }
-        .tb-navlinks { display: flex; gap: 26px; }
+        .tb-navlinks { font-family: 'Oswald', sans-serif; font-size: 20px; display: flex; gap: 36px; }
         .tb-navlink {
           background: none; border: none; cursor: pointer; font-size: 13.5px; font-weight: 500;
           color: var(--text-dim); padding-bottom: 18px; margin-bottom: -18px; border-bottom: 2px solid transparent;
@@ -998,7 +384,7 @@ export default function Booking() {
       {/* NAVBAR */}
       <div className="tb-navbar">
         <div className="tb-brand">
-          <div className="tb-brand-mark"><Anchor size={16} /></div>
+          {/* <div className="tb-brand-mark"><Anchor size={16} /></div> */}
           Truck Tracking
         </div>
         <div className="tb-navlinks">
@@ -1009,11 +395,12 @@ export default function Booking() {
           ))}
         </div>
         <div className="tb-navicons">
-          <div className="tb-icon-circle"><User size={15} /></div>
-          <div className="tb-icon-circle"><Layers size={15} /></div>
+          {/* <div className="tb-icon-circle"><User size={15} /></div> */}
           <div className="tb-icon-circle"><Settings size={15} /></div>
           <div className="tb-icon-circle"><Bell size={15} /></div>
-          <div className="tb-avatar">KM</div>
+          <button><div className="tb-avatar" type="button" onClick={() => setShowUserProfile(true)}>
+            <User size={25} />
+          </div></button>
         </div>
       </div>
 
@@ -1084,23 +471,23 @@ export default function Booking() {
                 <div className="tb-card" key={slot.id}>
                   <div className="tb-card-top">
                     <div className="tb-operator">
-                      <div className="tb-operator-mark"><Anchor size={13} /></div>
+                      {/* <div className="tb-operator-mark"><Anchor size={13} /></div> */}
                       Autorité Portuaire
                     </div>
-                    <div className="tb-duration">Durée {durationLabel(slot.start, slot.end)}</div>
+                    <div className="tb-duration">Durée {durationLabel(slot.start_time, slot.end_)}</div>
                   </div>
 
                   <div className="tb-card-main">
                     <div>
                       <div className="tb-time-big">{slot.start}</div>
-                      <div className="tb-gate-label">{slot.origin}</div>
+                      <div className="tb-gate-label">{slot.origin_gate}</div>
                     </div>
 
                     <div className="tb-timeline">
                       <div className="tb-tl-stop">
                         <div className="tb-tl-dot" />
-                        <div className="tb-tl-time">{slot.start}</div>
-                        <div className="tb-tl-place">{slot.origin}</div>
+                        <div className="tb-tl-time">{slot.start_time}</div>
+                        <div className="tb-tl-place">{slot.origin_gate}</div>
                       </div>
                       <div className="tb-tl-line">
                         <span className="tb-tl-op" style={{ background: `${opMeta.color}22`, color: opMeta.color }}>
@@ -1109,15 +496,15 @@ export default function Booking() {
                       </div>
                       <div className="tb-tl-stop">
                         <div className="tb-tl-dot" style={{ background: opMeta.color }} />
-                        <div className="tb-tl-time">{slot.end}</div>
-                        <div className="tb-tl-place">{slot.destination}</div>
+                        <div className="tb-tl-time">{slot.end_time}</div>
+                        <div className="tb-tl-place">{slot.destination_gate}</div>
                       </div>
                     </div>
 
                     <div className="tb-right-col">
-                      <div className="tb-terminal">{slot.destination}</div>
+                      <div className="tb-terminal">{slot.destination_terminal}</div>
                       <div className={`tb-avail ${isFull ? 'full' : ''}`}>
-                        {isReserved ? 'Réservé' : isFull ? 'Complet' : `${slot.available} places dispo.`}
+                        {isReserved ? 'Réservé' : isFull ? 'Complet' : `${slot.available_slots} places dispo.`}
                       </div>
                       <button
                         className="tb-reserve-btn"

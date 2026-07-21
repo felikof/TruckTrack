@@ -64,7 +64,6 @@ class SlotSerializer(serializers.ModelSerializer):
             "slot_date",
             "start_time",
             "end_time",
-            "duration",
             "origin_gate",
             "destination_terminal",
             "total_slots",
@@ -337,60 +336,6 @@ class AlertLogSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["id", "created_at"]
         
-# class LoadSerializer(serializers.ModelSerializer):
-    
-#     class Meta:
-#         model = Load
-#         fields = [
-#             "id",
-#             "container",
-#             "description",
-#             "weight",
-#             "volume",
-#             "load_type",
-#             "special_handling",
-#             "pickup_location",
-#             "delivery_location",
-#             "pickup_date",
-#             "delivery_date",
-#             "created_at",
-#         ]
-#         read_only_fields = ["id", "created_at"]
-        
-# class DeclarationSerializer(serializers.ModelSerializer):
-    
-#     class Meta:
-#         model = Declaration
-#         fields = [
-#             "id",
-#             "num",
-#             "date",
-#             "description",
-#             "marchandises",
-#             "container_type",
-#             "transitaire",
-#             "created_at",
-#         ]
-#         read_only_fields = ["id", "created_at"]
-        
-# class ContainerTypeSerializer(serializers.ModelSerializer):
-    
-#     class Meta:
-#         model = ContainerType
-#         fields = [
-#             "id",
-#             "num",
-#             "type",
-#             "length",
-#             "width",
-#             "height",
-#             "max_weight",
-#             "tare_weight",
-#             "payload_capacity",
-#             "volume",
-#             "created_at",
-#         ]
-#         read_only_fields = ["id", "created_at"]
         
 class TruckRouteSerializer(serializers.ModelSerializer):
     
@@ -441,6 +386,19 @@ class GpsPositionSerializer(serializers.ModelSerializer):
             "latitude",
             "longitude",
             "timestamp",
+            "created_at",
+        ]
+        read_only_fields = ["id", "created_at"]
+        
+class NotificationSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Notification
+        fields = [
+            "id",
+            "type",
+            "booking",
+            "message",
             "created_at",
         ]
         read_only_fields = ["id", "created_at"]

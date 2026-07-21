@@ -12,26 +12,16 @@ router.register(r'companies', CompanyViewSet, basename='company')
 router.register(r'bookings', BookingViewSet, basename='booking')
 # router.register(r'notifications', NotificationViewSet, basename='notification')
 router.register(r'alertlogs', AlertLogViewSet, basename='alertlog')
-# router.register(r'loads', LoadViewSet, basename='load')
-# router.register(r'declarations', DeclarationViewSet, basename='declaration')
-# router.register(r'containertypes', ContainerTypeViewSet, basename='containertype')
-# router.register(r'truckroutes', TruckRouteViewSet, basename='truckroute')
 router.register(r'gpspositions', GpsPositionViewSet, basename='gpsposition')
 
 urlpatterns = [
     path("users/sign/", UserSignView.as_view(), name="sign"),
     path("users/login/", TokenObtainPairView.as_view(), name="login"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-    path("users/login/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("users/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-    path('admins/sign/', AdminRegistrationView.as_view(), name='admin_register'),
-    # path("bookings/", TokenObtainPairView.as_view(), name="bookings"),
-    # path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    # path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-
-    # path("users/slots/available/", available_slots, name="available_slots"),
-    # path("users/slots/<int:pk>/book/", book_slot, name="book"),
-    # path("users/slots/<int:pk>/cancel/", cancel_booking, name="cancel"),
+    path("admins/sign/", AdminRegistrationView.as_view(), name="admin_register"),
+    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     
     path("", include(router.urls)),
 ]
