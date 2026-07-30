@@ -6,7 +6,13 @@ import {
   QrCode, XCircle, RotateCcw
 } from 'lucide-react';
 import UserProfile from '../components/UserProfile';
-import slotService, { getSlots, createSlot, updateSlot, deleteSlot } from '../services/slotService';
+import { getSlots} from '../services/slotService';
+import notificationService from '../services/notificationService';
+import userService from '../services/userService';
+import truckService from '../services/truckService';
+import driverService from '../services/driverService';
+import companyService from '../services/companyService';
+
 
 // ============================================================
 // DONNÉES SIMULÉES — reflète le modèle Slot / Reservation réel
@@ -28,7 +34,7 @@ const RESERVATION_STATUS_META = {
 };
 
 // référence de "maintenant" pour les calculs de compte à rebours de la démo
-const NOW = new Date('2026-07-17T08:15:00');
+const NOW = new Date('2026-07-24T16:00:00');  // 17 juillet 2026, 09:30
 
 // const initialSlots = [
 //   { id: 'SLOT-001', date: '2026-07-17', start: '08:00', end: '10:30', origin: 'Porte A1', destination: 'Terminal 3', total: 12, available: 12, operation: 'loading' },
@@ -40,7 +46,7 @@ const NOW = new Date('2026-07-17T08:15:00');
 
 // API: GET /api/reservations/?driver=me
 const initialReservations = [
-  { id: 'RSV-1042', slotId: 'SLOT-001', date: '2026-07-17', start: '08:00', end: '10:30', origin: 'Porte A1', destination: 'Terminal 3', operation: 'loading', carrier: 'Sogetra', driver: 'Kodjo Mensah', truck: 'TG-4471-A', status: 'confirmed' },
+  { id: 'RSV-1042', slotId: 'SLOT-015', date: '2026-07-25', start: '18:00', end: '20:00', origin: 'LCT', destination: 'Zone transit', operation: 'loading', carrier: 'Sogetra', driver: 'Kodjo Mensah', truck: 'TG-4471-A', status: 'pending' },
   { id: 'RSV-1043', slotId: 'SLOT-002', date: '2026-07-17', start: '10:00', end: '13:15', origin: 'Porte B2', destination: 'Terminal 3', operation: 'unloading', carrier: 'Sogetra', driver: 'Ama Doe', truck: 'TG-2290-B', status: 'pending' },
   { id: 'RSV-1039', slotId: 'SLOT-091', date: '2026-07-18', start: '09:00', end: '11:20', origin: 'Porte A1', destination: 'Terminal 1', operation: 'loading', carrier: 'Sogetra', driver: 'Kodjo Mensah', truck: 'TG-4471-A', status: 'confirmed' },
   { id: 'RSV-1050', slotId: 'SLOT-098', date: '2026-07-19', start: '07:30', end: '10:00', origin: 'Porte C1', destination: 'Terminal 2', operation: 'transit', carrier: 'Sogetra', driver: 'Ama Doe', truck: 'TG-2290-B', status: 'confirmed' },
@@ -62,7 +68,17 @@ const savedDrivers = [
   { name: 'Ama Doe', phone: '+228 91 45 67 89', license: 'PL-77042' },
 ];
 
+// function durationLabel(start, end) {
+//   const [sh, sm] = start.split(':').map(Number);
+//   const [eh, em] = end.split(':').map(Number);
+//   const mins = (eh * 60 + em) - (sh * 60 + sm);
+//   const h = Math.floor(mins / 60);
+//   const m = mins % 60;
+//   return m ? `${h}h ${m}m` : `${h}h`;
+// }
+
 function durationLabel(start, end) {
+  if (!start || !end) return '—';
   const [sh, sm] = start.split(':').map(Number);
   const [eh, em] = end.split(':').map(Number);
   const mins = (eh * 60 + em) - (sh * 60 + sm);
@@ -106,8 +122,15 @@ export default function Booking() {
   const [reservingSlot, setReservingSlot] = useState(null);
   const [confirmedIds, setConfirmedIds] = useState([]);
   const [cancelTarget, setCancelTarget] = useState(null);
-  const [UserProfile, setShowUserProfile] = useState(false);
+  // const [UserProfile, setShowUserProfile] = useState(false);
   const [loadingSlots, setLoadingSlots] = useState(true);
+  const [showUserProfile, setShowUserProfile] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showFleetManager, setShowFleetManager] = useState(false);
+
+  const [currentUser, setCurrentUser] = useState(null);
+  const [notifications, setNotifications] = useState([]);
+
 
   const togglePreferredHour = (h) => {
     setPreferredHours(prev => prev.includes(h) ? prev.filter(x => x !== h) : [...prev, h]);
@@ -141,6 +164,33 @@ export default function Booking() {
     { id: 'scheduled', label: 'Programmées' },
     { id: 'history', label: 'Historique' },
   ];
+
+  // API: GET /api/users/?email=<email stocké au login>
+  useEffect(() => {
+    const email = localStorage.getItem('email');
+    const token = localStorage.getItem('accessToken');
+    if (email && token) {
+      userService.getUser(token, email)
+        .then(setCurrentUser)
+        .catch(err => console.error('Erreur de chargement du profil :', err));
+    }
+  }, []);
+
+  // API: GET /api/notifications/?company=me  (à filtrer côté serveur sur l'utilisateur connecté)
+  useEffect(() => {
+    notificationService.getMyNotifications()
+      .then(setNotifications)
+      .catch(err => console.error('Erreur de chargement des notifications :', err));
+  }, []);
+
+  const unreadCount = notifications.filter(n => !n.read).length;
+
+  const markNotificationRead = (notif) => {
+    setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, read: true } : n));
+    notificationService.markAsRead(notif.id).catch(err => console.error(err));
+  };
+
+  {showFleetManager && <FleetManagerModal onClose={() => setShowFleetManager(false)} />}
 
   return (
     <div className="tb-root">
@@ -387,6 +437,20 @@ export default function Booking() {
           {/* <div className="tb-brand-mark"><Anchor size={16} /></div> */}
           Truck Tracking
         </div>
+        {/* <div className="tb-navlinks">
+          {navLinks.map(l => (
+            <button key={l.id} className={`tb-navlink ${activeNav === l.id ? 'active' : ''}`} onClick={() => setActiveNav(l.id)}>
+              {l.label}
+            </button>
+          ))}
+        </div>
+        <div className="tb-navicons">
+          <div className="tb-icon-circle"><Settings size={15} /></div>
+          <div className="tb-icon-circle"><Bell size={15} /></div>
+          <button><div className="tb-avatar" type="button" onClick={() => setShowUserProfile(true)}>
+            <User size={25} />
+          </div></button>
+        </div> */}
         <div className="tb-navlinks">
           {navLinks.map(l => (
             <button key={l.id} className={`tb-navlink ${activeNav === l.id ? 'active' : ''}`} onClick={() => setActiveNav(l.id)}>
@@ -395,12 +459,48 @@ export default function Booking() {
           ))}
         </div>
         <div className="tb-navicons">
-          {/* <div className="tb-icon-circle"><User size={15} /></div> */}
-          <div className="tb-icon-circle"><Settings size={15} /></div>
-          <div className="tb-icon-circle"><Bell size={15} /></div>
-          <button><div className="tb-avatar" type="button" onClick={() => setShowUserProfile(true)}>
-            <User size={25} />
-          </div></button>
+          <div className="tb-topbar-icon-wrap">
+            <button
+              className={`tb-icon-circle ${showFleetManager ? 'active' : ''}`}
+              onClick={() => setShowFleetManager(true)}
+              title="Ma flotte"
+            >
+              <Truck size={15} />
+            </button>
+          </div>
+
+          <div className="tb-topbar-icon-wrap">
+            <button
+              className={`tb-icon-circle ${showNotifications ? 'active' : ''}`}
+              onClick={() => { setShowNotifications(v => !v); setShowUserProfile(false); }}
+              title="Notifications"
+            >
+              <Bell size={15} />
+              {unreadCount > 0 && <span className="tb-notif-badge">{unreadCount}</span>}
+            </button>
+            {showNotifications && (
+              <>
+                <div className="tb-backdrop" onClick={() => setShowNotifications(false)} />
+                <NotificationsDropdown
+                  notifications={notifications}
+                  onSelect={markNotificationRead}
+                  onClose={() => setShowNotifications(false)}
+                />
+              </>
+            )}
+          </div>
+
+          <div className="tb-topbar-icon-wrap">
+            <button className="tb-avatar" type="button" onClick={() => { setShowUserProfile(v => !v); setShowNotifications(false); }}>
+              <User size={18} />
+            </button>
+            {showUserProfile && (
+              <>
+                <div className="tb-backdrop" onClick={() => setShowUserProfile(false)} />
+                <UserProfileDropdown currentUser={currentUser} onClose={() => setShowUserProfile(false)} />
+              </>
+            )}
+          </div>
         </div>
       </div>
 
@@ -474,12 +574,12 @@ export default function Booking() {
                       {/* <div className="tb-operator-mark"><Anchor size={13} /></div> */}
                       Autorité Portuaire
                     </div>
-                    <div className="tb-duration">Durée {durationLabel(slot.start_time, slot.end_)}</div>
+                    <div className="tb-duration">Durée {durationLabel(slot.start_time, slot.end_time)}</div>
                   </div>
 
                   <div className="tb-card-main">
                     <div>
-                      <div className="tb-time-big">{slot.start}</div>
+                      <div className="tb-time-big">{slot.start_time}</div>
                       <div className="tb-gate-label">{slot.origin_gate}</div>
                     </div>
 
@@ -497,14 +597,14 @@ export default function Booking() {
                       <div className="tb-tl-stop">
                         <div className="tb-tl-dot" style={{ background: opMeta.color }} />
                         <div className="tb-tl-time">{slot.end_time}</div>
-                        <div className="tb-tl-place">{slot.destination_gate}</div>
+                        <div className="tb-tl-place">{slot.destination_terminal}</div>
                       </div>
                     </div>
 
                     <div className="tb-right-col">
                       <div className="tb-terminal">{slot.destination_terminal}</div>
                       <div className={`tb-avail ${isFull ? 'full' : ''}`}>
-                        {isReserved ? 'Réservé' : isFull ? 'Complet' : `${slot.available_slots} places dispo.`}
+                        {isReserved ? 'Réservé' : isFull ? 'Complet' : `${slot.total_slots} places dispo.`}
                       </div>
                       <button
                         className="tb-reserve-btn"
@@ -523,7 +623,7 @@ export default function Booking() {
                       <div className="tb-badge-icon" title="Créneau vérifié"><ShieldCheck size={13} /></div>
                       <div className="tb-badge-icon" title="Détails"><Search size={13} /></div>
                     </div>
-                    <div className="tb-slots-left">{slot.available}/{slot.total} places restantes</div>
+                    <div className="tb-slots-left">{slot.available_slots}/{slot.total_slots} places restantes</div>
                   </div>
                 </div>
               );
@@ -571,6 +671,257 @@ export default function Booking() {
         />
       )}
     </div>
+  );
+}
+
+function UserProfileDropdown({ currentUser, onClose }) {
+  return (
+    <div className="tb-dropdown tb-dropdown-narrow">
+      <div className="tb-dropdown-header">
+        Mon compte
+        <button className="tb-close-btn" onClick={onClose}><X size={13} /></button>
+      </div>
+      <div className="tb-profile-body">
+        <div className="tb-profile-avatar-lg">
+          <User size={22} />
+        </div>
+        {currentUser ? (
+          <>
+            <div className="tb-profile-name">{currentUser.first_name} {currentUser.name}</div>
+            <div className="tb-profile-email">{currentUser.email}</div>
+          </>
+        ) : (
+          <div className="tb-profile-email">Chargement…</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function NotificationsDropdown({ notifications, onSelect, onClose }) {
+  const sorted = [...notifications].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+
+  return (
+    <div className="tb-dropdown">
+      <div className="tb-dropdown-header">
+        Notifications
+        <button className="tb-close-btn" onClick={onClose}><X size={13} /></button>
+      </div>
+      {sorted.length === 0 && <div className="tb-dropdown-empty">Aucune notification.</div>}
+      {sorted.map(n => (
+        <div key={n.id} className={`tb-dropdown-item ${!n.read ? 'unread' : ''}`} onClick={() => onSelect(n)}>
+          <div className="tb-dropdown-icon">
+            <CheckCircle2 size={14} />
+          </div>
+          <div className="tb-dropdown-text">
+            <div className="tb-dropdown-title">{n.message}</div>
+            <div className="tb-dropdown-sub">{n.bookingId}</div>
+            <div className="tb-dropdown-time">{n.createdAt}</div>
+          </div>
+          {!n.read && <span className="tb-unread-dot" />}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function FleetManagerModal({ onClose }) {
+  const [tab, setTab] = useState('trucks');
+  const [trucks, setTrucks] = useState([]);
+  const [drivers, setDrivers] = useState([]);
+  const [company, setCompany] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      truckService.getMyTrucks(),
+      driverService.getMyDrivers(),
+      companyService.getMyCompany(),
+    ])
+      .then(([t, d, c]) => { setTrucks(t); setDrivers(d); setCompany(c); })
+      .catch(err => console.error('Erreur de chargement de la flotte :', err))
+      .finally(() => setLoading(false));
+  }, []);
+
+  return (
+    <div className="tb-modal-overlay" onClick={onClose}>
+      <div className="tb-modal" style={{ maxWidth: 560 }} onClick={(e) => e.stopPropagation()}>
+        <div className="tb-modal-header">
+          <div className="tb-modal-title">Ma flotte</div>
+          <button className="tb-close-btn" onClick={onClose}><X size={15} /></button>
+        </div>
+
+        <div className="tb-filter-tabs" style={{ padding: '14px 22px 0' }}>
+          <button className={`tb-filter-tab ${tab === 'trucks' ? 'active' : ''}`} onClick={() => setTab('trucks')}>Camions</button>
+          <button className={`tb-filter-tab ${tab === 'drivers' ? 'active' : ''}`} onClick={() => setTab('drivers')}>Chauffeurs</button>
+          <button className={`tb-filter-tab ${tab === 'company' ? 'active' : ''}`} onClick={() => setTab('company')}>Transporteur</button>
+        </div>
+
+        <div style={{ padding: 22 }}>
+          {loading && <div style={{ color: '#8993A6', fontSize: 13 }}>Chargement…</div>}
+
+          {!loading && tab === 'trucks' && (
+            <TruckList trucks={trucks} onAdd={(t) => setTrucks(prev => [...prev, t])} />
+          )}
+          {!loading && tab === 'drivers' && (
+            <DriverList drivers={drivers} onAdd={(d) => setDrivers(prev => [...prev, d])} />
+          )}
+          {!loading && tab === 'company' && (
+            <CompanyForm company={company} onSaved={setCompany} />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TruckList({ trucks, onAdd }) {
+  const [plate, setPlate] = useState('');
+  const [type, setType] = useState('Semi-remorque');
+  const [saving, setSaving] = useState(false);
+
+  const handleAdd = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const created = await truckService.createTruck({ plate, type });
+      onAdd(created);
+      setPlate('');
+    } catch (err) {
+      console.error('Erreur d\'ajout du camion :', err.response?.data || err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div>
+      <div className="tb-list" style={{ marginBottom: 16 }}>
+        {trucks.map(t => (
+          <div key={t.id} className="tb-truck-row">
+            <Truck size={15} color="#4C6FFF" />
+            <span className="tb-mono">{t.plate}</span>
+            <span style={{ color: '#8993A6', marginLeft: 'auto' }}>{t.type}</span>
+          </div>
+        ))}
+        {trucks.length === 0 && <div style={{ color: '#8993A6', fontSize: 12.5 }}>Aucun camion enregistré.</div>}
+      </div>
+      <form onSubmit={handleAdd} className="tb-field-row" style={{ marginBottom: 0 }}>
+        <div className="tb-field">
+          <label>Immatriculation</label>
+          <input placeholder="TG-4471-A" value={plate} onChange={(e) => setPlate(e.target.value)} required />
+        </div>
+        <div className="tb-field">
+          <label>Type</label>
+          <select value={type} onChange={(e) => setType(e.target.value)}>
+            <option>Semi-remorque</option>
+            <option>Porteur</option>
+            <option>Citerne</option>
+            <option>Frigorifique</option>
+          </select>
+        </div>
+        <button type="submit" className="tb-confirm-btn" style={{ gridColumn: '1 / -1' }} disabled={saving}>
+          {saving ? 'Ajout…' : 'Ajouter le camion'}
+        </button>
+      </form>
+    </div>
+  );
+}
+
+function DriverList({ drivers, onAdd }) {
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [license, setLicense] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  const handleAdd = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const created = await driverService.createDriver({ name, phone, license });
+      onAdd(created);
+      setName(''); setPhone(''); setLicense('');
+    } catch (err) {
+      console.error('Erreur d\'ajout du chauffeur :', err.response?.data || err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div>
+      <div className="tb-list" style={{ marginBottom: 16 }}>
+        {drivers.map(d => (
+          <div key={d.id} className="tb-truck-row">
+            <UserRound size={15} color="#4C6FFF" />
+            <span>{d.name}</span>
+            <span style={{ color: '#8993A6', marginLeft: 'auto' }}>{d.phone}</span>
+          </div>
+        ))}
+        {drivers.length === 0 && <div style={{ color: '#8993A6', fontSize: 12.5 }}>Aucun chauffeur enregistré.</div>}
+      </div>
+      <form onSubmit={handleAdd} className="tb-field-row" style={{ marginBottom: 0 }}>
+        <div className="tb-field">
+          <label>Nom complet</label>
+          <input placeholder="Kodjo Mensah" value={name} onChange={(e) => setName(e.target.value)} required />
+        </div>
+        <div className="tb-field">
+          <label>Téléphone</label>
+          <input placeholder="+228 90 12 34 56" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+        </div>
+        <div className="tb-field" style={{ gridColumn: '1 / -1' }}>
+          <label>Numéro de permis</label>
+          <input placeholder="PL-88213" value={license} onChange={(e) => setLicense(e.target.value)} required />
+        </div>
+        <button type="submit" className="tb-confirm-btn" style={{ gridColumn: '1 / -1' }} disabled={saving}>
+          {saving ? 'Ajout…' : 'Ajouter le chauffeur'}
+        </button>
+      </form>
+    </div>
+  );
+}
+
+function CompanyForm({ company, onSaved }) {
+  const [form, setForm] = useState(company || { company_name: '', phone: '', address: '' });
+  const [saving, setSaving] = useState(false);
+
+  const update = (key, value) => setForm(prev => ({ ...prev, [key]: value }));
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const saved = company
+        ? await companyService.updateCompany(company.id, form)
+        : await companyService.createCompany(form);
+      onSaved(saved);
+    } catch (err) {
+      console.error('Erreur de sauvegarde du transporteur :', err.response?.data || err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div className="tb-field" style={{ marginBottom: 12 }}>
+        <label>Nom de l'entreprise</label>
+        <input value={form.company_name} onChange={(e) => update('company_name', e.target.value)} required />
+      </div>
+      <div className="tb-field-row">
+        <div className="tb-field">
+          <label>Téléphone</label>
+          <input value={form.phone} onChange={(e) => update('phone', e.target.value)} required />
+        </div>
+        <div className="tb-field">
+          <label>Adresse</label>
+          <input value={form.address} onChange={(e) => update('address', e.target.value)} />
+        </div>
+      </div>
+      <button type="submit" className="tb-confirm-btn" disabled={saving}>
+        {saving ? 'Enregistrement…' : 'Enregistrer le transporteur'}
+      </button>
+    </form>
   );
 }
 
@@ -673,6 +1024,7 @@ function ReservationsView({ reservations, onCancel }) {
     </div>
   );
 }
+
 
 // ============================================================
 // ONGLET "PROGRAMMÉES" — agenda des réservations confirmées à venir
@@ -821,9 +1173,9 @@ function HistoryView({ reservations }) {
                   <td className="tb-mono" style={{ color: '#4C6FFF', fontSize: 12.5 }}>{r.id}</td>
                   <td>
                     <div>{r.date}</div>
-                    <div style={{ fontSize: 11.5, color: '#8993A6' }}>{r.start}–{r.end}</div>
+                    <div style={{ fontSize: 11.5, color: '#8993A6' }}>{r.start_time}–{r.end_time}</div>
                   </td>
-                  <td style={{ fontSize: 12.5, color: '#8993A6' }}>{r.origin} → {r.destination}</td>
+                  <td style={{ fontSize: 12.5, color: '#8993A6' }}>{r.origin_gate} → {r.destination_terminal}</td>
                   <td>
                     <span className="tb-pill-status" style={{ background: `${opMeta.color}1A`, color: opMeta.color }}>{opMeta.label}</span>
                   </td>
@@ -890,7 +1242,7 @@ function ReservationModal({ slot, onClose, onConfirmed }) {
           <div className="tb-success">
             <CheckCircle2 size={44} className="tb-success-icon" />
             <div className="tb-success-title">Réservation confirmée</div>
-            <div className="tb-success-sub">Le créneau {slot.id} a été réservé pour {truckForm.plate || 'votre camion'}.</div>
+            <div className="tb-success-sub">Le créneau {slot.slot_id} a été réservé pour {truckForm.plate || 'votre camion'}.</div>
           </div>
         </div>
       </div>
@@ -903,7 +1255,7 @@ function ReservationModal({ slot, onClose, onConfirmed }) {
         <div className="tb-modal-header">
           <div>
             <div className="tb-modal-title">Réserver ce créneau</div>
-            <div className="tb-modal-sub">{slot.id} · {slot.origin} → {slot.destination}</div>
+            <div className="tb-modal-sub">{slot.slot_id} · {slot.origin_gate} → {slot.destination_terminal}</div>
           </div>
           <button className="tb-close-btn" onClick={onClose}><X size={15} /></button>
         </div>
@@ -911,7 +1263,7 @@ function ReservationModal({ slot, onClose, onConfirmed }) {
         <div className="tb-recap">
           <div>
             <div style={{ color: '#8993A6' }}>Horaire</div>
-            <b>{slot.start} – {slot.end}</b>
+            <b>{slot.start_time} – {slot.end_time}</b>
           </div>
           <div>
             <div style={{ color: '#8993A6' }}>Opération</div>
@@ -919,7 +1271,7 @@ function ReservationModal({ slot, onClose, onConfirmed }) {
           </div>
           <div>
             <div style={{ color: '#8993A6' }}>Places restantes</div>
-            <b>{slot.available}</b>
+            <b>{slot.available_slots}</b>
           </div>
         </div>
 

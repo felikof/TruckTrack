@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import axios from "axios";
 import toast from 'react-hot-toast';
-import { createTruck } from '../services/truckService';
+import truckRegistration from '../services/truckService';
 
 const TruckRegistration = ({ onSubmit, onCancel }) => {
   const [currentStep, setCurrentStep] = useState(1)
@@ -191,7 +191,7 @@ const TruckRegistration = ({ onSubmit, onCancel }) => {
       }
       console.log("Truck registration data:", formData);
       // Appel du service
-      const newTruck = await createTruck(payload);
+      const newTruck = await truckRegistration.createTruck(payload);
       console.log("Truck registration data:", newTruck);
     } catch (error) {
         // console.error("Erreur 400:", error.response.data);

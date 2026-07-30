@@ -228,14 +228,9 @@ class BookingSerializer(serializers.ModelSerializer):
             "company",
             "booking_date",
             "status",
-            "payment_status",
-            "total_amount",
-            "currency",
-            "payment_method",
             "created_at",
-            "updated_at",
         ]
-        read_only_fields = ["id", "created_at", "updated_at"]
+        read_only_fields = ["id", "created_at"]
         
 class BookingDetailSerializer(serializers.ModelSerializer):
     slot_number = serializers.CharField(source='slot.slot_id', read_only=True)

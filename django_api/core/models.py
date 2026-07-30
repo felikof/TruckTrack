@@ -168,10 +168,12 @@ class Truck(models.Model):
 
 class Booking(models.Model):
     STATUS_CHOICES = [
-        ("Pending", "Pending"),
-        ("Confirmed", "Confirmed"),
-        ("Cancelled", "Cancelled"),
-        ("Completed", "Completed"),
+        ("Pending", "pending"),
+        ("Confirmed", "confirmed"),
+        ("Cancelled", "cancelled"),
+        ("Completed", "completed"),
+        ("Checked In", "checked_in"),
+        ("No Show", "no_show"),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -242,22 +244,14 @@ class Notification(models.Model):
         ('pending', 'Validation requise'),
         ('cancelled', 'Annulation transporteur'),
         ('no_show', 'Créneau non utilisé'),
+        ('confirmed', 'Réservation confirmée'),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    admin = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='notifications',
-        null=True, blank=True,
-        help_text="Si null, la notification est visible par tous les admins"
-    )
+    admin = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='admin_notifications', null=True, blank=True)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='company_notifications', null=True, blank=True)
     type = models.CharField(max_length=20, choices=TYPE_CHOICES)
-    booking = models.ForeignKey(
-        'Booking',
-        on_delete=models.CASCADE,
-        related_name='notifications'
-    )
+    booking = models.ForeignKey('Booking', on_delete=models.CASCADE, related_name='notifications')
     message = models.CharField(max_length=255)
     read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

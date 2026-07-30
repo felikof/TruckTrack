@@ -26,3 +26,15 @@ def create_booking_notification(sender, instance, created, **kwargs):
                     booking=instance,
                     message="Réservation annulée par le transporteur",
                 )
+
+@receiver(post_save, sender=Booking)
+def notify_company_on_confirmation(sender, instance, created, **kwargs):
+    if not created and instance.status == 'Confirmed':
+        already = Notification.objects.filter(booking=instance, type='confirmed').exists()
+        if not already:
+            Notification.objects.create(
+                type='confirmed',
+                booking=instance,
+                company=instance.company,
+                message=f"Votre réservation {instance.book_num} a été validée par l'autorité portuaire",
+            )

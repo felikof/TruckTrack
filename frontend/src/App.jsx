@@ -16,6 +16,7 @@ import DriverRegistration from './components/DriverRegistration';
 import AdminLogin from './components/AdminLogin';
 import AdminRegister from './components/AdminRegister';
 import AdminSlotManagement from './components/AdminSlotManagement';
+import TruckMap from './components/TruckMap';
 
 function App() {
     return (
@@ -38,6 +39,7 @@ function App() {
                 <Route path="/AdminR" element={<AdminRegister/>}/>
                 <Route path="/Slot" element={<AdminSlotManagement/>}/>
                 <Route path="/header" element={<Header/>}/>
+                <Route path="/TruckMap" element={<TruckMap/>}/>
             </Routes>
         </Router>
     );

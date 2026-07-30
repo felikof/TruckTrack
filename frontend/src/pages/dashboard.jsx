@@ -85,7 +85,7 @@ const THEMES = {
 // (voir commentaires "API:" à chaque endroit concerné)
 // ============================================================
 
-const GATES = ['Porte Nord', 'Porte Sud', 'Porte Est', 'Terminal Conteneurs'];
+const GATES = ['Porte Nord', 'Porte Sud', 'Porte Est', 'Terminal Conteneur', 'LCT'];
 const TERMINALS = ['Quai A', 'Quai B', 'Quai C', 'Zone de Transit'];
 
 const STATUS_META = {
@@ -142,7 +142,7 @@ const LOW_AVAILABILITY_RATIO = 0.2;
 
 // API: GET /api/reservations/
 const initialReservations = [
-  { id: 'RSV-1042', slotId: 'SLOT-001', truck: 'TG-4471-A', driver: 'Kodjo Mensah', company: 'Sogetra', createdAt: '2026-07-15 08:12', status: 'checked_in' },
+  { id: 'RSV-1042', slotId: 'SLOT-015', truck: 'TG-4471-A', driver: 'Kodjo Mensah', company: 'Sogetra', createdAt: '2026-07-15 08:12', status: 'checked_in' },
   { id: 'RSV-1043', slotId: 'SLOT-001', truck: 'TG-2290-B', driver: 'Ama Doe', company: 'Transit Plus', createdAt: '2026-07-15 09:30', status: 'confirmed' },
   { id: 'RSV-1044', slotId: 'SLOT-002', truck: 'TG-1187-C', driver: 'Yao Kokou', company: 'Sogetra', createdAt: '2026-07-15 10:05', status: 'confirmed' },
   { id: 'RSV-1045', slotId: 'SLOT-003', truck: 'TG-6650-D', driver: 'Essi Adjo', company: 'Fret Togo', createdAt: '2026-07-16 06:40', status: 'pending' },
@@ -347,8 +347,8 @@ export default function Dashboard() {
   // ---- Statistiques dérivées ---------------------------------------------
   const kpis = useMemo(() => {
     const activeSlots = slots.filter(s => s.status === 'active').length;
-    const totalCapacity = slots.reduce((acc, s) => acc + s.total, 0);
-    const totalReserved = slots.reduce((acc, s) => acc + s.reserved, 0);
+    const totalCapacity = slots.reduce((acc, s) => acc + s.total_slots, 0);
+    const totalReserved = slots.reduce((acc, s) => acc + s.available_slots, 0);
     const occupation = totalCapacity ? Math.round((totalReserved / totalCapacity) * 100) : 0;
     const todayReservations = reservations.filter(r => r.createdAt.startsWith('2026-07-16')).length;
     const enRoute = trucks.filter(t => t.status === 'en_route').length;
@@ -1167,7 +1167,7 @@ function CreneauxTab({ slots, theme, search, setSearch, statusFilter, setStatusF
           </thead>
           <tbody>
             {slots.map(slot => {
-              const occRate = slot.total ? Math.round((slot.reserved / slot.total) * 100) : 0;
+              const occRate = slot.total_slots ? Math.round((slot.available_slots / slot.total_slots) * 100) : 0;
               const statusColor = theme[STATUS_META[slot.status].colorKey];
               const opColor = theme[OPERATION_META[slot.operation].colorKey];
               const capColor = occRate >= 90 ? theme.red : occRate >= 50 ? theme.amber : theme.green;
@@ -1193,7 +1193,7 @@ function CreneauxTab({ slots, theme, search, setSearch, statusFilter, setStatusF
                       <div className="pal-capacity-bar">
                         <div className="pal-capacity-fill" style={{ width: `${occRate}%`, background: capColor }} />
                       </div>
-                      <span className="pal-mono" style={{ fontSize: 11.5, color: theme.textDim }}>{slot.reserved_slots}/{slot.total_slots}</span>
+                      <span className="pal-mono" style={{ fontSize: 11.5, color: theme.textDim }}>{slot.available_slots}/{slot.total_slots}</span>
                     </div>
                   </td>
                   <td>
@@ -1226,9 +1226,10 @@ function CreneauxTab({ slots, theme, search, setSearch, statusFilter, setStatusF
 
 function SlotModal({ slot, onClose, onSave, isSaving }) {
   const [form, setForm] = useState(slot || {
-    slot_date: '2026-07-17',
+    slot_date: '2026-07-24',
     start_time: '06:00',
     end_time: '09:15',
+    duration: '',
     origin_gate: GATES[0],
     destination_terminal: TERMINALS[0],
     total_slots: 10,
@@ -1236,6 +1237,7 @@ function SlotModal({ slot, onClose, onSave, isSaving }) {
     status: 'active',
     operation: 'loading',
   });
+
 
   const update = (key, value) => setForm(prev => ({ ...prev, [key]: value }));
 
@@ -1282,13 +1284,13 @@ function SlotModal({ slot, onClose, onSave, isSaving }) {
             <div className="pal-field-row">
               <div className="pal-field">
                 <label>Porte d'origine</label>
-                <select value={form.origin_gate} onChange={(e) => update('origin', e.target.value)}>
+                <select value={form.origin_gate} onChange={(e) => update('origin_gate', e.target.value)}>
                   {GATES.map(g => <option key={g} value={g}>{g}</option>)}
                 </select>
               </div>
               <div className="pal-field">
                 <label>Terminal de destination</label>
-                <select value={form.destination_terminal} onChange={(e) => update('destination', e.target.value)}>
+                <select value={form.destination_terminal} onChange={(e) => update('destination_terminal', e.target.value)}>
                   {TERMINALS.map(t => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
@@ -1305,7 +1307,7 @@ function SlotModal({ slot, onClose, onSave, isSaving }) {
               </div>
               <div className="pal-field">
                 <label>Capacité totale</label>
-                <input type="number" min="1" value={form.total_slots} onChange={(e) => update('total', e.target.value)} required />
+                <input type="number" min="1" value={form.total_slots} onChange={(e) => update('total_slots', e.target.value)} required />
               </div>
             </div>
           </div>

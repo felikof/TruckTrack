@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import * as yup from 'yup';
-import { registerCompany } from "../services/companyService";
+import company from "../services/companyService";
 
 const CompanyRegistration = ({ onSubmit, onCancel }) => {
   const [currentStep, setCurrentStep] = useState(1)
@@ -152,7 +152,7 @@ const CompanyRegistration = ({ onSubmit, onCancel }) => {
 
   const handleRegisterCompany = async () => {
     try {
-      const result = await registerCompany(formData);
+      const result = await company.createCompany(formData);
       alert("Company registered successfully!");
       if (onSubmit) onSubmit(result);
     } catch (error) {
